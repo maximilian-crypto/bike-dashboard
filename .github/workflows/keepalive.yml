@@ -1,0 +1,24 @@
+name: Keepalive
+
+# GitHub pausiert Zeitplan-Workflows, wenn ein Repo 60 Tage lang keinerlei
+# Aktivitaet hatte. Dieser Job macht alle ~10 Tage einen leeren Commit und
+# haelt damit den automatischen Sync dauerhaft am Leben – ohne dein Zutun.
+on:
+  schedule:
+    - cron: "17 3 */10 * *"
+  workflow_dispatch: {}
+
+permissions:
+  contents: write
+
+jobs:
+  keepalive:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Leerer Commit
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git commit --allow-empty -m "keepalive: Actions-Zeitplan aktiv halten"
+          git push
