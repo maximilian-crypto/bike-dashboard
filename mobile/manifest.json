@@ -1,0 +1,16 @@
+{
+  "name": "Bike Live Ride",
+  "short_name": "Ride",
+  "start_url": "ride.html",
+  "display": "fullscreen",
+  "orientation": "portrait",
+  "background_color": "#0a0c10",
+  "theme_color": "#0a0c10",
+  "icons": [
+    {
+      "src": "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='192' height='192'%3E%3Crect width='192' height='192' rx='44' fill='%230a0c10'/%3E%3Cg fill='none' stroke='%23ff5a36' stroke-width='9' stroke-linecap='round' stroke-linejoin='round'%3E%3Ccircle cx='62' cy='126' r='28'/%3E%3Ccircle cx='130' cy='126' r='28'/%3E%3Cpath d='M62 126l34-58h28l-22 58'/%3E%3Cpath d='M96 68h34l16 58'/%3E%3C/g%3E%3C/svg%3E",
+      "sizes": "192x192",
+      "type": "image/svg+xml"
+    }
+  ]
+}

@@ -1,0 +1,44 @@
+# Kopiere diese Datei zu  config.toml  und trage deine Werte ein.
+# Wie du an die Werte kommst, steht in der README (Abschnitt "Setup").
+# config.toml wird NICHT eingecheckt (steht in .gitignore).
+
+[strava]
+client_id = "DEINE_STRAVA_CLIENT_ID"
+client_secret = "DEIN_STRAVA_CLIENT_SECRET"
+
+[whoop]
+client_id = "DEINE_WHOOP_CLIENT_ID"
+client_secret = "DEIN_WHOOP_CLIENT_SECRET"
+
+# Lokaler Port für den OAuth-Login-Rückkanal. Muss zu den Redirect-URIs
+# passen, die du in beiden Portalen einträgst (siehe README).
+[server]
+port = 8721
+
+# --- Für die Tages-Routenempfehlung ---
+
+[ors]
+# Kostenloser API-Key von https://openrouteservice.org  (berechnet die Rundkurse).
+api_key = "DEIN_OPENROUTESERVICE_KEY"
+# Fahrprofil: cycling-regular | cycling-road | cycling-mountain | cycling-electric
+profile = "cycling-regular"
+
+[athlete]
+# Startpunkt deiner Runden (z. B. Zuhause). Koordinaten findest du, indem du
+# in Google Maps rechtsklickst -> die erste Zeile sind  lat, lon.
+home_lat = 0.0
+home_lon = 0.0
+# Optionales Wochen-Stundenziel. 0 = automatisch aus deinem Schnitt der
+# letzten 4 Wochen ableiten.
+weekly_hours_target = 0
+
+# --- KI-Coach (optional) ---
+[coach]
+# Anthropic-API-Key von https://console.anthropic.com  (Klartext-Coach).
+api_key = "DEIN_ANTHROPIC_KEY"
+model = "claude-opus-4-8"
+
+# --- Morgen-Report aufs Handy (optional) ---
+[report]
+# Selbst gewähltes ntfy-Thema; in der ntfy-App (Handy) dasselbe abonnieren.
+ntfy_topic = "DEIN_NTFY_THEMA"

@@ -1,0 +1,11 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "mobile",
+      "runtimeExecutable": "python",
+      "runtimeArgs": ["-m", "http.server", "8800", "--directory", "mobile"],
+      "port": 8800
+    }
+  ]
+}

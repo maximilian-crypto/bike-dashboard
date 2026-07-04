@@ -1,0 +1,7 @@
+streamlit>=1.58
+pandas>=3.0
+plotly>=6.8
+requests>=2.32
+anthropic>=0.110
+SQLAlchemy>=2.0
+psycopg[binary]>=3.2
