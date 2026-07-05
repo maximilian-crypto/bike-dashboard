@@ -71,14 +71,37 @@
     font-variant-numeric:tabular-nums;}
   .unit{font-size:13px;color:var(--muted);font-weight:500;}
 
-  /* HF-Kachel zonen-getönt */
+  /* HF- & Trittfrequenz-Kachel farb-getönt – kräftig für Ablesbarkeit auch mit
+     polarisierter Sonnenbrille (mehr Sättigung, dickerer Rand, Glow, großes Badge) */
   #hrTile{--zc:#2a3142;
-    background:linear-gradient(158deg, color-mix(in srgb,var(--zc) 20%, var(--panelA)), var(--panelB));
-    border-color:color-mix(in srgb,var(--zc) 50%, var(--border));
-    box-shadow:inset 0 1px 0 rgba(255,255,255,.04), 0 0 26px -10px var(--zc);
+    background:linear-gradient(158deg, color-mix(in srgb,var(--zc) 34%, var(--panelA)), color-mix(in srgb,var(--zc) 10%, var(--panelB)));
+    border:2px solid color-mix(in srgb,var(--zc) 80%, var(--border));
+    box-shadow:inset 0 1px 0 rgba(255,255,255,.05), 0 0 34px -8px var(--zc);
     transition:background .45s, border-color .45s, box-shadow .45s;}
-  #zoneBadge{position:absolute;top:12px;right:12px;font-size:12px;font-weight:700;
-    padding:2px 9px;border-radius:8px;background:#2a3142;color:var(--text);letter-spacing:.03em;}
+  #cadTile{--cc:#2a3142;
+    background:linear-gradient(158deg, color-mix(in srgb,var(--cc) 30%, var(--panelA)), color-mix(in srgb,var(--cc) 8%, var(--panelB)));
+    border:2px solid color-mix(in srgb,var(--cc) 74%, var(--border));
+    box-shadow:inset 0 1px 0 rgba(255,255,255,.05), 0 0 30px -10px var(--cc);
+    transition:background .45s, border-color .45s, box-shadow .45s;}
+  /* Beim Verlassen der Zielzone pulsiert die HF-Kachel deutlich sichtbar. */
+  #hrTile.offzone{animation:zoneflash 1.3s ease-in-out infinite;}
+  @keyframes zoneflash{0%,100%{box-shadow:inset 0 1px 0 rgba(255,255,255,.05),0 0 30px -10px var(--zc);}
+    50%{box-shadow:inset 0 1px 0 rgba(255,255,255,.05),0 0 46px 0px var(--zc);}}
+  #zoneBadge,#cadBadge{position:absolute;top:11px;right:11px;font-size:15px;font-weight:800;
+    min-width:30px;text-align:center;padding:3px 10px;border-radius:9px;background:#2a3142;color:var(--text);
+    letter-spacing:.02em;box-shadow:0 2px 8px -3px #000;transition:background .3s;}
+
+  /* Karte einklappbar → Kacheln bekommen den Platz und werden groß */
+  .maptoggle{display:flex;align-items:center;justify-content:center;gap:7px;margin:0 10px 8px;
+    padding:8px;border-radius:12px;font-size:12px;font-weight:700;letter-spacing:.09em;text-transform:uppercase;
+    background:linear-gradient(158deg,var(--panelA),var(--panelB));color:var(--muted);
+    border:1px solid var(--border);font-family:inherit;}
+  .maptoggle .ic{color:var(--faint);transition:transform .25s;}
+  body.mapcollapsed .maptoggle .ic{transform:rotate(180deg);}
+  body.mapcollapsed #map{display:none;}
+  body.mapcollapsed .grid{flex:1;grid-auto-rows:1fr;}
+  body.mapcollapsed .tile{min-height:0;}
+  body.mapcollapsed .tile .val{font-size:62px;}
 
   .wind .arrowwrap{position:absolute;top:11px;right:11px;width:38px;height:38px;opacity:.95;}
   .wind .arrow{transform-origin:50% 50%;transition:transform .5s ease;}
@@ -101,6 +124,7 @@
     text-transform:uppercase;letter-spacing:.1em;font-weight:600;}
   .stat .v{font-size:21px;font-weight:600;font-variant-numeric:tabular-nums;letter-spacing:-.02em;margin-top:2px;}
   .stat .v .u{font-size:11px;color:var(--muted);font-weight:500;}
+  .tripnote{font-size:10px;color:var(--faint);text-align:center;margin:-4px 10px 9px;letter-spacing:.03em;}
 
   /* Nav-Card */
   #navBanner{margin:0 10px 10px;border-radius:16px;padding:11px 13px;display:flex;align-items:center;gap:13px;
@@ -179,14 +203,15 @@
     </div>
 
     <div id="hrTile" class="tile">
-      <div class="lbl"><i class="ic" data-ic="heart" style="--s:13px"></i> Herzfrequenz</div>
+      <div class="lbl"><i class="ic" data-ic="heart" style="--s:13px"></i> Puls</div>
       <div id="zoneBadge">—</div>
       <div class="valrow"><span id="hr" class="val">—</span><span class="unit">bpm</span></div>
       <div class="gauge" id="gaugeHr"></div>
     </div>
 
     <div id="cadTile" class="tile">
-      <div class="lbl"><i class="ic" data-ic="cadence" style="--s:13px"></i> Trittfrequenz</div>
+      <div class="lbl"><i class="ic" data-ic="cadence" style="--s:13px"></i> Kadenz</div>
+      <div id="cadBadge">—</div>
       <div class="valrow"><span id="cad" class="val">—</span><span class="unit">U/min</span></div>
       <div class="gauge" id="gaugeCad"></div>
     </div>
@@ -210,12 +235,16 @@
     <div class="stat"><div class="l"><i class="ic" data-ic="clock" style="--s:12px"></i> Zeit</div><div class="v" id="time">0:00</div></div>
     <div class="stat"><div class="l"><i class="ic" data-ic="speed" style="--s:12px"></i> Ø Tempo</div><div class="v"><span id="avg">0</span> <span class="u">km/h</span></div></div>
   </div>
+  <div id="tripNote" class="tripnote">„Start" = Trip-Meter + Display wach halten · Aufzeichnung läuft über Strava</div>
 
   <div id="navBanner" class="hidden">
     <div class="navico" id="navIco"><i class="ic" data-ic="navStraight"></i></div>
     <div class="main"><div class="turn" id="navTurn">Route generieren</div><div class="meta" id="navMeta"></div></div>
   </div>
 
+  <button id="mapToggle" class="maptoggle" aria-label="Karte ein- oder ausklappen">
+    <i class="ic" data-ic="chevron" style="--s:16px"></i><span id="mapToggleTxt">Karte ausblenden</span>
+  </button>
   <div id="map"></div>
 
   <footer>
@@ -235,7 +264,7 @@
   <label>Maximale Herzfrequenz (bpm)</label>
   <input id="maxhr" type="number" value="198" min="120" max="230" />
   <label>Ruhepuls (bpm) — für Karvonen/HRR-Zonen wie in Whoop</label>
-  <input id="resthr" type="number" value="60" min="30" max="110" />
+  <input id="resthr" type="number" value="72" min="30" max="110" />
   <label>Ziel-Zone</label>
   <select id="targetZone">
     <option value="1">Z1 · Erholung</option>
@@ -289,13 +318,15 @@ const ICON = {
   navLeft:'<svg viewBox="0 0 24 24"><path d="M15 20v-8a3 3 0 0 0-3-3H7"/><path d="M10.5 5L6 9l4.5 4"/></svg>',
   arrive:'<svg viewBox="0 0 24 24"><path d="M12 21s6.5-5.4 6.5-10.5A6.5 6.5 0 0 0 5.5 10.5C5.5 15.6 12 21 12 21Z"/><path d="M9.5 10.3l1.8 1.8 3.2-3.4"/></svg>',
   warn:'<svg viewBox="0 0 24 24"><path d="M12 4l9.3 16H2.7L12 4Z"/><path d="M12 10v4.2"/><circle cx="12" cy="17.4" r="0.7" fill="currentColor" stroke="none"/></svg>',
+  chevron:'<svg viewBox="0 0 24 24"><path d="M6 9l6 6 6-6"/></svg>',
 };
 function buildIcons(root){ (root||document).querySelectorAll('[data-ic]').forEach(el=>{ el.innerHTML = ICON[el.dataset.ic]||''; }); }
 
 const ZONE_COLORS = {1:'#3a9bdc',2:'#2ecc71',3:'#f2c40f',4:'#ef8a2b',5:'#e8503a'};
 // HF-Zonen als Anteil der Herzfrequenzreserve (HRR / Karvonen) — wie Whoop.
-const ZONE_PCT = [[0.40,0.60],[0.60,0.70],[0.70,0.80],[0.80,0.90],[0.90,1.00]];
-let maxHR=198, restHR=60, targetZone=2, orsKey='', targetKm=30, windklug=true;
+const ZONE_PCT = [[0.40,0.60],[0.60,0.70],[0.70,0.80],[0.80,0.90],[0.90,1.00]];        // HRR (Karvonen)
+const LTHR_PCT = [[0.00,0.81],[0.81,0.90],[0.90,0.94],[0.94,1.00],[1.00,1.06]];        // Friel-Schwellenzonen
+let maxHR=198, restHR=72, targetZone=2, orsKey='', targetKm=30, windklug=true, lthr=0;
 let cadLo=85, cadHi=95, spdLo=22, spdHi=30;
 let guidance=false, hrVal=null, cadVal=null, spdVal=null;
 
@@ -305,12 +336,15 @@ let map=null, trail=null, marker=null, routeLayer=null;
 let windFrom=0, windSpeed=0, lastWindFetch=0;
 let route=null, lastZoneInTarget=true, searchIdx=0;
 let compassOn=false, compassHeading=null, lastArrow=0;
+let todayData=null, todayRoute=null;
 
 // ---------- Helpers ----------
 // Karvonen/HRR: Anteil der Herzfrequenzreserve (mit Ruhepuls), sonst %max.
-function hrrFrac(hr){ return (restHR>0 && maxHR>restHR) ? (hr-restHR)/(maxHR-restHR) : hr/maxHR; }
-function hrrBpm(f){ return (restHR>0 && maxHR>restHR) ? restHR + f*(maxHR-restHR) : maxHR*f; }
-function zoneFor(hr){ const f=hrrFrac(hr); for(let i=0;i<5;i++){ if(f<ZONE_PCT[i][1]||i===4) return i+1;} return 1; }
+// Mit LTHR (Feldtest-Wert aus today.json) → Anteil der Schwellen-HF, sonst HRR/%max.
+function zoneBounds(){ return lthr>0 ? LTHR_PCT : ZONE_PCT; }
+function hrrFrac(hr){ if(lthr>0) return hr/lthr; return (restHR>0 && maxHR>restHR) ? (hr-restHR)/(maxHR-restHR) : hr/maxHR; }
+function hrrBpm(f){ if(lthr>0) return f*lthr; return (restHR>0 && maxHR>restHR) ? restHR + f*(maxHR-restHR) : maxHR*f; }
+function zoneFor(hr){ const b=zoneBounds(); const f=hrrFrac(hr); for(let i=0;i<5;i++){ if(f<b[i][1]||i===4) return i+1;} return 1; }
 function hav(a,b,c,d){ const R=6371000,p1=a*Math.PI/180,p2=c*Math.PI/180,dp=(c-a)*Math.PI/180,dl=(d-b)*Math.PI/180;
   const x=Math.sin(dp/2)**2+Math.cos(p1)*Math.cos(p2)*Math.sin(dl/2)**2; return 2*R*Math.asin(Math.sqrt(x)); }
 function brg(a,b,c,d){ const p1=a*Math.PI/180,p2=c*Math.PI/180,dl=(d-b)*Math.PI/180;
@@ -326,7 +360,7 @@ function arc(f0,f1){ f0=clamp(f0); f1=clamp(f1); const n=Math.max(2,Math.round(M
   for(let i=0;i<=n;i++){ const [x,y]=ptAt(f0+(f1-f0)*i/n); d+=(i?'L':'M')+x.toFixed(1)+' '+y.toFixed(1)+' '; } return d.trim(); }
 const GA={
   speed:{cont:'gaugeSpd', min:()=>0, max:()=>Math.max(45,spdHi*1.6), band:()=>[spdLo,spdHi], w:{below:'▲ schneller', above:'▼ Tempo raus'}},
-  hr:   {cont:'gaugeHr',  min:()=>hrrBpm(0.35), max:()=>maxHR, band:()=>{const z=ZONE_PCT[targetZone-1];return [hrrBpm(z[0]),hrrBpm(z[1])];}, w:{below:'▲ mehr geben', above:'▼ lockerer'}},
+  hr:   {cont:'gaugeHr',  min:()=>hrrBpm(0.35), max:()=>(lthr>0?hrrBpm(1.06):maxHR), band:()=>{const z=zoneBounds()[targetZone-1];return [hrrBpm(z[0]),hrrBpm(z[1])];}, w:{below:'▲ mehr geben', above:'▼ lockerer'}},
   cad:  {cont:'gaugeCad', min:()=>40, max:()=>120, band:()=>[cadLo,cadHi], w:{below:'▲ schneller treten', above:'▼ ruhiger treten'}},
 };
 function buildGauges(){
@@ -464,6 +498,7 @@ function onHR(hr){
   const zb=$('zoneBadge'); zb.textContent='Z'+z; zb.style.background=c; zb.style.color='#0a0c10';
   $('hrTile').style.setProperty('--zc',c);
   const inTarget=(z===targetZone);
+  $('hrTile').classList.toggle('offzone',!inTarget);
   $('hrTxt').textContent=hr; $('hrPill').className=inTarget?'pill ok':(z<targetZone?'pill':'pill warn');
   if(lastZoneInTarget&&!inTarget&&navigator.vibrate) navigator.vibrate(180);
   lastZoneInTarget=inTarget; updateGauge('hr',hr);
@@ -485,8 +520,17 @@ function onCSC(v){
   const f=v.getUint8(0); let off=1; if(f&0x01) off+=6;
   if(f&0x02){ const c=v.getUint16(off,true),t=v.getUint16(off+2,true);
     if(lastCrank!=null){ const dc=(c-lastCrank+65536)%65536, dt=(t-lastCrankT+65536)%65536;
-      if(dt>0){ const rpm=Math.round((dc/(dt/1024))*60); cadVal=rpm; $('cad').textContent=rpm; updateGauge('cad',rpm); } }
+      if(dt>0){ const rpm=Math.round((dc/(dt/1024))*60); cadVal=rpm; $('cad').textContent=rpm; updateGauge('cad',rpm); setCadIndicator(rpm); } }
     lastCrank=c; lastCrankT=t; }
+}
+// Trittfrequenz-Kachel je nach Zielband (cadLo–cadHi aus recommend.py) einfärben.
+function setCadIndicator(rpm){
+  if(rpm==null) return;
+  const st=statusOf('cad',rpm);
+  const col=st==='in'?'#2ecc71':(st==='above'?'#e8503a':'#3a9bdc');
+  $('cadTile').style.setProperty('--cc',col);
+  const b=$('cadBadge'); b.textContent=st==='in'?'✓':(st==='above'?'▼':'▲');
+  b.style.background=col; b.style.color='#0a0c10';
 }
 
 // ---------- Routing ----------
@@ -521,15 +565,33 @@ async function generateRoute(){
   else pick=cands.sort((a,b)=>a.err-b.err)[0];
   drawRoute(pick);
 }
-function drawRoute(c){
+function applyRoute(r){
   if(routeLayer) map.removeLayer(routeLayer);
-  routeLayer=L.polyline(c.coords,{color:'#ff5a36',weight:6,opacity:.92}).addTo(map);
+  routeLayer=L.polyline(r.coords,{color:'#ff5a36',weight:6,opacity:.92}).addTo(map);
   map.fitBounds(routeLayer.getBounds(),{padding:[30,30]});
+  route={coords:r.coords,cum:r.cum,total:r.total,steps:r.steps||[],source:r.source||'ors'}; searchIdx=0;
+  $('navBanner').classList.remove('hidden');
+  const km=(r.total/1000).toFixed(1), asc=Math.round(r.ascent||0);
+  const src=r.source==='today'?'Dashboard-Route':'Route';
+  $('navIco').innerHTML=ICON.navStraight; $('navTurn').textContent=src+' bereit';
+  $('navMeta').textContent=`${km} km · ${asc} Hm · ${route.steps.length} Abschnitte`;
+}
+function drawRoute(c){
   const props=c.ft.properties, seg=(props.segments||[]); const steps=[];
   seg.forEach(s=>s.steps.forEach(st=>steps.push({instr:st.instruction,wp0:st.way_points[0],wp1:st.way_points[1]})));
-  route={coords:c.coords,cum:c.cum,total:c.total,steps}; searchIdx=0;
-  const km=(c.total/1000).toFixed(1), asc=Math.round(props.ascent||0);
-  $('navIco').innerHTML=ICON.navStraight; $('navTurn').textContent='Route bereit'; $('navMeta').textContent=`${km} km · ${asc} Hm · ${steps.length} Abschnitte`;
+  applyRoute({coords:c.coords,cum:c.cum,total:c.total,steps,ascent:props.ascent,source:'ors'});
+}
+// Vom Dashboard geplante Route (today.json) übernehmen.
+function drawToday(){
+  if(!todayRoute||!(todayRoute.coords||[]).length){ generateRoute(); return; }
+  const coords=todayRoute.coords, m=routeMetrics(coords);
+  const steps=(todayRoute.steps||[]).map(s=>({instr:s.instruction,wp0:s.wp0,wp1:s.wp1}));
+  applyRoute({coords,cum:m.cum,total:m.total,steps,ascent:todayRoute.ascent_m,source:'today'});
+}
+// Erster Tipp lädt die Dashboard-Route, weitere erzeugen ORS-Varianten.
+async function routeAction(){
+  if(todayRoute && (!route || route.source!=='today')){ drawToday(); return; }
+  await generateRoute();
 }
 function navIconFor(instr){ const s=(instr||'').toLowerCase();
   if(s.includes('erreichen')||s.includes('ziel')) return 'arrive';
@@ -541,6 +603,7 @@ function updateNav(lat,lon){
   $('navBanner').classList.toggle('off',off);
   const remain=(route.total-route.cum[idx])/1000;
   if(off){ $('navIco').innerHTML=ICON.warn; $('navTurn').textContent='Abseits der Route'; $('navMeta').textContent=`${Math.round(dist)} m entfernt · noch ${remain.toFixed(1)} km`; return; }
+  if(!route.steps.length){ $('navIco').innerHTML=ICON.route; $('navTurn').textContent='Route folgen'; $('navMeta').textContent=`noch ${remain.toFixed(1)} km`; return; }
   let nxt=route.steps.find(s=>s.wp0>idx) || route.steps[route.steps.length-1];
   const tv=nxt?nxt.wp0:idx; const toTurn=Math.max(0,route.cum[Math.min(tv,route.cum.length-1)]-route.cum[idx]);
   $('navIco').innerHTML=ICON[navIconFor(nxt&&nxt.instr)]; $('navTurn').textContent=nxt?nxt.instr:'Ziel erreicht';
@@ -557,17 +620,61 @@ async function toggleRun(){
   else if(wakeLock){ wakeLock.release(); wakeLock=null; }
 }
 
+// ---------- Tagesplan vom Dashboard (today.json auf GitHub Pages) ----------
+// Same-origin geladen; liefert Whoop-HF-Zonen, Trittfrequenz-Ziel und die
+// windklug geplante Route – so ist die PWA konsistent mit dem Dashboard.
+async function loadToday(){
+  try{
+    const r=await fetch('today.json',{cache:'no-store'});
+    if(!r.ok) return;
+    const d=await r.json();
+    todayData=d;
+    applyTodayZones(d);
+    const todayStr=new Date().toISOString().slice(0,10);
+    if(d.route && d.date===todayStr) todayRoute=d.route;   // Route nur wenn heutig
+    showTodayBanner(d);
+  }catch(e){ /* today.json (noch) nicht da – lokale Defaults behalten */ }
+}
+function applyTodayZones(d){
+  const z=d.zones||{}, rec=d.recommendation||{};
+  if(z.max_hr) maxHR=z.max_hr;
+  if(z.rest_hr) restHR=z.rest_hr;
+  lthr = z.lthr || 0;   // gesetzt → Live-Zonen laufen über Friel-Schwellenzonen
+  if(z.target_zone) targetZone=z.target_zone;
+  if(rec.cadence_low) cadLo=rec.cadence_low;
+  if(rec.cadence_high) cadHi=rec.cadence_high;
+  if(rec.target_distance_km) targetKm=Math.round(rec.target_distance_km/5)*5;  // Slider-Schrittweite
+  // In die Eingabefelder spiegeln, aber NICHT in localStorage schreiben –
+  // today.json bleibt bei jedem Laden maßgeblich, manuelles Speichern geht weiter.
+  $('maxhr').value=maxHR; $('resthr').value=restHR; $('targetZone').value=targetZone;
+  $('cadLo').value=cadLo; $('cadHi').value=cadHi;
+  $('targetKm').value=targetKm; $('distLbl').textContent=targetKm;
+  refreshAllGauges();
+  if(hrVal!=null) onHR(hrVal);   // Zonenfarbe/-Badge mit neuen Grenzen neu setzen
+}
+function showTodayBanner(d){
+  const rec=d.recommendation||{}; if(!rec.title) return;
+  $('navBanner').classList.remove('hidden');
+  $('navIco').innerHTML = todayRoute ? ICON.route : ICON.target;
+  $('navTurn').textContent='Heute: '+rec.title;
+  const bits=[];
+  if(rec.hr_low) bits.push(`Z${rec.zone_number} ${rec.hr_low}–${rec.hr_high} bpm`);
+  if(rec.cadence && rec.cadence!=='–') bits.push(rec.cadence+' U/min');
+  if(rec.target_distance_km) bits.push(`Ziel ~${Math.round(rec.target_distance_km)} km · „Route" tippen`);
+  $('navMeta').textContent=bits.join(' · ');
+}
+
 // ---------- Settings ----------
 function loadSettings(){
   const s=JSON.parse(localStorage.getItem('rideCfg')||'{}');
-  maxHR=s.maxHR||198; restHR=s.restHR||60; targetZone=s.targetZone||2; orsKey=s.orsKey||''; targetKm=s.targetKm||30; windklug=s.windklug!==false;
+  maxHR=s.maxHR||198; restHR=s.restHR||72; targetZone=s.targetZone||2; orsKey=s.orsKey||''; targetKm=s.targetKm||30; windklug=s.windklug!==false;
   cadLo=s.cadLo||85; cadHi=s.cadHi||95; spdLo=s.spdLo||22; spdHi=s.spdHi||30;
   $('maxhr').value=maxHR; $('resthr').value=restHR; $('targetZone').value=targetZone; $('orsKey').value=orsKey;
   $('targetKm').value=targetKm; $('distLbl').textContent=targetKm; $('windklug').checked=windklug;
   $('cadLo').value=cadLo; $('cadHi').value=cadHi; $('spdLo').value=spdLo; $('spdHi').value=spdHi;
 }
 function saveSettings(){
-  maxHR=+$('maxhr').value||198; restHR=+$('resthr').value||60; targetZone=+$('targetZone').value||2; orsKey=$('orsKey').value.trim();
+  maxHR=+$('maxhr').value||198; restHR=+$('resthr').value||72; targetZone=+$('targetZone').value||2; orsKey=$('orsKey').value.trim();
   targetKm=+$('targetKm').value||30; windklug=$('windklug').checked;
   cadLo=+$('cadLo').value||85; cadHi=+$('cadHi').value||95; spdLo=+$('spdLo').value||22; spdHi=+$('spdHi').value||30;
   localStorage.setItem('rideCfg',JSON.stringify({maxHR,restHR,targetZone,orsKey,targetKm,windklug,cadLo,cadHi,spdLo,spdHi}));
@@ -576,7 +683,7 @@ function saveSettings(){
 
 // ---------- Wire up ----------
 $('startBtn').onclick=toggleRun;
-$('routeBtn').onclick=generateRoute;
+$('routeBtn').onclick=routeAction;
 $('coachBtn').onclick=toggleCoach;
 $('setBtn').onclick=()=>$('setDlg').showModal();
 $('setClose').onclick=()=>{ saveSettings(); $('setDlg').close(); };
@@ -584,9 +691,14 @@ $('hrBtn').onclick=connectHR;
 $('cadBtn').onclick=connectCad;
 $('targetKm').oninput=e=>$('distLbl').textContent=e.target.value;
 document.querySelector('.tile.wind').onclick=enableCompass;
+$('mapToggle').onclick=()=>{
+  const collapsed=document.body.classList.toggle('mapcollapsed');
+  $('mapToggleTxt').textContent=collapsed?'Karte zeigen':'Karte ausblenden';
+  if(!collapsed) setTimeout(()=>{ if(map) map.invalidateSize(); },60);
+};
 
 buildIcons(); $('startBtn').querySelector('.ic').innerHTML=ICON.play;
-loadSettings(); buildGauges(); initMap(); startGeo();
+loadSettings(); buildGauges(); initMap(); startGeo(); loadToday();
 document.addEventListener('visibilitychange',async()=>{ if(document.visibilityState==='visible'&&running&&!wakeLock){ try{ wakeLock=await navigator.wakeLock.request('screen'); }catch(e){} } });
 if('serviceWorker' in navigator) navigator.serviceWorker.register('sw.js').catch(()=>{});
 </script>

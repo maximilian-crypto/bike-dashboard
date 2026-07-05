@@ -433,6 +433,13 @@ def render_setup() -> None:
         st.number_input("Wochen-Stundenziel (0 = automatisch)",
                         value=int(a.get("weekly_hours_target", 0) or 0), min_value=0,
                         key="cfg_weekly")
+        st.number_input(
+            "LTHR – Laktatschwellen-HF (0 = aus, dann %HRR aus Whoop-HFmax)",
+            value=int(a.get("lthr", 0) or 0), min_value=0, max_value=230, key="cfg_lthr",
+            help="Feldtest: 30 min solo all-out fahren, Ø-HF der letzten 20 min eintragen. "
+                 "Verankert die HF-Zonen individuell an deiner Schwelle statt an der "
+                 "unsicheren geschätzten Maximal-HF.",
+        )
 
     with st.expander("4) KI-Coach + Morgen-Report (optional)", icon=":material/psychology:",
                      expanded=False):
@@ -470,6 +477,7 @@ def render_setup() -> None:
                 "home_lat": float(st.session_state.cfg_home_lat),
                 "home_lon": float(st.session_state.cfg_home_lon),
                 "weekly_hours_target": int(st.session_state.cfg_weekly),
+                "lthr": int(st.session_state.cfg_lthr),
             },
             "coach": {
                 "api_key": st.session_state.get("cfg_coach_key", "").strip(),
@@ -720,20 +728,28 @@ with tab_today:
     # --- HF-Zonen-Referenz ---
     mhr = zones.max_hr_from_data()
     rhr = zones.resting_hr_baseline()
-    if mhr:
-        rest_txt = f" · Ruhe {rhr} bpm" if rhr else ""
-        with st.expander(f"Deine HF-Zonen (Max-HF {mhr} bpm{rest_txt} · {zones.source_note()})",
+    lthr = zones.lthr_from_config()
+    if mhr or lthr:
+        head = f"LTHR {lthr} bpm" if lthr else f"Max-HF {mhr} bpm{f' · Ruhe {rhr} bpm' if rhr else ''}"
+        with st.expander(f"Deine HF-Zonen ({head} · {zones.source_note()})",
                          icon=":material/favorite:"):
-            st.caption(
-                "Berechnet wie in der Whoop-App über die **Herzfrequenzreserve** "
-                "(Karvonen): Ruhepuls + Intensität × (Max − Ruhe) — nicht simples %max."
-                if rhr else
-                "Ohne Ruhepuls über %-der-Max-HF geschätzt (verbinde Whoop für "
-                "die genauere Karvonen-Berechnung)."
-            )
+            if lthr:
+                lt1, lt2 = zones.lt1_lt2(lthr)
+                st.caption(
+                    f"Schwellenzonen (Friel) verankert an deiner **LTHR {lthr} bpm** aus dem "
+                    f"Feldtest — individuell treffsicherer als %HRR. Grauzone LT1–LT2 ≈ {lt1}–{lt2} bpm."
+                )
+            else:
+                st.caption(
+                    "Berechnet wie in der Whoop-App über die **Herzfrequenzreserve** "
+                    "(Karvonen): Ruhepuls + Intensität × (Max − Ruhe) — nicht simples %max."
+                    if rhr else
+                    "Ohne Ruhepuls über %-der-Max-HF geschätzt (verbinde Whoop für "
+                    "die genauere Karvonen-Berechnung). Noch genauer: LTHR-Feldtest in der Einrichtung."
+                )
             zdf = pd.DataFrame([
                 {"Zone": z.label, "von (bpm)": z.low_bpm, "bis (bpm)": z.high_bpm}
-                for z in zones.zones(mhr, rhr)
+                for z in zones.zones(mhr, rhr, lthr)
             ])
             st.dataframe(zdf, width="stretch", hide_index=True)
 

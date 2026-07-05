@@ -36,3 +36,25 @@ def test_intensity_frac():
     assert abs(zones.intensity_frac(150, 200, 100) - 0.5) < 1e-6
     # Ohne Ruhepuls -> %max
     assert abs(zones.intensity_frac(150, 200) - 0.75) < 1e-6
+
+
+def test_lthr_zones_use_threshold_bands():
+    # Mit LTHR -> Friel-Schwellenzonen: Z4 endet bei LTHR, Z5 beginnt dort.
+    z = zones.zones(max_hr=190, rest_hr=50, lthr=160)
+    assert z[3].high_bpm == 160          # Z4 bis 1.00*LTHR
+    assert z[4].low_bpm == 160           # Z5 ab LTHR
+    assert z[1].low_bpm == round(0.81 * 160)   # Z2 ab 81% LTHR
+    # LTHR hat Vorrang vor HRR (andere Grenzen als der %HRR-Modus).
+    assert zones.zones(max_hr=190, rest_hr=50)[3].high_bpm != 160
+    assert zones.method_label(rest_hr=50, lthr=160) == "Schwelle/LTHR"
+
+
+def test_lt1_lt2_from_lthr():
+    assert zones.lt1_lt2(160) == (131, 160)   # LT1 ≈ 0.82*160=131.2 -> 131, LT2 = LTHR
+
+
+def test_lthr_from_config(monkeypatch):
+    from bikedash import config
+    monkeypatch.delenv("ATHLETE_LTHR", raising=False)
+    config.save_config({"athlete": {"lthr": 158}})   # CONFIG_PATH ist per conftest isoliert
+    assert zones.lthr_from_config() == 158

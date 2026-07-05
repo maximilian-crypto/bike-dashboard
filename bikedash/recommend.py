@@ -12,14 +12,20 @@ from dataclasses import dataclass, field
 
 import pandas as pd
 
-from . import dataprep, zones
+from . import dataprep, form, zones
+
+# Form-Schwellen (TSB = CTL − ATL). Praktiker-Heuristik (Allen/Coggan) — bewusst
+# als kalibrierbare Startwerte, NICHT als hart validierte Grenzen (siehe Doku).
+TSB_DEEP_FATIGUE = -30.0   # darunter: keine harte Einheit, Erholung/Deload
+TSB_HARD_FLOOR = -20.0     # harte Einheit nur, wenn TSB darüber liegt
+TSB_TEMPO_CEIL = 0.0       # darüber Z4-Schwelle, dazwischen dosierter Z3-Tempo-Reiz
 
 # Sessiontyp-Vorlagen: (Ziel-Zone, Basisdauer min, Trittfrequenz, RPE 1-10, Tempofaktor)
 TEMPLATES = {
     "REST":      dict(zone=None, base_min=0,  cadence="–",       rpe="–",   speed_factor=0.0),
     "RECOVERY":  dict(zone=1,    base_min=40, cadence="85–95",   rpe="2–3", speed_factor=0.82),
     "ENDURANCE": dict(zone=2,    base_min=90, cadence="85–95",   rpe="3–4", speed_factor=0.92),
-    "TEMPO":     dict(zone=3,    base_min=75, cadence="85–95",   rpe="5–6", speed_factor=1.05),
+    "TEMPO":     dict(zone=3,    base_min=75, cadence="90–100",  rpe="5–6", speed_factor=1.05),
     "THRESHOLD": dict(zone=4,    base_min=70, cadence="90–100",  rpe="7–8", speed_factor=1.00),
 }
 
@@ -50,6 +56,7 @@ class Recommendation:
     week_km: float
     week_rides: int
     target_hours: float
+    tsb: float | None = None
     rationale: list[str] = field(default_factory=list)
 
     @property
@@ -65,6 +72,24 @@ def _band(score: float | None) -> str:
     if score >= 34:
         return "yellow"
     return "red"
+
+
+def _current_tsb(rides: pd.DataFrame, today: dt.date) -> float | None:
+    """Form (TSB) zum aktuellen Tag aus dem Banister-Modell.
+
+    `form.compute` liefert die Kurve bis zum letzten Fahrttag; wir nehmen den
+    jüngsten Wert ≤ heute. Liegt der letzte Ride länger zurück, unterschätzt das
+    die zwischenzeitliche Erholung leicht — für ein Ermüdungs-Gate konservativ ok.
+    """
+    if rides.empty or "load" not in rides.columns:
+        return None
+    fdf = form.compute(rides[["start", "load"]])
+    if fdf.empty:
+        return None
+    upto = fdf[fdf["date"].dt.date <= today]
+    if upto.empty:
+        return None
+    return float(upto.iloc[-1]["tsb"])
 
 
 def _latest_recovery(rec: pd.DataFrame, today: dt.date) -> float | None:
@@ -114,6 +139,7 @@ def build(today: dt.date | None = None) -> Recommendation:
     # --- Intensitätsverteilung (polarisiert): harte Tage dieser Woche & zuletzt ---
     max_hr = zones.max_hr_from_data()
     rest_hr = zones.resting_hr_baseline()
+    lthr = zones.lthr_from_config()   # falls Feldtest-Wert hinterlegt: Zonen daran ankern
 
     def _is_hard(row) -> bool:
         """Einheit im Schnitt in Z3+ (HRR ≥ 0,75) bzw. hoher Relative Effort."""
@@ -131,6 +157,9 @@ def build(today: dt.date | None = None) -> Recommendation:
 
     rode_today = (not rides.empty) and (rides["date"] == today).any()
 
+    # --- Form/Ermüdung (Banister TSB) als zusätzliche Steuerebene ---
+    tsb = _current_tsb(rides, today)
+
     # --- Entscheidungslogik ---
     reasons: list[str] = []
     if score is not None:
@@ -141,6 +170,8 @@ def build(today: dt.date | None = None) -> Recommendation:
         f"Diese Woche bisher {week_hours:.1f} h / Ziel ~{target_hours:.1f} h "
         f"({progress*100:.0f} %)."
     )
+    if tsb is not None:
+        reasons.append(f"Form (TSB) aktuell {tsb:+.0f}.")
 
     # Polarisiert: ~80 % locker (Z1–2), harte Reize dosiert (≈2×/Woche, ~20 %),
     # Z3-„Grauzone" meiden. Autoregulation über die Whoop-Recovery.
@@ -149,6 +180,12 @@ def build(today: dt.date | None = None) -> Recommendation:
     if rode_today:
         kind = "REST"
         reasons.append("Du bist heute bereits gefahren — Fokus auf Regeneration.")
+    elif tsb is not None and tsb < TSB_DEEP_FATIGUE:
+        kind = "RECOVERY" if progress < 1.2 else "REST"
+        reasons.append(
+            f"Form stark im Minus (TSB {tsb:+.0f} < {TSB_DEEP_FATIGUE:.0f}) — "
+            "akkumulierte Ermüdung, heute nur locker (Z1) oder Deload."
+        )
     elif band == "red":
         kind = "RECOVERY" if progress < 1.2 else "REST"
         reasons.append("Erholung niedrig (rot): heute nur locker (Z1) oder Pause.")
@@ -175,11 +212,25 @@ def build(today: dt.date | None = None) -> Recommendation:
         elif progress > 1.2:
             kind = "ENDURANCE"
             reasons.append("Top erholt, Wochenvolumen aber hoch: aerob halten (Z2).")
+        elif (score is None or score >= 70) and progress < 1.1 and (tsb is None or tsb > TSB_HARD_FLOOR):
+            if tsb is not None and tsb <= TSB_TEMPO_CEIL:
+                kind = "TEMPO"
+                reasons.append(
+                    f"Grünes Licht, Form solide aber nicht topfrisch (TSB {tsb:+.0f}) — "
+                    "dosierter Tempo-Reiz (Z3) statt Vollgas. Für dein Wochenvolumen ist "
+                    "etwas Z3 ein produktiver Mittelweg (pyramidal), kein zu meidendes Niemandsland."
+                )
+            else:
+                kind = "THRESHOLD"
+                reasons.append(
+                    "Bestens erholt & Luft im Plan: gezielte harte Einheit (Z4-Schwelle) — "
+                    "an frischen Tagen den harten Reiz wirklich hart fahren."
+                )
         elif (score is None or score >= 70) and progress < 1.1:
-            kind = "THRESHOLD"
+            kind = "ENDURANCE"
             reasons.append(
-                "Bestens erholt & Luft im Plan: gezielte harte Einheit (Z4-Schwelle) — "
-                "polarisiert heißt, harte Tage wirklich hart zu fahren."
+                f"Erholt, aber Form ermüdet (TSB {tsb:+.0f} ≤ {TSB_HARD_FLOOR:.0f}) — "
+                "heute aerob (Z2) statt harter Reiz, damit die Ermüdung abbaut."
             )
         else:
             kind = "ENDURANCE"
@@ -199,10 +250,10 @@ def build(today: dt.date | None = None) -> Recommendation:
             base = int(base * 0.8)
     dur = (0, 0) if base == 0 else (int(base * 0.85), int(base * 1.15))
 
-    # HF-Zone in bpm (Karvonen/HRR mit Ruhepuls, sonst %max).
+    # HF-Zone in bpm (Priorität: LTHR-Schwellenzonen → Karvonen/HRR → %max).
     zlow = zhigh = znum = zlabel = None
-    if tpl["zone"] and max_hr:
-        z = zones.zone_for(tpl["zone"], max_hr, rest_hr)
+    if tpl["zone"] and (max_hr or lthr):
+        z = zones.zone_for(tpl["zone"], max_hr, rest_hr, lthr)
         znum, zlabel, zlow, zhigh = z.number, z.label, z.low_bpm, z.high_bpm
 
     # Distanzschätzung aus Dauer × zonentypischem Tempo.
@@ -230,5 +281,6 @@ def build(today: dt.date | None = None) -> Recommendation:
         week_km=round(week_km, 1),
         week_rides=week_rides,
         target_hours=round(target_hours, 1),
+        tsb=round(tsb, 1) if tsb is not None else None,
         rationale=reasons,
     )

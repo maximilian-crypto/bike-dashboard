@@ -58,6 +58,7 @@ _ENV_MAP: dict[str, tuple[str, str, type]] = {
     "ATHLETE_HOME_LAT": ("athlete", "home_lat", float),
     "ATHLETE_HOME_LON": ("athlete", "home_lon", float),
     "ATHLETE_WEEKLY_HOURS_TARGET": ("athlete", "weekly_hours_target", float),
+    "ATHLETE_LTHR": ("athlete", "lthr", int),
     "ANTHROPIC_API_KEY": ("coach", "api_key", str),
     "COACH_MODEL": ("coach", "model", str),
     "NTFY_TOPIC": ("report", "ntfy_topic", str),

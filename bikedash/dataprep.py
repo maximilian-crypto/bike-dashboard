@@ -8,7 +8,8 @@ from __future__ import annotations
 
 import pandas as pd
 
-from . import store
+from . import load as load_mod
+from . import store, zones
 
 
 def prep_rides() -> pd.DataFrame:
@@ -30,8 +31,25 @@ def prep_rides() -> pd.DataFrame:
     df["moving_h"] = df["moving_time_s"] / 3600
     df["avg_speed_kmh"] = df["average_speed_ms"] * 3.6
     df["elev_m"] = df["total_elevation_gain_m"]
+
+    # Tageslast als transparentes Banister-TRIMP (HF-basiert). Fällt HF/Ruhepuls
+    # weg, greift Stravas Relative Effort, zuletzt eine grobe Dauer×HF-Schätzung.
+    max_hr = zones.max_hr_from_data()
+    rest_hr = zones.resting_hr_baseline()
     hr_factor = (df["average_heartrate"].fillna(120) / 120).clip(0.6, 2.0)
-    df["load"] = df["suffer_score"].fillna(df["moving_h"] * 50 * hr_factor)
+    estimate = df["moving_h"] * 50 * hr_factor
+
+    def _row_load(row) -> float:
+        trimp = load_mod.banister_trimp(
+            row["moving_time_s"], row["average_heartrate"], max_hr, rest_hr
+        )
+        if trimp is not None:
+            return trimp
+        if pd.notna(row["suffer_score"]):
+            return float(row["suffer_score"])
+        return float(estimate.loc[row.name])
+
+    df["load"] = df.apply(_row_load, axis=1)
     return df
 
 

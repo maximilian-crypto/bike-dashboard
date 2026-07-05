@@ -9,7 +9,7 @@ from __future__ import annotations
 
 import math
 import random
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from typing import Any
 
 import requests
@@ -28,6 +28,10 @@ class Route:
     profile_dist_km: list[float]   # kumulierte Distanz für das Höhenprofil
     profile_ele_m: list[float]
     seed: int
+    # Optionale Abbiege-Hinweise (nur wenn mit instructions=True angefordert).
+    # Jeder Eintrag: {"instruction": str, "wp0": int, "wp1": int} – die Indizes
+    # zeigen in die lats/lons-Geometrie. Für die On-Bike-Navigation der PWA.
+    steps: list[dict[str, Any]] = field(default_factory=list)
 
 
 def _haversine(lat1: float, lon1: float, lat2: float, lon2: float) -> float:
@@ -47,7 +51,13 @@ _MAX_ATTEMPTS = 6
 _TOLERANCE = 0.12
 
 
-def _request_route(cfg: dict[str, Any], length_km: float, seed: int, points: int = 3) -> Route:
+def _request_route(
+    cfg: dict[str, Any],
+    length_km: float,
+    seed: int,
+    points: int = 3,
+    instructions: bool = False,
+) -> Route:
     ors = config.ors(cfg)
     ath = config.athlete(cfg)
     profile = str(ors.get("profile", "cycling-regular"))
@@ -58,7 +68,8 @@ def _request_route(cfg: dict[str, Any], length_km: float, seed: int, points: int
         "coordinates": [[lon, lat]],
         "options": {"round_trip": {"length": int(length_km * 1000), "points": points, "seed": seed}},
         "elevation": True,
-        "instructions": False,
+        "instructions": instructions,
+        "language": "de",
     }
     resp = requests.post(
         ORS_URL.format(profile=profile),
@@ -84,6 +95,17 @@ def _request_route(cfg: dict[str, Any], length_km: float, seed: int, points: int
         cum.append(cum[-1] + _haversine(lats[i - 1], lons[i - 1], lats[i], lons[i]))
     dist_km = summary.get("distance", cum[-1]) / 1000.0
 
+    steps: list[dict[str, Any]] = []
+    if instructions:
+        for seg in props.get("segments", []):
+            for st in seg.get("steps", []):
+                wp = st.get("way_points", [0, 0])
+                steps.append({
+                    "instruction": st.get("instruction", ""),
+                    "wp0": int(wp[0]),
+                    "wp1": int(wp[1] if len(wp) > 1 else wp[0]),
+                })
+
     return Route(
         lats=lats,
         lons=lons,
@@ -92,6 +114,7 @@ def _request_route(cfg: dict[str, Any], length_km: float, seed: int, points: int
         profile_dist_km=[round(d / 1000.0, 2) for d in cum],
         profile_ele_m=eles,
         seed=seed,
+        steps=steps,
     )
 
 
@@ -166,11 +189,13 @@ def generate_loop(
     length_km: float,
     seed: int | None = None,
     wind_from_deg: float | None = None,
+    instructions: bool = False,
 ) -> Route:
     """Erzeugt eine Schleife nahe `length_km`.
 
     Ist `wind_from_deg` gesetzt, wird unter den passenden Distanz-Varianten die
     "windklügste" gewählt (Hinweg gegen den Wind, Rückweg mit Rückenwind).
+    Mit `instructions=True` kommen Abbiege-Hinweise mit (für die PWA-Navigation).
     """
     if not config.has_routing(cfg):
         raise RuntimeError(
@@ -186,7 +211,7 @@ def generate_loop(
     for i in range(_MAX_ATTEMPTS):
         s = base_seed + i * 13
         try:
-            rt = _request_route(cfg, req_km, s)
+            rt = _request_route(cfg, req_km, s, instructions=instructions)
         except Exception as exc:  # noqa: BLE001
             last_exc = exc
             continue

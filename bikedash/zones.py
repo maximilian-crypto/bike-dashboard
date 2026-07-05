@@ -18,7 +18,7 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 
-from . import store
+from . import config, store
 
 # Whoop-Zonengrenzen als Anteil der Herzfrequenzreserve (HRR).
 ZONE_BOUNDS = [
@@ -27,6 +27,17 @@ ZONE_BOUNDS = [
     (3, "Z3 · Tempo", 0.70, 0.80),
     (4, "Z4 · Schwelle", 0.80, 0.90),
     (5, "Z5 · Maximal", 0.90, 1.00),
+]
+
+# Schwellenbasierte Zonen (Friel-Radzonen) als Anteil der LTHR (Laktatschwellen-HF
+# ≈ Ø-HF der letzten 20 min eines 30-min-Solo-Zeitfahrens all-out). Individuell
+# treffsicherer als %HRR aus einer geschätzten Whoop-HFmax. Quelle: Joe Friel.
+LTHR_ZONE_BOUNDS = [
+    (1, "Z1 · Erholung", 0.00, 0.81),
+    (2, "Z2 · Grundlage", 0.81, 0.90),
+    (3, "Z3 · Tempo", 0.90, 0.94),
+    (4, "Z4 · Schwelle", 0.94, 1.00),
+    (5, "Z5 · Maximal", 1.00, 1.06),
 ]
 
 
@@ -61,22 +72,51 @@ def resting_hr_baseline() -> int | None:
     return int(round(vals.median()))
 
 
+def lthr_from_config() -> int | None:
+    """Laktatschwellen-HF (LTHR) aus der Config, falls hinterlegt (Feldtest-Wert).
+
+    Ist sie gesetzt, verankern wir die Zonen daran statt an der unsicheren
+    Whoop-HFmax. Env-Overlay (ATHLETE_LTHR) wird berücksichtigt.
+    """
+    cfg = config.load_config_raw()
+    config._overlay_env(cfg)
+    val = config.athlete(cfg).get("lthr")
+    try:
+        lthr = int(round(float(val)))
+    except (TypeError, ValueError):
+        return None
+    return lthr if lthr > 0 else None
+
+
 def _bpm(frac: float, max_hr: int, rest_hr: int | None) -> int:
     if rest_hr and max_hr > rest_hr:
         return int(round(rest_hr + frac * (max_hr - rest_hr)))
     return int(round(max_hr * frac))
 
 
-def zones(max_hr: int, rest_hr: int | None = None) -> list[Zone]:
-    """5 HF-Zonen. Mit Ruhepuls → Karvonen/HRR, sonst → %max-HF."""
+def zones(max_hr: int | None = None, rest_hr: int | None = None,
+          lthr: int | None = None) -> list[Zone]:
+    """5 HF-Zonen. Priorität: LTHR (Friel-Schwellenzonen) → Karvonen/HRR → %max-HF."""
+    if lthr:
+        return [
+            Zone(num, label, int(round(lo * lthr)), int(round(hi * lthr)))
+            for num, label, lo, hi in LTHR_ZONE_BOUNDS
+        ]
     return [
         Zone(num, label, _bpm(lo, max_hr, rest_hr), _bpm(hi, max_hr, rest_hr))
         for num, label, lo, hi in ZONE_BOUNDS
     ]
 
 
-def zone_for(num: int, max_hr: int, rest_hr: int | None = None) -> Zone:
-    return zones(max_hr, rest_hr)[num - 1]
+def zone_for(num: int, max_hr: int | None = None, rest_hr: int | None = None,
+             lthr: int | None = None) -> Zone:
+    return zones(max_hr, rest_hr, lthr)[num - 1]
+
+
+def lt1_lt2(lthr: int) -> tuple[int, int]:
+    """Aerobe (LT1) und anaerobe (LT2) Schwelle in bpm. LT2 = LTHR; LT1 als
+    Näherung 0,82·LTHR, bis per Feldtest/DFA-α1 individuell bestimmt."""
+    return int(round(0.82 * lthr)), int(lthr)
 
 
 def intensity_frac(hr: float, max_hr: int, rest_hr: int | None = None) -> float:
@@ -86,11 +126,16 @@ def intensity_frac(hr: float, max_hr: int, rest_hr: int | None = None) -> float:
     return hr / max_hr if max_hr else 0.0
 
 
-def method_label(rest_hr: int | None = None) -> str:
+def method_label(rest_hr: int | None = None, lthr: int | None = None) -> str:
+    if lthr:
+        return "Schwelle/LTHR"
     return "Karvonen/HRR" if rest_hr else "%max-HF"
 
 
 def source_note() -> str:
+    lthr = lthr_from_config()
+    if lthr:
+        return f"LTHR {lthr} bpm (Feldtest) · Schwellenzonen"
     src = "Whoop (Jahresdaten)" if store.get_state("whoop_max_hr") else "geschätzt aus Strava"
     rest = resting_hr_baseline()
     method = "Karvonen/HRR" if rest else "%max"
