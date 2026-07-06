@@ -336,7 +336,6 @@ let map=null, trail=null, marker=null, routeLayer=null;
 let windFrom=0, windSpeed=0, lastWindFetch=0;
 let route=null, lastZoneInTarget=true, searchIdx=0;
 let compassOn=false, compassHeading=null, lastArrow=0;
-let todayData=null, todayRoute=null;
 
 // ---------- Helpers ----------
 // Karvonen/HRR: Anteil der Herzfrequenzreserve (mit Ruhepuls), sonst %max.
@@ -565,33 +564,17 @@ async function generateRoute(){
   else pick=cands.sort((a,b)=>a.err-b.err)[0];
   drawRoute(pick);
 }
-function applyRoute(r){
-  if(routeLayer) map.removeLayer(routeLayer);
-  routeLayer=L.polyline(r.coords,{color:'#ff5a36',weight:6,opacity:.92}).addTo(map);
-  map.fitBounds(routeLayer.getBounds(),{padding:[30,30]});
-  route={coords:r.coords,cum:r.cum,total:r.total,steps:r.steps||[],source:r.source||'ors'}; searchIdx=0;
-  $('navBanner').classList.remove('hidden');
-  const km=(r.total/1000).toFixed(1), asc=Math.round(r.ascent||0);
-  const src=r.source==='today'?'Dashboard-Route':'Route';
-  $('navIco').innerHTML=ICON.navStraight; $('navTurn').textContent=src+' bereit';
-  $('navMeta').textContent=`${km} km · ${asc} Hm · ${route.steps.length} Abschnitte`;
-}
 function drawRoute(c){
+  if(routeLayer) map.removeLayer(routeLayer);
+  routeLayer=L.polyline(c.coords,{color:'#ff5a36',weight:6,opacity:.92}).addTo(map);
+  map.fitBounds(routeLayer.getBounds(),{padding:[30,30]});
   const props=c.ft.properties, seg=(props.segments||[]); const steps=[];
   seg.forEach(s=>s.steps.forEach(st=>steps.push({instr:st.instruction,wp0:st.way_points[0],wp1:st.way_points[1]})));
-  applyRoute({coords:c.coords,cum:c.cum,total:c.total,steps,ascent:props.ascent,source:'ors'});
-}
-// Vom Dashboard geplante Route (today.json) übernehmen.
-function drawToday(){
-  if(!todayRoute||!(todayRoute.coords||[]).length){ generateRoute(); return; }
-  const coords=todayRoute.coords, m=routeMetrics(coords);
-  const steps=(todayRoute.steps||[]).map(s=>({instr:s.instruction,wp0:s.wp0,wp1:s.wp1}));
-  applyRoute({coords,cum:m.cum,total:m.total,steps,ascent:todayRoute.ascent_m,source:'today'});
-}
-// Erster Tipp lädt die Dashboard-Route, weitere erzeugen ORS-Varianten.
-async function routeAction(){
-  if(todayRoute && (!route || route.source!=='today')){ drawToday(); return; }
-  await generateRoute();
+  route={coords:c.coords,cum:c.cum,total:c.total,steps}; searchIdx=0;
+  $('navBanner').classList.remove('hidden');
+  const km=(c.total/1000).toFixed(1), asc=Math.round(props.ascent||0);
+  $('navIco').innerHTML=ICON.navStraight; $('navTurn').textContent='Route bereit';
+  $('navMeta').textContent=`${km} km · ${asc} Hm · ${steps.length} Abschnitte`;
 }
 function navIconFor(instr){ const s=(instr||'').toLowerCase();
   if(s.includes('erreichen')||s.includes('ziel')) return 'arrive';
@@ -621,17 +604,15 @@ async function toggleRun(){
 }
 
 // ---------- Tagesplan vom Dashboard (today.json auf GitHub Pages) ----------
-// Same-origin geladen; liefert Whoop-HF-Zonen, Trittfrequenz-Ziel und die
-// windklug geplante Route – so ist die PWA konsistent mit dem Dashboard.
+// Same-origin geladen; liefert Whoop-HF-Zonen (bzw. LTHR), Trittfrequenz-Ziel
+// und Zieldistanz – so bleibt die PWA konsistent mit dem Dashboard. Bewusst
+// OHNE Route (Datenschutz); die Route plant die PWA clientseitig aus dem GPS.
 async function loadToday(){
   try{
     const r=await fetch('today.json',{cache:'no-store'});
     if(!r.ok) return;
     const d=await r.json();
-    todayData=d;
     applyTodayZones(d);
-    const todayStr=new Date().toISOString().slice(0,10);
-    if(d.route && d.date===todayStr) todayRoute=d.route;   // Route nur wenn heutig
     showTodayBanner(d);
   }catch(e){ /* today.json (noch) nicht da – lokale Defaults behalten */ }
 }
@@ -655,7 +636,7 @@ function applyTodayZones(d){
 function showTodayBanner(d){
   const rec=d.recommendation||{}; if(!rec.title) return;
   $('navBanner').classList.remove('hidden');
-  $('navIco').innerHTML = todayRoute ? ICON.route : ICON.target;
+  $('navIco').innerHTML = ICON.target;
   $('navTurn').textContent='Heute: '+rec.title;
   const bits=[];
   if(rec.hr_low) bits.push(`Z${rec.zone_number} ${rec.hr_low}–${rec.hr_high} bpm`);
@@ -683,7 +664,7 @@ function saveSettings(){
 
 // ---------- Wire up ----------
 $('startBtn').onclick=toggleRun;
-$('routeBtn').onclick=routeAction;
+$('routeBtn').onclick=generateRoute;
 $('coachBtn').onclick=toggleCoach;
 $('setBtn').onclick=()=>$('setDlg').showModal();
 $('setClose').onclick=()=>{ saveSettings(); $('setDlg').close(); };
