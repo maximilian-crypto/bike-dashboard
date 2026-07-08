@@ -1,51 +1,51 @@
 {
-  "generated_at": "2026-07-07T23:32:10+00:00",
-  "date": "2026-07-07",
+  "generated_at": "2026-07-08T09:16:40+00:00",
+  "date": "2026-07-08",
   "recommendation": {
-    "kind": "TEMPO",
-    "title": "Tempo-Einheit (Z3)",
-    "readiness_band": "green",
-    "recovery_score": 77.0,
-    "zone_number": 3,
-    "zone_label": "Z3 · Tempo",
-    "hr_low": 160,
-    "hr_high": 172,
-    "cadence": "90–100",
-    "cadence_low": 90,
-    "cadence_high": 100,
-    "rpe": "5–6",
+    "kind": "ENDURANCE",
+    "title": "Grundlagenausdauer (Z2)",
+    "readiness_band": "yellow",
+    "recovery_score": 63.0,
+    "zone_number": 2,
+    "zone_label": "Z2 · Grundlage",
+    "hr_low": 147,
+    "hr_high": 160,
+    "cadence": "85–95",
+    "cadence_low": 85,
+    "cadence_high": 95,
+    "rpe": "3–4",
     "duration_min": [
-      76,
-      103
+      91,
+      124
     ],
     "distance_km": [
-      28.5,
-      34.9
+      30.0,
+      36.7
     ],
-    "target_distance_km": 31.7,
+    "target_distance_km": 33.4,
     "week_hours": 0.0,
     "target_hours": 3.9,
     "tsb": -8.5,
     "rationale": [
-      "Whoop-Recovery heute: 77 %.",
+      "Whoop-Recovery heute: 63 %.",
       "Diese Woche bisher 0.0 h / Ziel ~3.9 h (0 %).",
       "Form (TSB) aktuell -9.",
-      "Grünes Licht, Form solide aber nicht topfrisch (TSB -9) — dosierter Tempo-Reiz (Z3) statt Vollgas. Für dein Wochenvolumen ist etwas Z3 ein produktiver Mittelweg (pyramidal), kein zu meidendes Niemandsland."
+      "Erholung mittel & Woche noch dünn: ruhige Grundlage (Z2)."
     ]
   },
   "zones": {
     "max_hr": 197,
     "rest_hr": 72,
     "lthr": null,
-    "target_zone": 3,
+    "target_zone": 2,
     "method": "Karvonen/HRR"
   },
   "weather": {
-    "temp_c": 12.9,
-    "wind_kmh": 8.9,
-    "wind_deg": 284,
-    "wind_dir": "W",
-    "gust_kmh": 19.8,
+    "temp_c": 16.5,
+    "wind_kmh": 18.6,
+    "wind_deg": 302,
+    "wind_dir": "NW",
+    "gust_kmh": 37.4,
     "code": 2,
     "desc": "teils bewölkt"
   }
