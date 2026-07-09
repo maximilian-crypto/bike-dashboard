@@ -1,51 +1,51 @@
 {
-  "generated_at": "2026-07-09T11:34:46+00:00",
+  "generated_at": "2026-07-09T18:27:48+00:00",
   "date": "2026-07-09",
   "recommendation": {
-    "kind": "ENDURANCE",
-    "title": "Grundlagenausdauer (Z2)",
+    "kind": "REST",
+    "title": "Ruhetag",
     "readiness_band": "yellow",
     "recovery_score": 44.0,
-    "zone_number": 2,
-    "zone_label": "Z2 · Grundlage",
-    "hr_low": 147,
-    "hr_high": 160,
-    "cadence": "85–95",
-    "cadence_low": 85,
-    "cadence_high": 95,
-    "rpe": "3–4",
+    "zone_number": null,
+    "zone_label": null,
+    "hr_low": null,
+    "hr_high": null,
+    "cadence": "–",
+    "cadence_low": null,
+    "cadence_high": null,
+    "rpe": "–",
     "duration_min": [
-      91,
-      124
+      0,
+      0
     ],
     "distance_km": [
-      29.7,
-      36.3
+      0.0,
+      0.0
     ],
-    "target_distance_km": 33.0,
-    "week_hours": 0.8,
+    "target_distance_km": 0.0,
+    "week_hours": 1.1,
     "target_hours": 4.1,
-    "tsb": -6.1,
+    "tsb": -10.0,
     "rationale": [
       "Whoop-Recovery heute: 44 %.",
-      "Diese Woche bisher 0.8 h / Ziel ~4.1 h (21 %).",
-      "Form (TSB) aktuell -6.",
-      "Erholung mittel & Woche noch dünn: ruhige Grundlage (Z2)."
+      "Diese Woche bisher 1.1 h / Ziel ~4.1 h (26 %).",
+      "Form (TSB) aktuell -10.",
+      "Du bist heute bereits gefahren — Fokus auf Regeneration."
     ]
   },
   "zones": {
     "max_hr": 197,
     "rest_hr": 72,
     "lthr": null,
-    "target_zone": 2,
+    "target_zone": null,
     "method": "Karvonen/HRR"
   },
   "weather": {
-    "temp_c": 19.4,
-    "wind_kmh": 15.5,
-    "wind_deg": 301,
+    "temp_c": 17.7,
+    "wind_kmh": 14.4,
+    "wind_deg": 307,
     "wind_dir": "NW",
-    "gust_kmh": 33.5,
+    "gust_kmh": 30.2,
     "code": 3,
     "desc": "bedeckt"
   }
