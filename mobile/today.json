@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-07-10T11:23:46+00:00",
+  "generated_at": "2026-07-10T18:09:19+00:00",
   "date": "2026-07-10",
   "recommendation": {
     "kind": "TEMPO",
@@ -41,11 +41,11 @@
     "method": "Karvonen/HRR"
   },
   "weather": {
-    "temp_c": 23.9,
-    "wind_kmh": 12.6,
-    "wind_deg": 5,
-    "wind_dir": "N",
-    "gust_kmh": 27.7,
+    "temp_c": 21.7,
+    "wind_kmh": 13.4,
+    "wind_deg": 333,
+    "wind_dir": "NW",
+    "gust_kmh": 29.2,
     "code": 1,
     "desc": "überwiegend klar"
   }
