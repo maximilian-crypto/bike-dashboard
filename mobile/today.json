@@ -1,52 +1,52 @@
 {
-  "generated_at": "2026-07-09T23:54:32+00:00",
-  "date": "2026-07-09",
+  "generated_at": "2026-07-10T11:23:46+00:00",
+  "date": "2026-07-10",
   "recommendation": {
-    "kind": "REST",
-    "title": "Ruhetag",
-    "readiness_band": "yellow",
-    "recovery_score": 44.0,
-    "zone_number": null,
-    "zone_label": null,
-    "hr_low": null,
-    "hr_high": null,
-    "cadence": "–",
-    "cadence_low": null,
-    "cadence_high": null,
-    "rpe": "–",
+    "kind": "TEMPO",
+    "title": "Tempo-Einheit (Z3)",
+    "readiness_band": "green",
+    "recovery_score": 72.0,
+    "zone_number": 3,
+    "zone_label": "Z3 · Tempo",
+    "hr_low": 160,
+    "hr_high": 172,
+    "cadence": "90–100",
+    "cadence_low": 90,
+    "cadence_high": 100,
+    "rpe": "5–6",
     "duration_min": [
-      0,
-      0
+      76,
+      103
     ],
     "distance_km": [
-      0.0,
-      0.0
+      28.5,
+      34.9
     ],
-    "target_distance_km": 0.0,
+    "target_distance_km": 31.7,
     "week_hours": 1.1,
     "target_hours": 4.1,
     "tsb": -10.0,
     "rationale": [
-      "Whoop-Recovery heute: 44 %.",
+      "Whoop-Recovery heute: 72 %.",
       "Diese Woche bisher 1.1 h / Ziel ~4.1 h (26 %).",
       "Form (TSB) aktuell -10.",
-      "Du bist heute bereits gefahren — Fokus auf Regeneration."
+      "Grünes Licht, Form solide aber nicht topfrisch (TSB -10) — dosierter Tempo-Reiz (Z3) statt Vollgas. Für dein Wochenvolumen ist etwas Z3 ein produktiver Mittelweg (pyramidal), kein zu meidendes Niemandsland."
     ]
   },
   "zones": {
     "max_hr": 197,
     "rest_hr": 72,
     "lthr": null,
-    "target_zone": null,
+    "target_zone": 3,
     "method": "Karvonen/HRR"
   },
   "weather": {
-    "temp_c": 15.6,
-    "wind_kmh": 8.7,
-    "wind_deg": 322,
-    "wind_dir": "NW",
-    "gust_kmh": 21.6,
-    "code": 3,
-    "desc": "bedeckt"
+    "temp_c": 23.9,
+    "wind_kmh": 12.6,
+    "wind_deg": 5,
+    "wind_dir": "N",
+    "gust_kmh": 27.7,
+    "code": 1,
+    "desc": "überwiegend klar"
   }
 }
