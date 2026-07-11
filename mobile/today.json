@@ -1,52 +1,52 @@
 {
-  "generated_at": "2026-07-10T23:33:02+00:00",
-  "date": "2026-07-10",
+  "generated_at": "2026-07-11T07:22:48+00:00",
+  "date": "2026-07-11",
   "recommendation": {
-    "kind": "TEMPO",
-    "title": "Tempo-Einheit (Z3)",
-    "readiness_band": "green",
-    "recovery_score": 72.0,
-    "zone_number": 3,
-    "zone_label": "Z3 · Tempo",
-    "hr_low": 160,
-    "hr_high": 172,
-    "cadence": "90–100",
-    "cadence_low": 90,
-    "cadence_high": 100,
-    "rpe": "5–6",
+    "kind": "ENDURANCE",
+    "title": "Grundlagenausdauer (Z2)",
+    "readiness_band": "unknown",
+    "recovery_score": null,
+    "zone_number": 2,
+    "zone_label": "Z2 · Grundlage",
+    "hr_low": 147,
+    "hr_high": 160,
+    "cadence": "85–95",
+    "cadence_low": 85,
+    "cadence_high": 95,
+    "rpe": "3–4",
     "duration_min": [
-      76,
-      103
+      91,
+      124
     ],
     "distance_km": [
-      28.5,
-      34.9
+      30.0,
+      36.7
     ],
-    "target_distance_km": 31.7,
+    "target_distance_km": 33.4,
     "week_hours": 1.1,
     "target_hours": 4.1,
     "tsb": -10.0,
     "rationale": [
-      "Whoop-Recovery heute: 72 %.",
+      "Keine aktuelle Whoop-Recovery — neutrale Annahme.",
       "Diese Woche bisher 1.1 h / Ziel ~4.1 h (26 %).",
       "Form (TSB) aktuell -10.",
-      "Grünes Licht, Form solide aber nicht topfrisch (TSB -10) — dosierter Tempo-Reiz (Z3) statt Vollgas. Für dein Wochenvolumen ist etwas Z3 ein produktiver Mittelweg (pyramidal), kein zu meidendes Niemandsland."
+      "Ohne Erholungsdaten konservativ: ruhige Grundlage (Z2)."
     ]
   },
   "zones": {
     "max_hr": 197,
     "rest_hr": 72,
     "lthr": null,
-    "target_zone": 3,
+    "target_zone": 2,
     "method": "Karvonen/HRR"
   },
   "weather": {
-    "temp_c": 16.2,
-    "wind_kmh": 5.7,
-    "wind_deg": 342,
-    "wind_dir": "N",
-    "gust_kmh": 13.3,
-    "code": 45,
-    "desc": "Nebel"
+    "temp_c": 18.6,
+    "wind_kmh": 3.5,
+    "wind_deg": 294,
+    "wind_dir": "NW",
+    "gust_kmh": 10.4,
+    "code": 0,
+    "desc": "klar"
   }
 }
