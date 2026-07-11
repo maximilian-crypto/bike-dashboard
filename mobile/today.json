@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-07-11T15:33:40+00:00",
+  "generated_at": "2026-07-11T18:39:37+00:00",
   "date": "2026-07-11",
   "recommendation": {
     "kind": "RECOVERY",
@@ -41,11 +41,11 @@
     "method": "Karvonen/HRR"
   },
   "weather": {
-    "temp_c": 27.2,
-    "wind_kmh": 13.9,
-    "wind_deg": 339,
-    "wind_dir": "N",
-    "gust_kmh": 31.0,
+    "temp_c": 24.2,
+    "wind_kmh": 12.9,
+    "wind_deg": 330,
+    "wind_dir": "NW",
+    "gust_kmh": 30.2,
     "code": 0,
     "desc": "klar"
   }
