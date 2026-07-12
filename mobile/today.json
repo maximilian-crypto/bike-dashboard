@@ -1,52 +1,52 @@
 {
-  "generated_at": "2026-07-12T19:57:54+00:00",
+  "generated_at": "2026-07-12T22:34:06+00:00",
   "date": "2026-07-12",
   "recommendation": {
-    "kind": "TEMPO",
-    "title": "Tempo-Einheit (Z3)",
+    "kind": "REST",
+    "title": "Ruhetag",
     "readiness_band": "green",
     "recovery_score": 78.0,
-    "zone_number": 3,
-    "zone_label": "Z3 · Tempo",
-    "hr_low": 160,
-    "hr_high": 172,
-    "cadence": "90–100",
-    "cadence_low": 90,
-    "cadence_high": 100,
-    "rpe": "5–6",
+    "zone_number": null,
+    "zone_label": null,
+    "hr_low": null,
+    "hr_high": null,
+    "cadence": "–",
+    "cadence_low": null,
+    "cadence_high": null,
+    "rpe": "–",
     "duration_min": [
-      76,
-      103
+      0,
+      0
     ],
     "distance_km": [
-      28.5,
-      34.9
+      0.0,
+      0.0
     ],
-    "target_distance_km": 31.7,
-    "week_hours": 1.1,
-    "target_hours": 4.1,
-    "tsb": -10.0,
+    "target_distance_km": 0.0,
+    "week_hours": 2.8,
+    "target_hours": 4.5,
+    "tsb": -3.5,
     "rationale": [
       "Whoop-Recovery heute: 78 %.",
-      "Diese Woche bisher 1.1 h / Ziel ~4.1 h (26 %).",
-      "Form (TSB) aktuell -10.",
-      "Grünes Licht, Form solide aber nicht topfrisch (TSB -10) — dosierter Tempo-Reiz (Z3) statt Vollgas. Für dein Wochenvolumen ist etwas Z3 ein produktiver Mittelweg (pyramidal), kein zu meidendes Niemandsland."
+      "Diese Woche bisher 2.8 h / Ziel ~4.5 h (61 %).",
+      "Form (TSB) aktuell -4.",
+      "Du bist heute bereits gefahren — Fokus auf Regeneration."
     ]
   },
   "zones": {
     "max_hr": 197,
     "rest_hr": 72,
     "lthr": null,
-    "target_zone": 3,
+    "target_zone": null,
     "method": "Karvonen/HRR"
   },
   "weather": {
-    "temp_c": 17.6,
-    "wind_kmh": 12.0,
-    "wind_deg": 327,
+    "temp_c": 14.9,
+    "wind_kmh": 5.4,
+    "wind_deg": 323,
     "wind_dir": "NW",
-    "gust_kmh": 26.6,
-    "code": 0,
-    "desc": "klar"
+    "gust_kmh": 14.0,
+    "code": 1,
+    "desc": "überwiegend klar"
   }
 }
