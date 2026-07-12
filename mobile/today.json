@@ -1,52 +1,52 @@
 {
-  "generated_at": "2026-07-11T22:32:53+00:00",
-  "date": "2026-07-11",
+  "generated_at": "2026-07-12T07:50:50+00:00",
+  "date": "2026-07-12",
   "recommendation": {
-    "kind": "RECOVERY",
-    "title": "Lockerer Erholungs-Spin",
-    "readiness_band": "red",
-    "recovery_score": 25.0,
-    "zone_number": 1,
-    "zone_label": "Z1 · Erholung",
-    "hr_low": 122,
-    "hr_high": 147,
-    "cadence": "85–95",
-    "cadence_low": 85,
-    "cadence_high": 95,
-    "rpe": "2–3",
+    "kind": "TEMPO",
+    "title": "Tempo-Einheit (Z3)",
+    "readiness_band": "green",
+    "recovery_score": 78.0,
+    "zone_number": 3,
+    "zone_label": "Z3 · Tempo",
+    "hr_low": 160,
+    "hr_high": 172,
+    "cadence": "90–100",
+    "cadence_low": 90,
+    "cadence_high": 100,
+    "rpe": "5–6",
     "duration_min": [
-      40,
-      55
+      76,
+      103
     ],
     "distance_km": [
-      11.9,
-      14.5
+      28.5,
+      34.9
     ],
-    "target_distance_km": 13.2,
+    "target_distance_km": 31.7,
     "week_hours": 1.1,
     "target_hours": 4.1,
     "tsb": -10.0,
     "rationale": [
-      "Whoop-Recovery heute: 25 %.",
+      "Whoop-Recovery heute: 78 %.",
       "Diese Woche bisher 1.1 h / Ziel ~4.1 h (26 %).",
       "Form (TSB) aktuell -10.",
-      "Erholung niedrig (rot): heute nur locker (Z1) oder Pause."
+      "Grünes Licht, Form solide aber nicht topfrisch (TSB -10) — dosierter Tempo-Reiz (Z3) statt Vollgas. Für dein Wochenvolumen ist etwas Z3 ein produktiver Mittelweg (pyramidal), kein zu meidendes Niemandsland."
     ]
   },
   "zones": {
     "max_hr": 197,
     "rest_hr": 72,
     "lthr": null,
-    "target_zone": 1,
+    "target_zone": 3,
     "method": "Karvonen/HRR"
   },
   "weather": {
-    "temp_c": 18.6,
-    "wind_kmh": 7.6,
-    "wind_deg": 335,
+    "temp_c": 20.5,
+    "wind_kmh": 10.9,
+    "wind_deg": 326,
     "wind_dir": "NW",
-    "gust_kmh": 16.6,
-    "code": 0,
-    "desc": "klar"
+    "gust_kmh": 27.0,
+    "code": 2,
+    "desc": "teils bewölkt"
   }
 }
