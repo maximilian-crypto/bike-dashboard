@@ -1,11 +1,11 @@
 {
-  "generated_at": "2026-07-13T11:43:11+00:00",
+  "generated_at": "2026-07-13T18:20:00+00:00",
   "date": "2026-07-13",
   "recommendation": {
     "kind": "REST",
     "title": "Ruhetag",
-    "readiness_band": "green",
-    "recovery_score": 78.0,
+    "readiness_band": "yellow",
+    "recovery_score": 36.0,
     "zone_number": null,
     "zone_label": null,
     "hr_low": null,
@@ -27,7 +27,7 @@
     "target_hours": 4.7,
     "tsb": -25.6,
     "rationale": [
-      "Whoop-Recovery heute: 78 %.",
+      "Whoop-Recovery heute: 36 %.",
       "Diese Woche bisher 1.4 h / Ziel ~4.7 h (29 %).",
       "Form (TSB) aktuell -26.",
       "Du bist heute bereits gefahren — Fokus auf Regeneration."
@@ -41,12 +41,12 @@
     "method": "Karvonen/HRR"
   },
   "weather": {
-    "temp_c": 27.2,
-    "wind_kmh": 10.2,
-    "wind_deg": 80,
+    "temp_c": 20.1,
+    "wind_kmh": 19.3,
+    "wind_deg": 104,
     "wind_dir": "O",
-    "gust_kmh": 23.0,
-    "code": 1,
-    "desc": "überwiegend klar"
+    "gust_kmh": 38.5,
+    "code": 3,
+    "desc": "bedeckt"
   }
 }
