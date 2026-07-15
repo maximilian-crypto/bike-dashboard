@@ -1,6 +1,6 @@
 {
-  "generated_at": "2026-07-14T20:21:35+00:00",
-  "date": "2026-07-14",
+  "generated_at": "2026-07-15T07:30:53+00:00",
+  "date": "2026-07-15",
   "recommendation": {
     "kind": "ENDURANCE",
     "title": "Grundlagenausdauer (Z2)",
@@ -30,7 +30,7 @@
       "Whoop-Recovery heute: 83 %.",
       "Diese Woche bisher 1.4 h / Ziel ~4.7 h (29 %).",
       "Form (TSB) aktuell -26.",
-      "Top erholt, aber zuletzt hart — heute Grundlage (Z2) zum Verarbeiten."
+      "Erholt, aber Form ermüdet (TSB -26 ≤ -20) — heute aerob (Z2) statt harter Reiz, damit die Ermüdung abbaut."
     ]
   },
   "zones": {
@@ -41,11 +41,11 @@
     "method": "Karvonen/HRR"
   },
   "weather": {
-    "temp_c": 20.2,
-    "wind_kmh": 7.8,
-    "wind_deg": 56,
-    "wind_dir": "NO",
-    "gust_kmh": 15.8,
+    "temp_c": 20.6,
+    "wind_kmh": 5.7,
+    "wind_deg": 18,
+    "wind_dir": "N",
+    "gust_kmh": 14.8,
     "code": 3,
     "desc": "bedeckt"
   }
