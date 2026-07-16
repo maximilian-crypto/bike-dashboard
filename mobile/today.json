@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-07-16T19:46:18+00:00",
+  "generated_at": "2026-07-16T23:14:28+00:00",
   "date": "2026-07-16",
   "recommendation": {
     "kind": "REST",
@@ -41,12 +41,12 @@
     "method": "Karvonen/HRR"
   },
   "weather": {
-    "temp_c": 22.3,
-    "wind_kmh": 9.3,
-    "wind_deg": 62,
-    "wind_dir": "NO",
+    "temp_c": 18.8,
+    "wind_kmh": 6.6,
+    "wind_deg": 77,
+    "wind_dir": "O",
     "gust_kmh": 18.4,
-    "code": 3,
-    "desc": "bedeckt"
+    "code": 2,
+    "desc": "teils bewölkt"
   }
 }
