@@ -208,6 +208,76 @@ pio.templates["bikedash"] = go.layout.Template(
 pio.templates.default = "plotly_dark+bikedash"
 
 
+def _rec_trend(rec: pd.DataFrame, col: str) -> dict | None:
+    """Lineare Regression eines Erholungs-Werts über die Zeit.
+
+    Gibt die Trend-Rate (pro Tag/Woche), Stützpunkte für die Trendlinie und
+    die Anzahl gültiger Tage zurück – oder ``None``, wenn zu wenige oder zu
+    dicht beieinanderliegende Datenpunkte für eine sinnvolle Analyse vorliegen.
+    Nutzt bewusst ``numpy.polyfit`` (kein statsmodels-Zwang wie bei px-OLS).
+    """
+    if col not in rec.columns:
+        return None
+    d = rec[["date", col]].dropna()
+    if len(d) < 3:
+        return None
+    t = (d["date"] - d["date"].min()).dt.total_seconds() / 86400.0  # Tage
+    tvals = t.to_numpy(dtype=float)
+    span = float(tvals.max())
+    if span <= 0:  # alle Punkte am selben Tag → keine Steigung bestimmbar
+        return None
+    slope, intercept = np.polyfit(tvals, d[col].to_numpy(dtype=float), 1)
+    return {
+        "slope_day": float(slope),
+        "per_week": float(slope) * 7,
+        "xs": [d["date"].min(), d["date"].max()],
+        "ys": [float(intercept), float(slope) * span + intercept],
+        "n": int(len(d)),
+        "days": int(round(span)),
+    }
+
+
+def _trend_chart(rec: pd.DataFrame, col: str, title: str, unit: str,
+                 good_dir: str, stable_thresh: float, rising_meaning: str,
+                 falling_meaning: str) -> None:
+    """Linien-Chart mit gestrichelter Trendlinie plus Kurz-Trendanalyse.
+
+    ``good_dir`` = ``"up"`` (steigend ist gut, z. B. HRV) oder ``"down"``
+    (fallend ist gut, z. B. Ruhepuls). ``stable_thresh`` ist die Wochen-Rate,
+    unterhalb derer der Trend als „stabil" gilt.
+    """
+    fig = px.line(rec, x="date", y=col, markers=True, title=title)
+    fig.update_layout(xaxis_title="", yaxis_title=unit)
+    tr = _rec_trend(rec, col)
+    if tr is not None:
+        fig.add_trace(go.Scatter(
+            x=tr["xs"], y=tr["ys"], mode="lines", name="Trend",
+            line=dict(color=C_AMBER, width=2, dash="dash"),
+        ))
+        fig.update_layout(legend=dict(
+            orientation="h", yanchor="bottom", y=1.02, xanchor="right", x=1))
+    st.plotly_chart(fig, width="stretch")
+
+    if tr is None:
+        st.caption("Noch zu wenige Datenpunkte für eine Trendanalyse.")
+        return
+
+    rate = tr["per_week"]
+    if abs(rate) < stable_thresh:
+        st.caption(f"➡️ Stabil (~{rate:+.1f} {unit}/Woche über {tr['days']} Tage).")
+        return
+    rising = rate > 0
+    is_good = (rising and good_dir == "up") or (not rising and good_dir == "down")
+    arrow = "📈" if rising else "📉"
+    verb = "steigt" if rising else "sinkt"
+    tone = "✅" if is_good else "⚠️"
+    meaning = rising_meaning if rising else falling_meaning
+    st.caption(
+        f"{arrow} {verb} um **{abs(rate):.1f} {unit}/Woche** über {tr['days']} "
+        f"Tage {tone} — {meaning}"
+    )
+
+
 def _wx_icon(code: int) -> str:
     """Material-Symbol-Name für einen WMO-Wettercode."""
     if code in (0, 1):
@@ -926,17 +996,25 @@ with tab3:
             fig.add_hline(y=33, line_dash="dot", line_color=C_ABOVE)
             st.plotly_chart(fig, width="stretch")
         with colB:
-            fig = px.line(rec, x="date", y="resting_heart_rate", markers=True,
-                          title="Ruhepuls (bpm)")
-            fig.update_layout(xaxis_title="", yaxis_title="bpm")
-            st.plotly_chart(fig, width="stretch")
+            _trend_chart(
+                rec, "resting_heart_rate", "Ruhepuls (bpm)", "bpm",
+                good_dir="down", stable_thresh=0.25,
+                rising_meaning="ein steigender Ruhepuls kann auf Ermüdung, Stress "
+                "oder einen beginnenden Infekt hindeuten.",
+                falling_meaning="ein fallender Ruhepuls spricht für gute Erholung "
+                "und steigende Fitness.",
+            )
 
         colC, colD = st.columns(2)
         with colC:
-            fig = px.line(rec, x="date", y="hrv_rmssd_milli", markers=True,
-                          title="HRV (RMSSD, ms)")
-            fig.update_layout(xaxis_title="", yaxis_title="ms")
-            st.plotly_chart(fig, width="stretch")
+            _trend_chart(
+                rec, "hrv_rmssd_milli", "HRV (RMSSD, ms)", "ms",
+                good_dir="up", stable_thresh=0.8,
+                rising_meaning="eine steigende HRV spricht für gute Erholung und "
+                "wachsende Belastbarkeit.",
+                falling_meaning="eine fallende HRV kann ein Warnsignal für "
+                "Überlastung oder unzureichende Erholung sein.",
+            )
         with colD:
             if not r.empty:
                 day_load = r.set_index("start")["load"].resample("D").sum()
