@@ -1,52 +1,52 @@
 {
-  "generated_at": "2026-07-17T22:35:04+00:00",
-  "date": "2026-07-17",
+  "generated_at": "2026-07-18T07:11:13+00:00",
+  "date": "2026-07-18",
   "recommendation": {
-    "kind": "RECOVERY",
-    "title": "Lockerer Erholungs-Spin",
-    "readiness_band": "yellow",
-    "recovery_score": 48.0,
-    "zone_number": 1,
-    "zone_label": "Z1 · Erholung",
-    "hr_low": 121,
-    "hr_high": 147,
+    "kind": "ENDURANCE",
+    "title": "Grundlagenausdauer (Z2)",
+    "readiness_band": "green",
+    "recovery_score": 84.0,
+    "zone_number": 2,
+    "zone_label": "Z2 · Grundlage",
+    "hr_low": 146,
+    "hr_high": 159,
     "cadence": "85–95",
     "cadence_low": 85,
     "cadence_high": 95,
-    "rpe": "2–3",
+    "rpe": "3–4",
     "duration_min": [
-      40,
-      55
+      91,
+      124
     ],
     "distance_km": [
-      11.7,
-      14.2
+      29.4,
+      36.0
     ],
-    "target_distance_km": 12.9,
+    "target_distance_km": 32.7,
     "week_hours": 2.2,
     "target_hours": 4.9,
-    "tsb": -22.3,
+    "tsb": -22.4,
     "rationale": [
-      "Whoop-Recovery heute: 48 %.",
+      "Whoop-Recovery heute: 84 %.",
       "Diese Woche bisher 2.2 h / Ziel ~4.9 h (44 %).",
       "Form (TSB) aktuell -22.",
-      "Letzte Einheit war intensiv — heute regenerativ (Z1)."
+      "Top erholt, aber zuletzt hart — heute Grundlage (Z2) zum Verarbeiten."
     ]
   },
   "zones": {
     "max_hr": 197,
-    "rest_hr": 71,
+    "rest_hr": 70,
     "lthr": null,
-    "target_zone": 1,
+    "target_zone": 2,
     "method": "Karvonen/HRR"
   },
   "weather": {
-    "temp_c": 16.9,
-    "wind_kmh": 8.3,
-    "wind_deg": 272,
+    "temp_c": 18.8,
+    "wind_kmh": 18.5,
+    "wind_deg": 277,
     "wind_dir": "W",
-    "gust_kmh": 19.8,
-    "code": 2,
-    "desc": "teils bewölkt"
+    "gust_kmh": 40.3,
+    "code": 3,
+    "desc": "bedeckt"
   }
 }
