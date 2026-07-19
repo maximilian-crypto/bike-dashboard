@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-07-19T11:40:26+00:00",
+  "generated_at": "2026-07-19T15:33:55+00:00",
   "date": "2026-07-19",
   "recommendation": {
     "kind": "ENDURANCE",
@@ -41,12 +41,12 @@
     "method": "Karvonen/HRR"
   },
   "weather": {
-    "temp_c": 17.4,
-    "wind_kmh": 17.4,
-    "wind_deg": 288,
+    "temp_c": 17.5,
+    "wind_kmh": 19.5,
+    "wind_deg": 286,
     "wind_dir": "W",
-    "gust_kmh": 40.7,
-    "code": 3,
-    "desc": "bedeckt"
+    "gust_kmh": 48.6,
+    "code": 80,
+    "desc": "Regenschauer"
   }
 }
