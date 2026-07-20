@@ -1,15 +1,15 @@
 {
-  "generated_at": "2026-07-19T22:37:29+00:00",
-  "date": "2026-07-19",
+  "generated_at": "2026-07-20T10:33:40+00:00",
+  "date": "2026-07-20",
   "recommendation": {
     "kind": "ENDURANCE",
     "title": "Grundlagenausdauer (Z2)",
     "readiness_band": "yellow",
-    "recovery_score": 50.0,
+    "recovery_score": 63.0,
     "zone_number": 2,
     "zone_label": "Z2 · Grundlage",
-    "hr_low": 146,
-    "hr_high": 159,
+    "hr_low": 145,
+    "hr_high": 158,
     "cadence": "85–95",
     "cadence_low": 85,
     "cadence_high": 95,
@@ -23,30 +23,30 @@
       36.0
     ],
     "target_distance_km": 32.7,
-    "week_hours": 2.2,
-    "target_hours": 4.9,
-    "tsb": -22.4,
+    "week_hours": 0.0,
+    "target_hours": 3.0,
+    "tsb": -22.7,
     "rationale": [
-      "Whoop-Recovery heute: 50 %.",
-      "Diese Woche bisher 2.2 h / Ziel ~4.9 h (44 %).",
-      "Form (TSB) aktuell -22.",
+      "Whoop-Recovery heute: 63 %.",
+      "Diese Woche bisher 0.0 h / Ziel ~3.0 h (0 %).",
+      "Form (TSB) aktuell -23.",
       "Erholung mittel & Woche noch dünn: ruhige Grundlage (Z2)."
     ]
   },
   "zones": {
     "max_hr": 197,
-    "rest_hr": 70,
+    "rest_hr": 68,
     "lthr": null,
     "target_zone": 2,
     "method": "Karvonen/HRR"
   },
   "weather": {
-    "temp_c": 13.6,
-    "wind_kmh": 9.4,
-    "wind_deg": 293,
-    "wind_dir": "NW",
-    "gust_kmh": 20.2,
-    "code": 80,
-    "desc": "Regenschauer"
+    "temp_c": 18.3,
+    "wind_kmh": 17.9,
+    "wind_deg": 341,
+    "wind_dir": "N",
+    "gust_kmh": 40.3,
+    "code": 3,
+    "desc": "bedeckt"
   }
 }
