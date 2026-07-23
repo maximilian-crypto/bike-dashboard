@@ -1,52 +1,52 @@
 {
-  "generated_at": "2026-07-23T17:04:22+00:00",
+  "generated_at": "2026-07-23T23:16:24+00:00",
   "date": "2026-07-23",
   "recommendation": {
-    "kind": "TEMPO",
-    "title": "Tempo-Einheit (Z3)",
+    "kind": "REST",
+    "title": "Ruhetag",
     "readiness_band": "green",
     "recovery_score": 80.0,
-    "zone_number": 3,
-    "zone_label": "Z3 · Tempo",
-    "hr_low": 158,
-    "hr_high": 171,
-    "cadence": "90–100",
-    "cadence_low": 90,
-    "cadence_high": 100,
-    "rpe": "5–6",
+    "zone_number": null,
+    "zone_label": null,
+    "hr_low": null,
+    "hr_high": null,
+    "cadence": "–",
+    "cadence_low": null,
+    "cadence_high": null,
+    "rpe": "–",
     "duration_min": [
-      63,
-      86
+      0,
+      0
     ],
     "distance_km": [
-      23.8,
-      29.1
+      0.0,
+      0.0
     ],
-    "target_distance_km": 26.5,
-    "week_hours": 3.0,
-    "target_hours": 3.7,
-    "tsb": -18.3,
+    "target_distance_km": 0.0,
+    "week_hours": 4.1,
+    "target_hours": 4.0,
+    "tsb": -23.0,
     "rationale": [
       "Whoop-Recovery heute: 80 %.",
-      "Diese Woche bisher 3.0 h / Ziel ~3.7 h (81 %).",
-      "Form (TSB) aktuell -18.",
-      "Grünes Licht, Form solide aber nicht topfrisch (TSB -18) — dosierter Tempo-Reiz (Z3) statt Vollgas. Für dein Wochenvolumen ist etwas Z3 ein produktiver Mittelweg (pyramidal), kein zu meidendes Niemandsland."
+      "Diese Woche bisher 4.1 h / Ziel ~4.0 h (101 %).",
+      "Form (TSB) aktuell -23.",
+      "Du bist heute bereits gefahren — Fokus auf Regeneration."
     ]
   },
   "zones": {
     "max_hr": 197,
     "rest_hr": 68,
     "lthr": null,
-    "target_zone": 3,
+    "target_zone": null,
     "method": "Karvonen/HRR"
   },
   "weather": {
-    "temp_c": 17.3,
-    "wind_kmh": 13.0,
-    "wind_deg": 275,
+    "temp_c": 13.6,
+    "wind_kmh": 7.8,
+    "wind_deg": 257,
     "wind_dir": "W",
-    "gust_kmh": 35.3,
-    "code": 2,
-    "desc": "teils bewölkt"
+    "gust_kmh": 15.8,
+    "code": 3,
+    "desc": "bedeckt"
   }
 }
