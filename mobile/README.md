@@ -10,7 +10,12 @@ im Browser, **braucht keinen Server** und funktioniert auch unterwegs.
   in der App „Broadcast Heart Rate" aktivieren). Die Kachel färbt sich nach
   **HF-Zone** (Z1 blau … Z5 rot), berechnet aus deiner Max-HF.
 - **Trittfrequenz** per Bluetooth (Cadence-/CSC-Sensor).
-- **Wind** am aktuellen Standort (Open-Meteo) mit Pfeil + Gegen-/Rückenwind-Anzeige.
+- **Gangempfehlung** aus der Kadenz relativ zum Zielband: leichter / halten / schwerer.
+- **Wind als Kompass-Rose** am aktuellen Standort (Open-Meteo): heading-up (deine
+  Fahrtrichtung oben), aufrechte N/O/S/W-Beschriftung und ein Pfeil für die
+  **relative** Windrichtung, farbcodiert nach Gegen-/Rücken-/Seitenwind.
+- **Steigung** aus der Sensor-Neigung – **kalibrierbar** (Kachel antippen setzt auf
+  ebener Strecke „0 %", weil der Handyhalter nicht immer gleich sitzt).
 - **Karte** mit Live-Position und zurückgelegter Strecke.
 - **Bildschirm bleibt an** (Wake Lock) während der Fahrt.
 

@@ -28,8 +28,8 @@ except Exception:
     pass
 
 from bikedash import (
-    backup, coach, config, dataprep, form, recommend, report, routing, store,
-    strava, weather, webauth, whoop, windlab, zones,
+    backup, coach, config, dataprep, form, maintenance, milestones, recommend,
+    report, routing, store, strava, weather, webauth, whoop, windlab, zones,
 )
 
 st.set_page_config(page_title="RIDE · Fahrrad-Dashboard", page_icon="🚴", layout="wide")
@@ -673,12 +673,18 @@ if not rec.empty and rec["recovery_score"].notna().any():
 else:
     c5.metric(":material/speed: Ø Tempo", f"{r['avg_speed_kmh'].mean():.1f} km/h")
 
-tab_today, tab1, tab2, tab3, tab_wind, tab_coach, tab_setup = st.tabs(
+(tab_today, tab1, tab2, tab3, tab_wind, tab_orden, tab_maint, tab_coach,
+ tab_setup) = st.tabs(
     [":material/bolt: Heute", ":material/trending_up: Leistung & Fortschritt",
      ":material/fitness_center: Trainingsbelastung", ":material/bedtime: Erholung",
-     ":material/air: Wind-Labor (Beta)", ":material/psychology: Coach",
+     ":material/air: Wind-Labor (Beta)", ":material/military_tech: Orden",
+     ":material/build: Wartung", ":material/psychology: Coach",
      ":material/tune: Einrichtung"]
 )
+
+# Kumulierte Gesamtdistanz über die GANZE Historie (nicht der Zeitraumfilter) –
+# Grundlage für Orden-Meilensteine und den Verschleiß-Tracker.
+total_km_all = float(rides["distance_km"].sum())
 
 
 # ===========================================================================
@@ -1112,6 +1118,152 @@ with tab_wind:
         figb.update_traces(marker_color=C_BELOW)
         figb.update_layout(yaxis_title="km/h", xaxis_title="")
         st.plotly_chart(figb, width="stretch")
+
+
+# ===========================================================================
+# Tab: Orden (Distanz-Meilensteine)
+# ===========================================================================
+with tab_orden:
+    st.subheader(":material/military_tech: Distanz-Meilensteine & Orden", anchor=False)
+    st.caption(
+        "Jede berühmte Distanz wird zum Orden, sobald deine aufsummierte "
+        "Fahrleistung sie überholt – dazwischen liegen erreichbare Nahziele."
+    )
+
+    all_themes = list(milestones.THEMES.keys())
+    picked = st.multiselect(
+        "Themen", options=all_themes, default=all_themes,
+        format_func=lambda k: milestones.THEMES[k],
+    )
+    themes = set(picked) if picked else None
+    mv = milestones.compute(total_km_all, themes=themes)
+
+    m1, m2, m3 = st.columns(3)
+    m1.metric(":material/route: Gesamtdistanz", de_num(mv.total_km, "km", 0))
+    m2.metric(":material/military_tech: Orden", f"{len(mv.earned)} / {mv.badges_total}")
+    m3.metric(":material/emoji_events: Zuletzt",
+              f"{mv.latest.icon} {mv.latest.name}" if mv.latest else "–")
+
+    st.markdown("#### Nächste Ziele")
+    if mv.next_targets:
+        for t in mv.next_targets:
+            head = f"{t.icon} **{t.label}**"
+            if t.kind == "orden" and t.blurb:
+                head += f" · _{t.blurb}_"
+            rem = f"noch **{de_num(t.remaining_km, 'km', 0)}**"
+            st.markdown(f"{head}  \n{rem} · Ziel bei {de_num(t.km, 'km', 0)}")
+            st.progress(min(max(t.progress, 0.0), 1.0))
+    else:
+        st.success("Alle Orden gesammelt – Wahnsinn! 🏆")
+
+    st.markdown("#### Deine Orden-Sammlung")
+    view_cat = sorted(
+        [b for b in mv.catalog if themes is None or b.theme in themes],
+        key=lambda b: b.km,
+    )
+    ocols = st.columns(4)
+    for i, b in enumerate(view_cat):
+        earned = b.km <= mv.total_km
+        opacity = "1" if earned else "0.4"
+        border = C_IN if earned else BORDER
+        lock = "" if earned else "🔒 "
+        with ocols[i % 4]:
+            st.markdown(
+                f'<div style="opacity:{opacity};background:linear-gradient(158deg,{PANEL_A},{PANEL_B});'
+                f'border:1px solid {border};border-radius:14px;padding:12px 14px;margin-bottom:10px;'
+                f'min-height:120px">'
+                f'<div style="font-size:30px;line-height:1">{b.icon}</div>'
+                f'<div style="font-weight:600;margin-top:6px;font-size:14px">{lock}{b.name}</div>'
+                f'<div style="color:{MUTED};font-size:12px;margin-top:1px">{de_num(b.km, "km", 0)}</div>'
+                f'<div style="color:{FAINT};font-size:11px;margin-top:4px;line-height:1.35">{b.blurb}</div>'
+                f'</div>',
+                unsafe_allow_html=True,
+            )
+
+
+# ===========================================================================
+# Tab: Wartung (Verschleiß-Tracker)
+# ===========================================================================
+with tab_maint:
+    st.subheader(":material/build: Verschleiß & Wartung", anchor=False)
+    maint_state = maintenance.load_state()
+    stats = maintenance.statuses(maint_state, total_km_all)
+    n_due = sum(1 for s in stats if s.status == maintenance.STATUS_DUE)
+    n_soon = sum(1 for s in stats if s.status == maintenance.STATUS_SOON)
+
+    k1, k2, k3 = st.columns(3)
+    k1.metric(":material/route: Kilometerstand", de_num(total_km_all, "km", 0),
+              help="Kumulierte Strava-Gesamtdistanz über die ganze Historie.")
+    k2.metric(":material/warning: Fällig", f"{n_due}")
+    k3.metric(":material/schedule: Bald fällig", f"{n_soon}")
+
+    st.caption(
+        "Verschleiß zählt ab dem Kilometerstand beim letzten Wechsel. Frisch "
+        "eingerichtet? Einmal **„Alle ab jetzt frisch“** klicken, dann stimmt die Basis."
+    )
+    if st.button(":material/restart_alt: Alle ab jetzt frisch tracken"):
+        maintenance.save_state(maintenance.reset_all(maint_state, total_km_all))
+        st.rerun()
+
+    STATUS_STYLE = {
+        maintenance.STATUS_OK:   (C_IN, "in Ordnung"),
+        maintenance.STATUS_SOON: (C_AMBER, "bald fällig"),
+        maintenance.STATUS_DUE:  (C_ABOVE, "fällig"),
+    }
+    for s in stats:
+        color, txt = STATUS_STYLE[s.status]
+        c1, c2 = st.columns([4, 1])
+        with c1:
+            rem = (f"noch {de_num(s.remaining_km, 'km', 0)}" if s.remaining_km >= 0
+                   else f"überfällig um {de_num(-s.remaining_km, 'km', 0)}")
+            st.markdown(
+                f"{s.icon} **{s.name}** · <span style='color:{color}'>{txt}</span>  \n"
+                f"<span style='color:{MUTED};font-size:13px'>"
+                f"{de_num(s.wear_km, 'km', 0)} / {de_num(s.interval_km, 'km', 0)} · {rem}"
+                f"</span>",
+                unsafe_allow_html=True,
+            )
+            st.progress(min(max(s.pct, 0.0), 1.0))
+        with c2:
+            if st.button("Gewechselt", key=f"maint_reset_{s.id}",
+                         help="Bauteil als frisch gewechselt markieren"):
+                maintenance.save_state(
+                    maintenance.reset_component(maint_state, s.id, total_km_all))
+                st.rerun()
+
+    with st.expander(":material/tune: Bauteile & Intervalle bearbeiten"):
+        st.caption("Zeilen hinzufügen/entfernen oder Intervalle ändern, dann speichern. "
+                   "Neue Bauteile starten ab dem aktuellen Kilometerstand.")
+        edit_df = pd.DataFrame([
+            {"Emoji": c["icon"], "Bauteil": c["name"], "Intervall (km)": int(c["interval_km"])}
+            for c in maint_state
+        ])
+        edited = st.data_editor(
+            edit_df, num_rows="dynamic", width="stretch", key="maint_editor",
+            column_config={
+                "Intervall (km)": st.column_config.NumberColumn(min_value=1, step=50),
+            },
+        )
+        if st.button(":material/save: Speichern", type="primary", key="maint_save"):
+            by_name = {c["name"].strip().lower(): c for c in maint_state}
+            new_state: list[dict] = []
+            for _, row in edited.iterrows():
+                name = str(row.get("Bauteil") or "").strip()
+                if not name:
+                    continue
+                prev = by_name.get(name.lower())
+                slug = "".join(ch if ch.isalnum() else "_" for ch in name.lower())
+                new_state.append({
+                    "id": prev["id"] if prev else slug,
+                    "name": name,
+                    "icon": str(row.get("Emoji") or "🔧"),
+                    "interval_km": float(row.get("Intervall (km)") or 1000),
+                    "installed_km": float(prev["installed_km"] if prev else total_km_all),
+                })
+            if new_state:
+                maintenance.save_state(new_state)
+                st.success("Gespeichert.")
+                st.rerun()
 
 
 # ===========================================================================

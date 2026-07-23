@@ -11,6 +11,11 @@ Körper-/Erholungsdaten aus **Whoop** automatisch zusammenführt und auswertet:
 - **💤 Erholung** – Recovery, Ruhepuls, HRV; Belastung → Erholung am Folgetag.
 - **🌬️ Wind-Labor (Beta)** – wie Gegen-/Rückenwind dein Tempo beeinflusst; fließt
   in die windkluge Routenplanung ein (Hinweg gegen den Wind, Rückweg mit Rückenwind).
+- **🏅 Orden & Meilensteine** – deine kumulierte Gesamtdistanz schaltet „Orden" bei
+  berühmten Distanzen frei (Tour de France, Länge Deutschlands, ein Shai-Hulud,
+  Erde → Mond …), dazwischen erreichbare Nahziele alle ~40 km.
+- **🔧 Verschleiß-Tracker** – km-Zähler pro Bauteil (Kette, Reifen, Kassette …) mit
+  Wartungs-Ampel und „gewechselt"-Reset.
 - **🧠 KI-Coach** – Klartext-Beratung aus deinen Daten (Claude API) + Wochenrückblick.
 - **📱 Morgen-Report** – heutige Empfehlung + Wetter + Form früh aufs Handy (via ntfy).
 
@@ -170,6 +175,8 @@ bike-dashboard/
 │  ├─ weather.py        # Wetter (Open-Meteo)
 │  ├─ windlab.py        # Wind-Performance-Analyse (Beta)
 │  ├─ form.py           # Form-Modell (CTL/ATL/TSB)
+│  ├─ milestones.py     # Distanz-Meilensteine & Orden
+│  ├─ maintenance.py    # Verschleiß-/Wartungs-Tracker
 │  ├─ backup.py         # Datensicherung
 │  ├─ coach.py          # KI-Coach (Claude API)
 │  └─ report.py         # Morgen-Report (ntfy-Push)

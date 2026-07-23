@@ -25,7 +25,7 @@ import sys
 from pathlib import Path
 from typing import Any
 
-from bikedash import config, recommend, weather, zones
+from bikedash import config, dataprep, milestones, recommend, weather, zones
 
 ROOT = Path(__file__).resolve().parent
 DEFAULT_OUT = ROOT / "mobile" / "today.json"
@@ -47,6 +47,32 @@ def _parse_cadence(text: str) -> tuple[int | None, int | None]:
     if len(nums) == 1:
         return int(nums[0]), int(nums[0])
     return None, None
+
+
+def _milestone_payload() -> dict[str, Any] | None:
+    """Kompakter Meilenstein für die Ride-PWA: nächstes Ziel + Orden-Zähler.
+
+    Route-frei und ohne persönliche Koordinaten – nur aggregierte Kilometer.
+    Fehlt die Datenbasis, bleibt das Feld weg (unkritisch fürs Frontend).
+    """
+    try:
+        rides = dataprep.prep_rides()
+        if rides.empty:
+            return None
+        total_km = float(rides["distance_km"].sum())
+        mv = milestones.compute(total_km)
+        nxt = mv.next_targets[0] if mv.next_targets else None
+        return {
+            "total_km": round(total_km, 1),
+            "orden_earned": len(mv.earned),
+            "orden_total": mv.badges_total,
+            "next_name": nxt.label if nxt else None,
+            "next_icon": nxt.icon if nxt else None,
+            "next_remaining_km": round(nxt.remaining_km, 1) if nxt else None,
+            "next_km": round(nxt.km, 1) if nxt else None,
+        }
+    except Exception:  # noqa: BLE001
+        return None
 
 
 def _weather_payload(cfg: dict[str, Any]) -> dict[str, Any] | None:
@@ -81,6 +107,7 @@ def build(out_path: Path = DEFAULT_OUT, today: dt.date | None = None) -> dict[st
     # eine Route ab Zuhause würde die (als Secret gehaltene) Heimat-Koordinate
     # veröffentlichen. Die PWA plant die Route weiter clientseitig aus dem GPS.
     wx = _weather_payload(cfg)
+    milestone = _milestone_payload()
 
     payload: dict[str, Any] = {
         "generated_at": dt.datetime.now(dt.timezone.utc).isoformat(timespec="seconds"),
@@ -114,6 +141,7 @@ def build(out_path: Path = DEFAULT_OUT, today: dt.date | None = None) -> dict[st
             "method": zones.method_label(rest_hr, lthr),
         },
         "weather": wx,
+        "milestone": milestone,
     }
 
     out_path.parent.mkdir(parents=True, exist_ok=True)

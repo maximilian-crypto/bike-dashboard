@@ -25,8 +25,8 @@ TEMPLATES = {
     "REST":      dict(zone=None, base_min=0,  cadence="–",       rpe="–",   speed_factor=0.0),
     "RECOVERY":  dict(zone=1,    base_min=40, cadence="85–95",   rpe="2–3", speed_factor=0.82),
     "ENDURANCE": dict(zone=2,    base_min=90, cadence="85–95",   rpe="3–4", speed_factor=0.92),
-    "TEMPO":     dict(zone=3,    base_min=75, cadence="90–100",  rpe="5–6", speed_factor=1.05),
-    "THRESHOLD": dict(zone=4,    base_min=70, cadence="90–100",  rpe="7–8", speed_factor=1.00),
+    "TEMPO":     dict(zone=3,    base_min=75, cadence="85–100",  rpe="5–6", speed_factor=1.05),
+    "THRESHOLD": dict(zone=4,    base_min=70, cadence="85–100",  rpe="7–8", speed_factor=1.00),
 }
 
 TITLES = {
