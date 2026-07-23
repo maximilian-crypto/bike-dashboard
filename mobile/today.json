@@ -1,51 +1,51 @@
 {
-  "generated_at": "2026-07-22T23:34:21+00:00",
-  "date": "2026-07-22",
+  "generated_at": "2026-07-23T09:15:26+00:00",
+  "date": "2026-07-23",
   "recommendation": {
-    "kind": "REST",
-    "title": "Ruhetag",
-    "readiness_band": "unknown",
-    "recovery_score": null,
-    "zone_number": null,
-    "zone_label": null,
-    "hr_low": null,
-    "hr_high": null,
-    "cadence": "–",
-    "cadence_low": null,
-    "cadence_high": null,
-    "rpe": "–",
+    "kind": "TEMPO",
+    "title": "Tempo-Einheit (Z3)",
+    "readiness_band": "green",
+    "recovery_score": 80.0,
+    "zone_number": 3,
+    "zone_label": "Z3 · Tempo",
+    "hr_low": 158,
+    "hr_high": 171,
+    "cadence": "90–100",
+    "cadence_low": 90,
+    "cadence_high": 100,
+    "rpe": "5–6",
     "duration_min": [
-      0,
-      0
+      63,
+      86
     ],
     "distance_km": [
-      0.0,
-      0.0
+      23.8,
+      29.1
     ],
-    "target_distance_km": 0.0,
+    "target_distance_km": 26.5,
     "week_hours": 3.0,
     "target_hours": 3.7,
     "tsb": -18.3,
     "rationale": [
-      "Keine aktuelle Whoop-Recovery — neutrale Annahme.",
+      "Whoop-Recovery heute: 80 %.",
       "Diese Woche bisher 3.0 h / Ziel ~3.7 h (81 %).",
       "Form (TSB) aktuell -18.",
-      "Du bist heute bereits gefahren — Fokus auf Regeneration."
+      "Grünes Licht, Form solide aber nicht topfrisch (TSB -18) — dosierter Tempo-Reiz (Z3) statt Vollgas. Für dein Wochenvolumen ist etwas Z3 ein produktiver Mittelweg (pyramidal), kein zu meidendes Niemandsland."
     ]
   },
   "zones": {
     "max_hr": 197,
     "rest_hr": 68,
     "lthr": null,
-    "target_zone": null,
+    "target_zone": 3,
     "method": "Karvonen/HRR"
   },
   "weather": {
-    "temp_c": 14.4,
-    "wind_kmh": 10.1,
-    "wind_deg": 297,
+    "temp_c": 17.8,
+    "wind_kmh": 13.8,
+    "wind_deg": 303,
     "wind_dir": "NW",
-    "gust_kmh": 22.7,
+    "gust_kmh": 32.0,
     "code": 2,
     "desc": "teils bewölkt"
   }
