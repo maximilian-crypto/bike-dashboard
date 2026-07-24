@@ -1,51 +1,51 @@
 {
-  "generated_at": "2026-07-23T23:16:24+00:00",
-  "date": "2026-07-23",
+  "generated_at": "2026-07-24T09:11:53+00:00",
+  "date": "2026-07-24",
   "recommendation": {
-    "kind": "REST",
-    "title": "Ruhetag",
+    "kind": "ENDURANCE",
+    "title": "Grundlagenausdauer (Z2)",
     "readiness_band": "green",
-    "recovery_score": 80.0,
-    "zone_number": null,
-    "zone_label": null,
-    "hr_low": null,
-    "hr_high": null,
-    "cadence": "–",
-    "cadence_low": null,
-    "cadence_high": null,
-    "rpe": "–",
+    "recovery_score": 92.0,
+    "zone_number": 2,
+    "zone_label": "Z2 · Grundlage",
+    "hr_low": 145,
+    "hr_high": 158,
+    "cadence": "85–95",
+    "cadence_low": 85,
+    "cadence_high": 95,
+    "rpe": "3–4",
     "duration_min": [
-      0,
-      0
+      76,
+      103
     ],
     "distance_km": [
-      0.0,
-      0.0
+      25.3,
+      30.9
     ],
-    "target_distance_km": 0.0,
+    "target_distance_km": 28.1,
     "week_hours": 4.1,
     "target_hours": 4.0,
     "tsb": -23.0,
     "rationale": [
-      "Whoop-Recovery heute: 80 %.",
+      "Whoop-Recovery heute: 92 %.",
       "Diese Woche bisher 4.1 h / Ziel ~4.0 h (101 %).",
       "Form (TSB) aktuell -23.",
-      "Du bist heute bereits gefahren — Fokus auf Regeneration."
+      "Erholt, aber Form ermüdet (TSB -23 ≤ -20) — heute aerob (Z2) statt harter Reiz, damit die Ermüdung abbaut."
     ]
   },
   "zones": {
     "max_hr": 197,
     "rest_hr": 68,
     "lthr": null,
-    "target_zone": null,
+    "target_zone": 2,
     "method": "Karvonen/HRR"
   },
   "weather": {
-    "temp_c": 13.6,
-    "wind_kmh": 7.8,
-    "wind_deg": 257,
+    "temp_c": 17.0,
+    "wind_kmh": 13.6,
+    "wind_deg": 281,
     "wind_dir": "W",
-    "gust_kmh": 15.8,
+    "gust_kmh": 28.1,
     "code": 3,
     "desc": "bedeckt"
   }
