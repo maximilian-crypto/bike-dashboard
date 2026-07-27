@@ -1,11 +1,11 @@
 {
-  "generated_at": "2026-07-26T20:16:10+00:00",
-  "date": "2026-07-26",
+  "generated_at": "2026-07-27T12:40:16+00:00",
+  "date": "2026-07-27",
   "recommendation": {
     "kind": "ENDURANCE",
     "title": "Grundlagenausdauer (Z2)",
     "readiness_band": "green",
-    "recovery_score": 95.0,
+    "recovery_score": 81.0,
     "zone_number": 2,
     "zone_label": "Z2 · Grundlage",
     "hr_low": 145,
@@ -15,22 +15,22 @@
     "cadence_high": 95,
     "rpe": "3–4",
     "duration_min": [
-      76,
-      103
+      91,
+      124
     ],
     "distance_km": [
-      25.7,
-      31.4
+      30.8,
+      37.6
     ],
-    "target_distance_km": 28.5,
-    "week_hours": 5.0,
-    "target_hours": 4.2,
+    "target_distance_km": 34.2,
+    "week_hours": 0.0,
+    "target_hours": 2.7,
     "tsb": -21.4,
     "rationale": [
-      "Whoop-Recovery heute: 95 %.",
-      "Diese Woche bisher 5.0 h / Ziel ~4.2 h (118 %).",
+      "Whoop-Recovery heute: 81 %.",
+      "Diese Woche bisher 0.0 h / Ziel ~2.7 h (0 %).",
       "Form (TSB) aktuell -21.",
-      "Gut erholt: solide Grundlage (Z2) baut die aerobe Basis."
+      "Erholt, aber Form ermüdet (TSB -21 ≤ -20) — heute aerob (Z2) statt harter Reiz, damit die Ermüdung abbaut."
     ]
   },
   "zones": {
@@ -41,11 +41,11 @@
     "method": "Karvonen/HRR"
   },
   "weather": {
-    "temp_c": 17.3,
-    "wind_kmh": 16.6,
-    "wind_deg": 252,
+    "temp_c": 19.1,
+    "wind_kmh": 18.3,
+    "wind_deg": 286,
     "wind_dir": "W",
-    "gust_kmh": 32.0,
+    "gust_kmh": 38.2,
     "code": 3,
     "desc": "bedeckt"
   }
