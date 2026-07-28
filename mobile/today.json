@@ -1,52 +1,52 @@
 {
-  "generated_at": "2026-07-27T20:51:54+00:00",
-  "date": "2026-07-27",
+  "generated_at": "2026-07-28T09:49:04+00:00",
+  "date": "2026-07-28",
   "recommendation": {
-    "kind": "ENDURANCE",
-    "title": "Grundlagenausdauer (Z2)",
+    "kind": "REST",
+    "title": "Ruhetag",
     "readiness_band": "green",
-    "recovery_score": 81.0,
-    "zone_number": 2,
-    "zone_label": "Z2 · Grundlage",
-    "hr_low": 145,
-    "hr_high": 158,
-    "cadence": "85–95",
-    "cadence_low": 85,
-    "cadence_high": 95,
-    "rpe": "3–4",
+    "recovery_score": 96.0,
+    "zone_number": null,
+    "zone_label": null,
+    "hr_low": null,
+    "hr_high": null,
+    "cadence": "–",
+    "cadence_low": null,
+    "cadence_high": null,
+    "rpe": "–",
     "duration_min": [
-      91,
-      124
+      0,
+      0
     ],
     "distance_km": [
-      30.8,
-      37.6
+      0.0,
+      0.0
     ],
-    "target_distance_km": 34.2,
-    "week_hours": 0.0,
-    "target_hours": 2.7,
-    "tsb": -21.4,
+    "target_distance_km": 0.0,
+    "week_hours": 0.3,
+    "target_hours": 2.8,
+    "tsb": -11.7,
     "rationale": [
-      "Whoop-Recovery heute: 81 %.",
-      "Diese Woche bisher 0.0 h / Ziel ~2.7 h (0 %).",
-      "Form (TSB) aktuell -21.",
-      "Erholt, aber Form ermüdet (TSB -21 ≤ -20) — heute aerob (Z2) statt harter Reiz, damit die Ermüdung abbaut."
+      "Whoop-Recovery heute: 96 %.",
+      "Diese Woche bisher 0.3 h / Ziel ~2.8 h (10 %).",
+      "Form (TSB) aktuell -12.",
+      "Du bist heute bereits gefahren — Fokus auf Regeneration."
     ]
   },
   "zones": {
     "max_hr": 197,
     "rest_hr": 68,
     "lthr": null,
-    "target_zone": 2,
+    "target_zone": null,
     "method": "Karvonen/HRR"
   },
   "weather": {
-    "temp_c": 13.3,
-    "wind_kmh": 8.8,
-    "wind_deg": 258,
-    "wind_dir": "W",
-    "gust_kmh": 17.3,
-    "code": 0,
-    "desc": "klar"
+    "temp_c": 20.2,
+    "wind_kmh": 15.1,
+    "wind_deg": 242,
+    "wind_dir": "SW",
+    "gust_kmh": 30.6,
+    "code": 2,
+    "desc": "teils bewölkt"
   }
 }
