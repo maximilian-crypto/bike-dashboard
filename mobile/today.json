@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-07-29T10:14:01+00:00",
+  "generated_at": "2026-07-29T16:52:31+00:00",
   "date": "2026-07-29",
   "recommendation": {
     "kind": "TEMPO",
@@ -41,12 +41,12 @@
     "method": "Karvonen/HRR"
   },
   "weather": {
-    "temp_c": 27.1,
-    "wind_kmh": 13.1,
-    "wind_deg": 164,
-    "wind_dir": "S",
-    "gust_kmh": 27.4,
-    "code": 2,
-    "desc": "teils bewölkt"
+    "temp_c": 31.6,
+    "wind_kmh": 12.4,
+    "wind_deg": 206,
+    "wind_dir": "SW",
+    "gust_kmh": 25.9,
+    "code": 0,
+    "desc": "klar"
   }
 }
