@@ -1,52 +1,52 @@
 {
-  "generated_at": "2026-07-29T23:38:38+00:00",
-  "date": "2026-07-29",
+  "generated_at": "2026-07-30T09:37:08+00:00",
+  "date": "2026-07-30",
   "recommendation": {
-    "kind": "TEMPO",
-    "title": "Tempo-Einheit (Z3)",
-    "readiness_band": "green",
-    "recovery_score": 81.0,
-    "zone_number": 3,
-    "zone_label": "Z3 · Tempo",
-    "hr_low": 158,
-    "hr_high": 171,
-    "cadence": "90–100",
-    "cadence_low": 90,
-    "cadence_high": 100,
-    "rpe": "5–6",
+    "kind": "ENDURANCE",
+    "title": "Grundlagenausdauer (Z2)",
+    "readiness_band": "yellow",
+    "recovery_score": 55.0,
+    "zone_number": 2,
+    "zone_label": "Z2 · Grundlage",
+    "hr_low": 145,
+    "hr_high": 158,
+    "cadence": "85–95",
+    "cadence_low": 85,
+    "cadence_high": 95,
+    "rpe": "3–4",
     "duration_min": [
-      76,
-      103
+      91,
+      124
     ],
     "distance_km": [
-      29.7,
-      36.3
+      31.3,
+      38.2
     ],
-    "target_distance_km": 33.0,
+    "target_distance_km": 34.8,
     "week_hours": 0.3,
     "target_hours": 2.8,
     "tsb": -12.0,
     "rationale": [
-      "Whoop-Recovery heute: 81 %.",
+      "Whoop-Recovery heute: 55 %.",
       "Diese Woche bisher 0.3 h / Ziel ~2.8 h (10 %).",
       "Form (TSB) aktuell -12.",
-      "Grünes Licht, Form solide aber nicht topfrisch (TSB -12) — dosierter Tempo-Reiz (Z3) statt Vollgas. Für dein Wochenvolumen ist etwas Z3 ein produktiver Mittelweg (pyramidal), kein zu meidendes Niemandsland."
+      "Erholung mittel & Woche noch dünn: ruhige Grundlage (Z2)."
     ]
   },
   "zones": {
     "max_hr": 197,
     "rest_hr": 66,
     "lthr": null,
-    "target_zone": 3,
+    "target_zone": 2,
     "method": "Karvonen/HRR"
   },
   "weather": {
-    "temp_c": 20.5,
-    "wind_kmh": 5.9,
-    "wind_deg": 142,
-    "wind_dir": "SO",
-    "gust_kmh": 12.6,
-    "code": 0,
-    "desc": "klar"
+    "temp_c": 31.4,
+    "wind_kmh": 15.7,
+    "wind_deg": 200,
+    "wind_dir": "S",
+    "gust_kmh": 31.0,
+    "code": 1,
+    "desc": "überwiegend klar"
   }
 }
