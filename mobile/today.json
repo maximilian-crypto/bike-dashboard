@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-08-02T07:54:53+00:00",
+  "generated_at": "2026-08-02T11:45:54+00:00",
   "date": "2026-08-02",
   "recommendation": {
     "kind": "TEMPO",
@@ -41,12 +41,12 @@
     "method": "Karvonen/HRR"
   },
   "weather": {
-    "temp_c": 18.5,
-    "wind_kmh": 2.2,
-    "wind_deg": 90,
-    "wind_dir": "O",
-    "gust_kmh": 6.5,
-    "code": 0,
-    "desc": "klar"
+    "temp_c": 24.0,
+    "wind_kmh": 5.8,
+    "wind_deg": 292,
+    "wind_dir": "W",
+    "gust_kmh": 13.0,
+    "code": 2,
+    "desc": "teils bewölkt"
   }
 }
