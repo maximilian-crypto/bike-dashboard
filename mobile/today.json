@@ -1,52 +1,52 @@
 {
-  "generated_at": "2026-08-01T20:13:44+00:00",
-  "date": "2026-08-01",
+  "generated_at": "2026-08-02T07:54:53+00:00",
+  "date": "2026-08-02",
   "recommendation": {
-    "kind": "ENDURANCE",
-    "title": "Grundlagenausdauer (Z2)",
-    "readiness_band": "yellow",
-    "recovery_score": 52.0,
-    "zone_number": 2,
-    "zone_label": "Z2 · Grundlage",
-    "hr_low": 145,
-    "hr_high": 158,
-    "cadence": "85–95",
-    "cadence_low": 85,
-    "cadence_high": 95,
-    "rpe": "3–4",
+    "kind": "TEMPO",
+    "title": "Tempo-Einheit (Z3)",
+    "readiness_band": "green",
+    "recovery_score": 74.0,
+    "zone_number": 3,
+    "zone_label": "Z3 · Tempo",
+    "hr_low": 158,
+    "hr_high": 171,
+    "cadence": "90–100",
+    "cadence_low": 90,
+    "cadence_high": 100,
+    "rpe": "5–6",
     "duration_min": [
-      91,
-      124
+      76,
+      103
     ],
     "distance_km": [
-      31.3,
-      38.2
+      29.7,
+      36.3
     ],
-    "target_distance_km": 34.8,
+    "target_distance_km": 33.0,
     "week_hours": 0.3,
     "target_hours": 2.8,
     "tsb": -12.0,
     "rationale": [
-      "Whoop-Recovery heute: 52 %.",
+      "Whoop-Recovery heute: 74 %.",
       "Diese Woche bisher 0.3 h / Ziel ~2.8 h (10 %).",
       "Form (TSB) aktuell -12.",
-      "Erholung mittel & Woche noch dünn: ruhige Grundlage (Z2)."
+      "Grünes Licht, Form solide aber nicht topfrisch (TSB -12) — dosierter Tempo-Reiz (Z3) statt Vollgas. Für dein Wochenvolumen ist etwas Z3 ein produktiver Mittelweg (pyramidal), kein zu meidendes Niemandsland."
     ]
   },
   "zones": {
     "max_hr": 197,
     "rest_hr": 66,
     "lthr": null,
-    "target_zone": 2,
+    "target_zone": 3,
     "method": "Karvonen/HRR"
   },
   "weather": {
-    "temp_c": 16.7,
-    "wind_kmh": 4.3,
-    "wind_deg": 275,
-    "wind_dir": "W",
-    "gust_kmh": 9.4,
-    "code": 1,
-    "desc": "überwiegend klar"
+    "temp_c": 18.5,
+    "wind_kmh": 2.2,
+    "wind_deg": 90,
+    "wind_dir": "O",
+    "gust_kmh": 6.5,
+    "code": 0,
+    "desc": "klar"
   }
 }
