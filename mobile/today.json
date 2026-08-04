@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-08-04T13:55:39+00:00",
+  "generated_at": "2026-08-04T17:39:25+00:00",
   "date": "2026-08-04",
   "recommendation": {
     "kind": "REST",
@@ -42,11 +42,11 @@
   },
   "weather": {
     "temp_c": 29.0,
-    "wind_kmh": 9.1,
-    "wind_deg": 146,
+    "wind_kmh": 7.1,
+    "wind_deg": 156,
     "wind_dir": "SO",
-    "gust_kmh": 18.0,
-    "code": 1,
-    "desc": "überwiegend klar"
+    "gust_kmh": 18.7,
+    "code": 3,
+    "desc": "bedeckt"
   }
 }
