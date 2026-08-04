@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-08-04T10:31:23+00:00",
+  "generated_at": "2026-08-04T13:55:39+00:00",
   "date": "2026-08-04",
   "recommendation": {
     "kind": "REST",
@@ -41,12 +41,12 @@
     "method": "Karvonen/HRR"
   },
   "weather": {
-    "temp_c": 24.1,
-    "wind_kmh": 11.4,
-    "wind_deg": 118,
+    "temp_c": 29.0,
+    "wind_kmh": 9.1,
+    "wind_deg": 146,
     "wind_dir": "SO",
-    "gust_kmh": 25.9,
-    "code": 3,
-    "desc": "bedeckt"
+    "gust_kmh": 18.0,
+    "code": 1,
+    "desc": "überwiegend klar"
   }
 }
