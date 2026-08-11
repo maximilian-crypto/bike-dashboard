@@ -1,6 +1,6 @@
 {
-  "generated_at": "2026-08-10T20:35:17+00:00",
-  "date": "2026-08-10",
+  "generated_at": "2026-08-11T01:12:39+00:00",
+  "date": "2026-08-11",
   "recommendation": {
     "kind": "ENDURANCE",
     "title": "Grundlagenausdauer (Z2)",
@@ -41,12 +41,12 @@
     "method": "Karvonen/HRR"
   },
   "weather": {
-    "temp_c": 14.8,
-    "wind_kmh": 8.8,
-    "wind_deg": 282,
+    "temp_c": 13.1,
+    "wind_kmh": 10.1,
+    "wind_deg": 270,
     "wind_dir": "W",
-    "gust_kmh": 21.2,
-    "code": 1,
-    "desc": "überwiegend klar"
+    "gust_kmh": 19.8,
+    "code": 2,
+    "desc": "teils bewölkt"
   }
 }
