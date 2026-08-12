@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-08-12T05:26:38+00:00",
+  "generated_at": "2026-08-12T09:06:52+00:00",
   "date": "2026-08-12",
   "recommendation": {
     "kind": "ENDURANCE",
@@ -19,17 +19,17 @@
       124
     ],
     "distance_km": [
-      31.4,
-      38.3
+      31.3,
+      38.2
     ],
     "target_distance_km": 34.8,
-    "week_hours": 0.0,
-    "target_hours": 2.3,
-    "tsb": -1.4,
+    "week_hours": 0.6,
+    "target_hours": 2.4,
+    "tsb": 3.7,
     "rationale": [
       "Keine aktuelle Whoop-Recovery — neutrale Annahme.",
-      "Diese Woche bisher 0.0 h / Ziel ~2.3 h (0 %).",
-      "Form (TSB) aktuell -1.",
+      "Diese Woche bisher 0.6 h / Ziel ~2.4 h (24 %).",
+      "Form (TSB) aktuell +4.",
       "Ohne Erholungsdaten konservativ: ruhige Grundlage (Z2)."
     ]
   },
@@ -41,12 +41,12 @@
     "method": "Karvonen/HRR"
   },
   "weather": {
-    "temp_c": 7.9,
-    "wind_kmh": 3.3,
-    "wind_deg": 96,
-    "wind_dir": "O",
-    "gust_kmh": 6.1,
-    "code": 0,
-    "desc": "klar"
+    "temp_c": 16.4,
+    "wind_kmh": 6.9,
+    "wind_deg": 62,
+    "wind_dir": "NO",
+    "gust_kmh": 16.6,
+    "code": 2,
+    "desc": "teils bewölkt"
   }
 }
