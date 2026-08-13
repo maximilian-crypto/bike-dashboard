@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-08-13T12:55:42+00:00",
+  "generated_at": "2026-08-13T16:50:14+00:00",
   "date": "2026-08-13",
   "recommendation": {
     "kind": "ENDURANCE",
@@ -42,10 +42,10 @@
   },
   "weather": {
     "temp_c": 28.9,
-    "wind_kmh": 12.5,
-    "wind_deg": 102,
+    "wind_kmh": 9.8,
+    "wind_deg": 98,
     "wind_dir": "O",
-    "gust_kmh": 27.4,
+    "gust_kmh": 25.2,
     "code": 0,
     "desc": "klar"
   }
