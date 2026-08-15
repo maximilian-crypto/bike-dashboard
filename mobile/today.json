@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-08-15T12:24:13+00:00",
+  "generated_at": "2026-08-15T16:16:46+00:00",
   "date": "2026-08-15",
   "recommendation": {
     "kind": "THRESHOLD",
@@ -41,11 +41,11 @@
     "method": "Karvonen/HRR"
   },
   "weather": {
-    "temp_c": 23.2,
-    "wind_kmh": 14.8,
-    "wind_deg": 319,
+    "temp_c": 21.1,
+    "wind_kmh": 13.0,
+    "wind_deg": 314,
     "wind_dir": "NW",
-    "gust_kmh": 31.7,
+    "gust_kmh": 28.4,
     "code": 3,
     "desc": "bedeckt"
   }
