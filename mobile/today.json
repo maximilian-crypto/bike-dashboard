@@ -1,51 +1,51 @@
 {
-  "generated_at": "2026-08-16T20:14:46+00:00",
-  "date": "2026-08-16",
+  "generated_at": "2026-08-17T00:54:01+00:00",
+  "date": "2026-08-17",
   "recommendation": {
-    "kind": "THRESHOLD",
-    "title": "Schwellen-Intervalle (Z4)",
-    "readiness_band": "green",
-    "recovery_score": 71.0,
-    "zone_number": 4,
-    "zone_label": "Z4 · Schwelle",
-    "hr_low": 171,
-    "hr_high": 184,
-    "cadence": "90–100",
-    "cadence_low": 90,
-    "cadence_high": 100,
-    "rpe": "7–8",
+    "kind": "ENDURANCE",
+    "title": "Grundlagenausdauer (Z2)",
+    "readiness_band": "unknown",
+    "recovery_score": null,
+    "zone_number": 2,
+    "zone_label": "Z2 · Grundlage",
+    "hr_low": 144,
+    "hr_high": 157,
+    "cadence": "85–95",
+    "cadence_low": 85,
+    "cadence_high": 95,
+    "rpe": "3–4",
     "duration_min": [
-      71,
-      96
+      91,
+      124
     ],
     "distance_km": [
-      26.4,
-      32.3
+      31.3,
+      38.2
     ],
-    "target_distance_km": 29.3,
-    "week_hours": 0.6,
-    "target_hours": 2.4,
+    "target_distance_km": 34.8,
+    "week_hours": 0.0,
+    "target_hours": 2.0,
     "tsb": 3.7,
     "rationale": [
-      "Whoop-Recovery heute: 71 %.",
-      "Diese Woche bisher 0.6 h / Ziel ~2.4 h (24 %).",
+      "Keine aktuelle Whoop-Recovery — neutrale Annahme.",
+      "Diese Woche bisher 0.0 h / Ziel ~2.0 h (0 %).",
       "Form (TSB) aktuell +4.",
-      "Bestens erholt & Luft im Plan: gezielte harte Einheit (Z4-Schwelle) — an frischen Tagen den harten Reiz wirklich hart fahren."
+      "Ohne Erholungsdaten konservativ: ruhige Grundlage (Z2)."
     ]
   },
   "zones": {
     "max_hr": 197,
     "rest_hr": 65,
     "lthr": null,
-    "target_zone": 4,
+    "target_zone": 2,
     "method": "Karvonen/HRR"
   },
   "weather": {
-    "temp_c": 16.4,
-    "wind_kmh": 4.6,
-    "wind_deg": 342,
-    "wind_dir": "N",
-    "gust_kmh": 11.5,
+    "temp_c": 15.3,
+    "wind_kmh": 4.0,
+    "wind_deg": 270,
+    "wind_dir": "W",
+    "gust_kmh": 8.6,
     "code": 3,
     "desc": "bedeckt"
   }
