@@ -136,10 +136,14 @@ Live-Ride-PWA mit BLE-Puls/-Kadenz und Karte.
 
 ---
 
-## 5. AKTUELLER BLOCKER: fehlende PowerShell / Windows-Umgebung
+## 5. Ehemaliger „Blocker": PowerShell war NICHT die Ursache
 
-**Das Projekt ist auf Windows + PowerShell zugeschnitten, die bisherige
-Entwicklung lief aber in einer Linux-Cloud-Session ohne PowerShell.**
+> **Nachtrag (2026-08-19, verifiziert):** Die frühere Diagnose „alles hakt wegen
+> fehlender PowerShell" war falsch. Die `.ps1`-Skripte starten nur Python und
+> enthalten keine Programmlogik — sie können nichts kaputt machen. Die echten
+> Ursachen sind gefunden und behoben, siehe **Abschnitt 5b**.
+
+Der Vollständigkeit halber der ursprüngliche Umgebungs-Hinweis:
 
 Konkret fehlt in der Cloud-Session:
 
@@ -172,6 +176,32 @@ allein auf PowerShell schieben:
 | **Steigung fehlt** | Braucht `DeviceOrientation` **und** erteilte Sensor-Berechtigung (iOS: Nutzergeste + Prompt). Am Desktop gibt es keine Neigung → Kachel bleibt auf „—". |
 | **Shift funktioniert nicht** | `updateShift()` braucht `cadVal`, das **ausschliesslich** von einem gekoppelten BLE-Kadenzsensor (CSC) kommt. Ohne Sensor bleibt die Kachel auf „warte auf Kadenz". |
 | **Windrose nicht wie vorgestellt** | Design-Frage, kein Bug — Zielbild ist noch nicht spezifiziert. |
+
+---
+
+## 5b. Tatsächliche Ursachen — gefunden und behoben (2026-08-19)
+
+Alles unten wurde in einer Linux-Session **real ausgeführt und im Browser
+verifiziert** (Streamlit gestartet, PWA mit simulierten Sensordaten getestet).
+
+| # | Befund | Warum es das Symptom erklärt | Behebung |
+|---|---|---|---|
+| 1 | **Feature-Branch war nie in `main`** — die 3 Commits lagen nur auf `claude/fahrrad-app-neue-feature-ptpp0w` | Streamlit-Deploy und GitHub Pages liefern aus `main` → dort gab es Orden/Wartung schlicht nicht | Branch zusammengeführt |
+| 2 | **`initMap()` warf `L is not defined`**, wenn Leaflet vom CDN fehlte; es stand in der Startkette `… initMap(); startGeo(); loadToday();` | Ein Wurf dort brach die **restliche Kette ab** → kein GPS, keine HF-Zonen, kein Meilenstein. Genau das Bild „alle Features fehlen" | Leaflet-Prüfung + Startkette einzeln per `boot()` abgesichert |
+| 3 | **`onPos()` griff ungeprüft auf `marker`/`trail`/`map` zu** | Ohne Leaflet warf **jedes GPS-Update** → Distanz, Zeit, Ø-Tempo, Wind und Navigation standen still | Karten-Zugriffe mit `if(map)` abgesichert |
+| 4 | **Service Worker cachte Leaflet nie** (`unpkg` war von der Cache-Strategie ausgenommen) | Ohne Empfang fehlte Leaflet → Fall 2/3 trat unterwegs zuverlässig ein | Leaflet jetzt cache-first (`ride-v3`) |
+| 5 | **Neigungs-Listener wurde nur beim Antippen registriert** | Steigungs-Kachel blieb auf „—", obwohl Android gar keine Berechtigung braucht | `autoEnableOrientation()` beim Start (iOS wartet weiterhin auf die Nutzergeste) |
+| 6 | **`Math.tan(beta)` ohne Begrenzung** | Aufrecht montiert ist `beta≈90°` → vor dem Kalibrieren stand Unsinn in der Kachel | Auf ±40 % geklemmt; unkalibriert zeigt die Kachel ehrlich „—" |
+| 7 | **Orden < 10 km zeigten „0 km"** | „Ein Shai-Hulud" (0,4 km) sah kaputt aus | `km_label()` mit Nachkommastelle |
+| 8 | **Zwei der drei Fortschrittsbalken waren immer leer** | Ziele 2 und 3 liegen definitionsgemäss vor ihrem Startpunkt | Balken nur noch fürs nächste Ziel |
+| 9 | **PWA-Banner formulierte „noch 15 km bis 5.215 km"** | Generische Nahziele heissen bereits nach ihrer Kilometerzahl | `next_kind` in `today.json`; Text danach formuliert |
+
+**Nicht kaputt (verifiziert):** Shift/Gangempfehlung arbeitet korrekt gegen das
+Zielband 85–95 (leichter/halten/schwerer), die Windrose rechnet Gegen-/Rücken-/
+Seitenwind richtig, `build_today.py` schreibt das `milestone`-Feld, und die Tabs
+„Orden" und „Wartung" rendern mit echten Kilometern. **Shift braucht weiterhin
+einen BLE-Kadenzsensor** — ohne Sensor gibt es keine Kadenz, das ist Physik,
+kein Bug.
 
 ---
 

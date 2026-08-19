@@ -331,6 +331,17 @@ def de_num(x: float, unit: str = "", dec: int = 0) -> str:
     return f"{s}{(' ' + unit) if unit else ''}"
 
 
+def km_label(x: float) -> str:
+    """Kilometer für Orden: kleine Distanzen brauchen Nachkommastellen.
+
+    Ohne das stand bei „Ein Shai-Hulud" (0,4 km) schlicht „0 km" – der Orden
+    sah dadurch kaputt aus.
+    """
+    if x < 10:
+        return de_num(round(x, 1), "km", 1)
+    return de_num(x, "km", 0)
+
+
 def route_map(rt: routing.Route) -> go.Figure:
     df = pd.DataFrame({"lat": rt.lats, "lon": rt.lons})
     center = {"lat": sum(rt.lats) / len(rt.lats), "lon": sum(rt.lons) / len(rt.lons)}
@@ -1146,13 +1157,16 @@ with tab_orden:
 
     st.markdown("#### Nächste Ziele")
     if mv.next_targets:
-        for t in mv.next_targets:
+        for i, t in enumerate(mv.next_targets):
             head = f"{t.icon} **{t.label}**"
             if t.kind == "orden" and t.blurb:
                 head += f" · _{t.blurb}_"
             rem = f"noch **{de_num(t.remaining_km, 'km', 0)}**"
-            st.markdown(f"{head}  \n{rem} · Ziel bei {de_num(t.km, 'km', 0)}")
-            st.progress(min(max(t.progress, 0.0), 1.0))
+            st.markdown(f"{head}  \n{rem} · Ziel bei {km_label(t.km)}")
+            # Balken nur fürs unmittelbar nächste Ziel: die weiter entfernten
+            # liegen per Definition noch vor dem Startpunkt und blieben immer leer.
+            if i == 0:
+                st.progress(min(max(t.progress, 0.0), 1.0))
     else:
         st.success("Alle Orden gesammelt – Wahnsinn! 🏆")
 
@@ -1174,7 +1188,7 @@ with tab_orden:
                 f'min-height:120px">'
                 f'<div style="font-size:30px;line-height:1">{b.icon}</div>'
                 f'<div style="font-weight:600;margin-top:6px;font-size:14px">{lock}{b.name}</div>'
-                f'<div style="color:{MUTED};font-size:12px;margin-top:1px">{de_num(b.km, "km", 0)}</div>'
+                f'<div style="color:{MUTED};font-size:12px;margin-top:1px">{km_label(b.km)}</div>'
                 f'<div style="color:{FAINT};font-size:11px;margin-top:4px;line-height:1.35">{b.blurb}</div>'
                 f'</div>',
                 unsafe_allow_html=True,

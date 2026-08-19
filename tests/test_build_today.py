@@ -62,6 +62,8 @@ def test_build_writes_valid_today_json(tmp_path):
     assert data["milestone"] is not None
     assert data["milestone"]["orden_total"] >= 1
     assert data["milestone"]["total_km"] > 0
+    # Die PWA formuliert den Banner-Text abhängig von der Zielart.
+    assert data["milestone"]["next_kind"] in ("orden", "step", None)
 
     # today.json ist bewusst route-frei (Datenschutz): kein Route-Feld.
     assert "route" not in data

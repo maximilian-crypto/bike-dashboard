@@ -68,6 +68,9 @@ def _milestone_payload() -> dict[str, Any] | None:
             "orden_total": mv.badges_total,
             "next_name": nxt.label if nxt else None,
             "next_icon": nxt.icon if nxt else None,
+            # "orden" = benannter Orden, "step" = generisches Nahziel (Label ist
+            # bereits eine Kilometerzahl) – die PWA formuliert danach.
+            "next_kind": nxt.kind if nxt else None,
             "next_remaining_km": round(nxt.remaining_km, 1) if nxt else None,
             "next_km": round(nxt.km, 1) if nxt else None,
         }

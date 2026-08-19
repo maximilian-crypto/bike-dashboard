@@ -375,7 +375,7 @@ let map=null, trail=null, marker=null, routeLayer=null;
 let windFrom=0, windSpeed=0, lastWindFetch=0;
 let route=null, lastZoneInTarget=true, searchIdx=0;
 let compassOn=false, compassHeading=null, lastArrow=0;
-let pitchRaw=null, gradOffset=0, gradVal=null, gradSmooth=null;
+let pitchRaw=null, gradOffset=0, gradVal=null, gradSmooth=null, gradCalibrated=false;
 
 // ---------- Helpers ----------
 // Karvonen/HRR: Anteil der Herzfrequenzreserve (mit Ruhepuls), sonst %max.
@@ -444,6 +444,16 @@ function toggleCoach(){
 
 // ---------- Map ----------
 function initMap(){
+  // Leaflet kommt vom CDN und fehlt offline bzw. bei schlechtem Netz. Ohne diese
+  // Prüfung wirft L.map() – und weil initMap() in der Startkette steht, liefen
+  // danach weder GPS noch today.json. Die Karte ist Beiwerk, Tacho und Zonen nicht.
+  if(typeof L==='undefined'){
+    const el=$('map');
+    if(el) el.innerHTML='<div style="display:flex;align-items:center;justify-content:center;'
+      +'height:100%;color:var(--muted);font-size:13px;text-align:center;padding:14px">'
+      +'Karte offline nicht verfügbar<br>Tacho, Puls und Wind laufen weiter.</div>';
+    return;
+  }
   map=L.map('map',{zoomControl:false,attributionControl:false}).setView([53.585,9.475],14);
   L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png',{maxZoom:19}).addTo(map);
   trail=L.polyline([],{color:'#fff',weight:4,opacity:.7}).addTo(map);
@@ -469,9 +479,11 @@ function onPos(p){
   if(!compassOn && hd!=null&&!isNaN(hd)) heading=hd;
   if(spd!=null){ spdVal=Math.max(0,spd); $('speed').textContent=spdVal.toFixed(0); updateGauge('speed',spdVal); }
   lastPos={lat,lon,t:p.timestamp};
-  marker.setLatLng([lat,lon]);
-  if(running) trail.addLatLng([lat,lon]);
-  map.setView([lat,lon], map.getZoom()<15?16:map.getZoom());
+  // Karte nur bedienen, wenn Leaflet geladen ist – sonst brachen hier alle
+  // folgenden Anzeigen (Distanz, Zeit, Ø-Tempo, Wind) mit ab.
+  if(marker) marker.setLatLng([lat,lon]);
+  if(running && trail) trail.addLatLng([lat,lon]);
+  if(map) map.setView([lat,lon], map.getZoom()<15?16:map.getZoom());
   $('dist').textContent=(distance/1000).toFixed(1);
   if(startT) $('time').textContent=fmtTime(Date.now()-startT);
   if(movingMs>0) $('avg').textContent=((distance/1000)/(movingMs/3600000)).toFixed(0);
@@ -526,9 +538,24 @@ async function enableCompass(){
     if(typeof DeviceOrientationEvent!=='undefined' && typeof DeviceOrientationEvent.requestPermission==='function'){
       const p=await DeviceOrientationEvent.requestPermission(); if(p!=='granted'){ $('compTxt').textContent='aus'; return; }
     }
-    window.addEventListener('deviceorientationabsolute', onOrient, true);
-    window.addEventListener('deviceorientation', onOrient, true);
+    listenOrientation();
   }catch(err){ console.log(err); }
+}
+// Sensor-Listener nur einmal registrieren (Kompass UND Steigung hängen dran).
+let orientBound=false;
+function listenOrientation(){
+  if(orientBound) return;
+  orientBound=true;
+  window.addEventListener('deviceorientationabsolute', onOrient, true);
+  window.addEventListener('deviceorientation', onOrient, true);
+}
+// Android/Chrome liefert die Neigung ohne Nachfrage – dort sofort lauschen,
+// damit die Steigungs-Kachel nicht erst nach einem Tippen erwacht. Nur iOS
+// verlangt eine Nutzergeste (DeviceOrientationEvent.requestPermission).
+function autoEnableOrientation(){
+  if(typeof DeviceOrientationEvent==='undefined') return;
+  if(typeof DeviceOrientationEvent.requestPermission==='function') return;  // iOS: wartet auf Tippen
+  listenOrientation();
 }
 
 // ---------- Steigung (kalibrierbar) ----------
@@ -536,8 +563,18 @@ async function enableCompass(){
 // Steigung = tan(Pitch − Kalibrier-Offset); geglättet gegen GPS-/Sensorzappeln.
 function updateGrad(){
   if(pitchRaw==null) return;
-  const deg=pitchRaw-gradOffset;
-  const pct=Math.tan(deg*Math.PI/180)*100;
+  // Vor dem Kalibrieren ist der Rohwinkel bedeutungslos (hängt am Handyhalter) –
+  // dann lieber ehrlich „—" zeigen als eine erfundene Steigung.
+  if(!gradCalibrated){
+    $('grad').textContent='—';
+    const b0=$('gradBadge');
+    b0.textContent='tippen = 0 %'; b0.style.background='#2a3142'; b0.style.color='var(--text)';
+    return;
+  }
+  // Winkel begrenzen: ein aufrecht montiertes Handy liefert beta≈90°, und
+  // tan(90°) läuft gegen unendlich – ohne Kalibrierung stand sonst Unsinn da.
+  const deg=Math.max(-40,Math.min(40,pitchRaw-gradOffset));
+  const pct=Math.max(-40,Math.min(40,Math.tan(deg*Math.PI/180)*100));
   gradSmooth=(gradSmooth==null)?pct:gradSmooth*0.8+pct*0.2;
   gradVal=gradSmooth;
   $('grad').textContent=(gradSmooth>=0?'+':'')+gradSmooth.toFixed(1);
@@ -548,8 +585,9 @@ function updateGrad(){
 }
 function calibrateGrad(){
   if(pitchRaw==null){ enableCompass(); $('gradBadge').textContent='neige & tippe'; return; }
-  gradOffset=pitchRaw; gradSmooth=0;
+  gradOffset=pitchRaw; gradSmooth=0; gradCalibrated=true;
   localStorage.setItem('gradOffset',String(gradOffset));
+  localStorage.setItem('gradCal','1');
   if(navigator.vibrate) navigator.vibrate(60);
   updateGrad();
 }
@@ -655,9 +693,12 @@ async function generateRoute(){
   drawRoute(pick);
 }
 function drawRoute(c){
-  if(routeLayer) map.removeLayer(routeLayer);
-  routeLayer=L.polyline(c.coords,{color:'#ff5a36',weight:6,opacity:.92}).addTo(map);
-  map.fitBounds(routeLayer.getBounds(),{padding:[30,30]});
+  // Ohne Karte trotzdem navigieren: die Abbiegehinweise unten brauchen kein Leaflet.
+  if(map){
+    if(routeLayer) map.removeLayer(routeLayer);
+    routeLayer=L.polyline(c.coords,{color:'#ff5a36',weight:6,opacity:.92}).addTo(map);
+    map.fitBounds(routeLayer.getBounds(),{padding:[30,30]});
+  }
   const props=c.ft.properties, seg=(props.segments||[]); const steps=[];
   seg.forEach(s=>s.steps.forEach(st=>steps.push({instr:st.instruction,wp0:st.way_points[0],wp1:st.way_points[1]})));
   route={coords:c.coords,cum:c.cum,total:c.total,steps}; searchIdx=0;
@@ -733,8 +774,14 @@ function showTodayBanner(d){
   if(rec.cadence && rec.cadence!=='–') bits.push(rec.cadence+' U/min');
   if(rec.target_distance_km) bits.push(`Ziel ~${Math.round(rec.target_distance_km)} km · „Route" tippen`);
   const ms=d.milestone;
-  if(ms && ms.next_name && ms.next_remaining_km!=null)
-    bits.push(`${ms.next_icon||'🏅'} noch ${Math.round(ms.next_remaining_km)} km bis ${ms.next_name}`);
+  if(ms && ms.next_name && ms.next_remaining_km!=null){
+    const rem=Math.round(ms.next_remaining_km);
+    // Generische Nahziele heissen schon "5.215 km" – dann nicht "bis 5.215 km"
+    // doppeln, sondern den Gesamtstand als Ziel ausweisen.
+    bits.push(ms.next_kind==='step'
+      ? `${ms.next_icon||'🎯'} noch ${rem} km bis zum nächsten Ziel (${ms.next_name})`
+      : `${ms.next_icon||'🏅'} noch ${rem} km bis ${ms.next_name}`);
+  }
   $('navMeta').textContent=bits.join(' · ');
 }
 
@@ -744,6 +791,7 @@ function loadSettings(){
   maxHR=s.maxHR||198; restHR=s.restHR||72; targetZone=s.targetZone||2; orsKey=s.orsKey||''; targetKm=s.targetKm||30; windklug=s.windklug!==false;
   cadLo=s.cadLo||85; cadHi=s.cadHi||95; spdLo=s.spdLo||22; spdHi=s.spdHi||30;
   gradOffset=parseFloat(localStorage.getItem('gradOffset')||'0')||0;
+  gradCalibrated=localStorage.getItem('gradCal')==='1';
   $('maxhr').value=maxHR; $('resthr').value=restHR; $('targetZone').value=targetZone; $('orsKey').value=orsKey;
   $('targetKm').value=targetKm; $('distLbl').textContent=targetKm; $('windklug').checked=windklug;
   $('cadLo').value=cadLo; $('cadHi').value=cadHi; $('spdLo').value=spdLo; $('spdHi').value=spdHi;
@@ -774,7 +822,12 @@ $('mapToggle').onclick=()=>{
 };
 
 buildIcons(); $('startBtn').querySelector('.ic').innerHTML=ICON.play;
-loadSettings(); buildGauges(); updateShift(); initMap(); startGeo(); loadToday();
+// Startkette einzeln abgesichert: ein Fehler in einem Schritt (z. B. fehlendes
+// Leaflet) darf die folgenden Schritte nicht mehr verschlucken.
+function boot(name,fn){ try{ fn(); }catch(e){ console.log('Start-Fehler in '+name,e); } }
+boot('loadSettings',loadSettings); boot('buildGauges',buildGauges); boot('updateShift',updateShift);
+boot('initMap',initMap); boot('startGeo',startGeo); boot('loadToday',loadToday);
+boot('autoOrient',autoEnableOrientation);
 document.addEventListener('visibilitychange',async()=>{ if(document.visibilityState==='visible'&&running&&!wakeLock){ try{ wakeLock=await navigator.wakeLock.request('screen'); }catch(e){} } });
 if('serviceWorker' in navigator) navigator.serviceWorker.register('sw.js').catch(()=>{});
 </script>
