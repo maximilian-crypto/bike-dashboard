@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-08-19T00:52:32+00:00",
+  "generated_at": "2026-08-19T04:30:58+00:00",
   "date": "2026-08-19",
   "recommendation": {
     "kind": "ENDURANCE",
@@ -42,11 +42,11 @@
   },
   "weather": {
     "temp_c": 15.9,
-    "wind_kmh": 10.9,
-    "wind_deg": 243,
+    "wind_kmh": 13.2,
+    "wind_deg": 225,
     "wind_dir": "SW",
-    "gust_kmh": 22.3,
-    "code": 3,
-    "desc": "bedeckt"
+    "gust_kmh": 27.4,
+    "code": 51,
+    "desc": "leichter Niesel"
   }
 }
