@@ -57,6 +57,12 @@ def test_build_writes_valid_today_json(tmp_path):
     assert z["rest_hr"] == 52          # aus dem Recovery-Ruhepuls im Helper
     assert z["method"] == "Karvonen/HRR"
 
+    # Meilenstein-Feld ist da und (mit geseedeten Fahrten) befüllt.
+    assert "milestone" in data
+    assert data["milestone"] is not None
+    assert data["milestone"]["orden_total"] >= 1
+    assert data["milestone"]["total_km"] > 0
+
     # today.json ist bewusst route-frei (Datenschutz): kein Route-Feld.
     assert "route" not in data
     # Ohne Heimat-Koordinaten & ohne Netz kein Wetter.

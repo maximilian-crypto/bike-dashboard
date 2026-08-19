@@ -103,9 +103,24 @@
   body.mapcollapsed .tile{min-height:0;}
   body.mapcollapsed .tile .val{font-size:62px;}
 
-  .wind .arrowwrap{position:absolute;top:11px;right:11px;width:38px;height:38px;opacity:.95;}
-  .wind .arrow{transform-origin:50% 50%;transition:transform .5s ease;}
-  .wind .sub{font-size:12px;color:var(--muted);margin-top:3px;font-weight:500;}
+  /* Wind als Kompass-Rose: Fahrtrichtung oben, N dreht mit, Pfeil = relative Windrichtung */
+  .wind .rosewrap{width:100%;display:flex;justify-content:center;margin:2px 0;}
+  .rose{width:112px;height:112px;max-width:100%;overflow:visible;}
+  body.mapcollapsed .rose{width:148px;height:148px;}
+  .rose-ring{fill:none;stroke:var(--border2);stroke-width:2;}
+  .rose-tick{stroke:var(--faint);stroke-width:1.5;}
+  .rose-lbl{fill:var(--muted);font-size:11px;font-weight:700;text-anchor:middle;dominant-baseline:middle;}
+  .rose-n{fill:var(--accent);}
+  #roseRing{transition:transform .4s ease;}
+  .rose-you{fill:var(--text);}
+  #windArrow{transition:transform .4s ease;}
+  .rose-val{fill:var(--text);font-size:23px;font-weight:700;text-anchor:middle;dominant-baseline:middle;font-variant-numeric:tabular-nums;}
+  .rose-unit{fill:var(--muted);font-size:9px;font-weight:600;text-anchor:middle;letter-spacing:.08em;}
+  .wind .sub{font-size:12px;color:var(--muted);margin-top:2px;font-weight:500;text-align:center;}
+  /* Gang- & Steigungs-Badge oben rechts (wie Kadenz-Badge) */
+  #shiftBadge,#gradBadge{position:absolute;top:11px;right:11px;font-size:12px;font-weight:700;
+    padding:3px 9px;border-radius:9px;background:#2a3142;color:var(--text);letter-spacing:.02em;
+    box-shadow:0 2px 8px -3px #000;transition:background .3s;}
 
   /* Gauge */
   .gauge{display:none;margin-top:6px;}
@@ -216,17 +231,39 @@
       <div class="gauge" id="gaugeCad"></div>
     </div>
 
-    <div class="tile wind">
+    <div class="tile wind" id="windTile">
       <div class="lbl"><i class="ic" data-ic="wind" style="--s:13px"></i> Wind</div>
-      <div class="arrowwrap">
-        <svg width="38" height="38" viewBox="0 0 46 46">
-          <g id="windArrow" class="arrow">
-            <path d="M23 7 L31.5 27 L23 22.5 L14.5 27 Z" fill="var(--accent)"/>
-          </g>
+      <div class="rosewrap">
+        <svg viewBox="0 0 100 100" class="rose" aria-label="Windrose">
+          <circle class="rose-ring" cx="50" cy="50" r="46"/>
+          <line class="rose-tick" x1="50" y1="6" x2="50" y2="12"/>
+          <line class="rose-tick" x1="94" y1="50" x2="88" y2="50"/>
+          <line class="rose-tick" x1="50" y1="94" x2="50" y2="88"/>
+          <line class="rose-tick" x1="6" y1="50" x2="12" y2="50"/>
+          <path class="rose-you" d="M50 1 L54 9 L46 9 Z"/>
+          <text id="rlN" class="rose-lbl rose-n" x="50" y="16">N</text>
+          <text id="rlE" class="rose-lbl" x="84" y="50">O</text>
+          <text id="rlS" class="rose-lbl" x="50" y="84">S</text>
+          <text id="rlW" class="rose-lbl" x="16" y="50">W</text>
+          <g id="windArrow"><path d="M50 31 L43 15 L50 19 L57 15 Z" fill="var(--accent)"/></g>
+          <text id="wind" class="rose-val" x="50" y="52">—</text>
+          <text class="rose-unit" x="50" y="65">km/h</text>
         </svg>
       </div>
-      <div class="valrow"><span id="wind" class="val">—</span><span class="unit">km/h</span></div>
       <div id="windSub" class="sub">aus —</div>
+    </div>
+
+    <div id="gradTile" class="tile">
+      <div class="lbl"><i class="ic" data-ic="slope" style="--s:13px"></i> Steigung</div>
+      <div id="gradBadge">tippen = 0 %</div>
+      <div class="valrow"><span id="grad" class="val">—</span><span class="unit">%</span></div>
+    </div>
+
+    <div id="shiftTile" class="tile">
+      <div class="lbl"><i class="ic" data-ic="gear" style="--s:13px"></i> Gang</div>
+      <div id="shiftBadge">—</div>
+      <div class="valrow"><span id="shift" class="val" style="font-size:34px">–</span></div>
+      <div id="shiftSub" class="sub" style="font-size:12px;color:var(--muted);margin-top:3px;font-weight:500">warte auf Kadenz</div>
     </div>
   </div>
 
@@ -319,6 +356,8 @@ const ICON = {
   arrive:'<svg viewBox="0 0 24 24"><path d="M12 21s6.5-5.4 6.5-10.5A6.5 6.5 0 0 0 5.5 10.5C5.5 15.6 12 21 12 21Z"/><path d="M9.5 10.3l1.8 1.8 3.2-3.4"/></svg>',
   warn:'<svg viewBox="0 0 24 24"><path d="M12 4l9.3 16H2.7L12 4Z"/><path d="M12 10v4.2"/><circle cx="12" cy="17.4" r="0.7" fill="currentColor" stroke="none"/></svg>',
   chevron:'<svg viewBox="0 0 24 24"><path d="M6 9l6 6 6-6"/></svg>',
+  slope:'<svg viewBox="0 0 24 24"><path d="M3 20h18"/><path d="M5 20L19 7"/><path d="M19 7v6"/></svg>',
+  gear:'<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3.1"/><path d="M12 3.4v2.5M12 18.1v2.5M4.6 4.6l1.8 1.8M17.6 17.6l1.8 1.8M3.4 12h2.5M18.1 12h2.5M4.6 19.4l1.8-1.8M17.6 6.4l1.8-1.8"/></svg>',
 };
 function buildIcons(root){ (root||document).querySelectorAll('[data-ic]').forEach(el=>{ el.innerHTML = ICON[el.dataset.ic]||''; }); }
 
@@ -336,6 +375,7 @@ let map=null, trail=null, marker=null, routeLayer=null;
 let windFrom=0, windSpeed=0, lastWindFetch=0;
 let route=null, lastZoneInTarget=true, searchIdx=0;
 let compassOn=false, compassHeading=null, lastArrow=0;
+let pitchRaw=null, gradOffset=0, gradVal=null, gradSmooth=null;
 
 // ---------- Helpers ----------
 // Karvonen/HRR: Anteil der Herzfrequenzreserve (mit Ruhepuls), sonst %max.
@@ -451,7 +491,16 @@ async function fetchWind(lat,lon){
 }
 function updateWindArrow(){
   const rel=(windFrom-heading+360)%360;
-  $('windArrow').setAttribute('transform',`rotate(${rel} 23 23)`);
+  // Heading-up: Himmelsrichtungs-Labels an ihre gedrehte Position setzen, aber
+  // aufrecht lassen (nur Position folgt der Fahrtrichtung, oben = wohin du fährst).
+  const R=34;
+  [['rlN',0],['rlE',90],['rlS',180],['rlW',270]].forEach(([id,b])=>{
+    const a=(b-heading)*Math.PI/180, el=$(id);
+    el.setAttribute('x',(50+R*Math.sin(a)).toFixed(1));
+    el.setAttribute('y',(50-R*Math.cos(a)).toFixed(1));
+  });
+  // Windpfeil zeigt die Richtung, AUS der der Wind kommt – relativ zur Fahrtrichtung.
+  $('windArrow').setAttribute('transform',`rotate(${rel} 50 50)`);
   const comp=windSpeed*Math.cos(rel*Math.PI/180), cross=Math.abs(windSpeed*Math.sin(rel*Math.PI/180));
   let label=(Math.abs(comp)<cross)?'Seitenwind':(comp>0?`Gegenwind ${Math.round(comp)}`:`Rückenwind ${Math.round(-comp)}`);
   if(label!=='Seitenwind') label+=' km/h';
@@ -461,6 +510,8 @@ function updateWindArrow(){
 
 // ---------- Kompass ----------
 function onOrient(e){
+  // beta = Vor-/Rück-Neigung → Steigung (unabhängig vom Kompass-Heading auswerten).
+  if(e.beta!=null && !isNaN(e.beta)){ pitchRaw=e.beta; updateGrad(); }
   let h=null;
   if(e.webkitCompassHeading!=null && !isNaN(e.webkitCompassHeading)) h=e.webkitCompassHeading;
   else if(e.absolute && e.alpha!=null){ const sa=(screen.orientation&&screen.orientation.angle)||0; h=(360-e.alpha+sa)%360; }
@@ -478,6 +529,45 @@ async function enableCompass(){
     window.addEventListener('deviceorientationabsolute', onOrient, true);
     window.addEventListener('deviceorientation', onOrient, true);
   }catch(err){ console.log(err); }
+}
+
+// ---------- Steigung (kalibrierbar) ----------
+// Der Handyhalter sitzt nicht immer gleich → auf ebener Strecke „tippen = 0 %".
+// Steigung = tan(Pitch − Kalibrier-Offset); geglättet gegen GPS-/Sensorzappeln.
+function updateGrad(){
+  if(pitchRaw==null) return;
+  const deg=pitchRaw-gradOffset;
+  const pct=Math.tan(deg*Math.PI/180)*100;
+  gradSmooth=(gradSmooth==null)?pct:gradSmooth*0.8+pct*0.2;
+  gradVal=gradSmooth;
+  $('grad').textContent=(gradSmooth>=0?'+':'')+gradSmooth.toFixed(1);
+  const col=gradSmooth>1?'#e8503a':(gradSmooth<-1?'#3a9bdc':'#2ecc71');
+  const b=$('gradBadge');
+  b.textContent=Math.abs(gradSmooth)<1?'flach':(gradSmooth>0?'bergauf':'bergab');
+  b.style.background=col; b.style.color='#0a0c10';
+}
+function calibrateGrad(){
+  if(pitchRaw==null){ enableCompass(); $('gradBadge').textContent='neige & tippe'; return; }
+  gradOffset=pitchRaw; gradSmooth=0;
+  localStorage.setItem('gradOffset',String(gradOffset));
+  if(navigator.vibrate) navigator.vibrate(60);
+  updateGrad();
+}
+
+// ---------- Gangempfehlung (Shift) ----------
+// Aus der Kadenz relativ zum Zielband: zu langsam treten → leichterer Gang,
+// zu schnell → schwererer Gang, im Band → halten.
+function updateShift(){
+  const el=$('shift'), sub=$('shiftSub'), badge=$('shiftBadge');
+  if(cadVal==null){ el.textContent='–'; el.style.color='var(--text)'; sub.textContent='warte auf Kadenz';
+    badge.textContent='—'; badge.style.background='#2a3142'; badge.style.color='var(--text)'; return; }
+  const st=statusOf('cad',cadVal);
+  let txt,sym,col,hint;
+  if(st==='below'){ txt='leichter'; sym='⬇'; col='#3a9bdc'; hint=`Kadenz ${cadVal} < ${cadLo} — leichteren Gang, schneller treten`; }
+  else if(st==='above'){ txt='schwerer'; sym='⬆'; col='#e8503a'; hint=`Kadenz ${cadVal} > ${cadHi} — schwereren Gang, kräftiger treten`; }
+  else { txt='halten'; sym='✓'; col='#2ecc71'; hint=`Kadenz ${cadVal} im Ziel ${cadLo}–${cadHi}`; }
+  el.textContent=txt; el.style.color=col; sub.textContent=hint;
+  badge.textContent=sym; badge.style.background=col; badge.style.color='#0a0c10';
 }
 
 // ---------- Heart rate ----------
@@ -519,7 +609,7 @@ function onCSC(v){
   const f=v.getUint8(0); let off=1; if(f&0x01) off+=6;
   if(f&0x02){ const c=v.getUint16(off,true),t=v.getUint16(off+2,true);
     if(lastCrank!=null){ const dc=(c-lastCrank+65536)%65536, dt=(t-lastCrankT+65536)%65536;
-      if(dt>0){ const rpm=Math.round((dc/(dt/1024))*60); cadVal=rpm; $('cad').textContent=rpm; updateGauge('cad',rpm); setCadIndicator(rpm); } }
+      if(dt>0){ const rpm=Math.round((dc/(dt/1024))*60); cadVal=rpm; $('cad').textContent=rpm; updateGauge('cad',rpm); setCadIndicator(rpm); updateShift(); } }
     lastCrank=c; lastCrankT=t; }
 }
 // Trittfrequenz-Kachel je nach Zielband (cadLo–cadHi aus recommend.py) einfärben.
@@ -630,7 +720,7 @@ function applyTodayZones(d){
   $('maxhr').value=maxHR; $('resthr').value=restHR; $('targetZone').value=targetZone;
   $('cadLo').value=cadLo; $('cadHi').value=cadHi;
   $('targetKm').value=targetKm; $('distLbl').textContent=targetKm;
-  refreshAllGauges();
+  refreshAllGauges(); updateShift();
   if(hrVal!=null) onHR(hrVal);   // Zonenfarbe/-Badge mit neuen Grenzen neu setzen
 }
 function showTodayBanner(d){
@@ -642,6 +732,9 @@ function showTodayBanner(d){
   if(rec.hr_low) bits.push(`Z${rec.zone_number} ${rec.hr_low}–${rec.hr_high} bpm`);
   if(rec.cadence && rec.cadence!=='–') bits.push(rec.cadence+' U/min');
   if(rec.target_distance_km) bits.push(`Ziel ~${Math.round(rec.target_distance_km)} km · „Route" tippen`);
+  const ms=d.milestone;
+  if(ms && ms.next_name && ms.next_remaining_km!=null)
+    bits.push(`${ms.next_icon||'🏅'} noch ${Math.round(ms.next_remaining_km)} km bis ${ms.next_name}`);
   $('navMeta').textContent=bits.join(' · ');
 }
 
@@ -650,6 +743,7 @@ function loadSettings(){
   const s=JSON.parse(localStorage.getItem('rideCfg')||'{}');
   maxHR=s.maxHR||198; restHR=s.restHR||72; targetZone=s.targetZone||2; orsKey=s.orsKey||''; targetKm=s.targetKm||30; windklug=s.windklug!==false;
   cadLo=s.cadLo||85; cadHi=s.cadHi||95; spdLo=s.spdLo||22; spdHi=s.spdHi||30;
+  gradOffset=parseFloat(localStorage.getItem('gradOffset')||'0')||0;
   $('maxhr').value=maxHR; $('resthr').value=restHR; $('targetZone').value=targetZone; $('orsKey').value=orsKey;
   $('targetKm').value=targetKm; $('distLbl').textContent=targetKm; $('windklug').checked=windklug;
   $('cadLo').value=cadLo; $('cadHi').value=cadHi; $('spdLo').value=spdLo; $('spdHi').value=spdHi;
@@ -672,6 +766,7 @@ $('hrBtn').onclick=connectHR;
 $('cadBtn').onclick=connectCad;
 $('targetKm').oninput=e=>$('distLbl').textContent=e.target.value;
 document.querySelector('.tile.wind').onclick=enableCompass;
+$('gradTile').onclick=calibrateGrad;
 $('mapToggle').onclick=()=>{
   const collapsed=document.body.classList.toggle('mapcollapsed');
   $('mapToggleTxt').textContent=collapsed?'Karte zeigen':'Karte ausblenden';
@@ -679,7 +774,7 @@ $('mapToggle').onclick=()=>{
 };
 
 buildIcons(); $('startBtn').querySelector('.ic').innerHTML=ICON.play;
-loadSettings(); buildGauges(); initMap(); startGeo(); loadToday();
+loadSettings(); buildGauges(); updateShift(); initMap(); startGeo(); loadToday();
 document.addEventListener('visibilitychange',async()=>{ if(document.visibilityState==='visible'&&running&&!wakeLock){ try{ wakeLock=await navigator.wakeLock.request('screen'); }catch(e){} } });
 if('serviceWorker' in navigator) navigator.serviceWorker.register('sw.js').catch(()=>{});
 </script>
