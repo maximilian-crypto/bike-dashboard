@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-08-19T12:33:41+00:00",
+  "generated_at": "2026-08-19T16:23:53+00:00",
   "date": "2026-08-19",
   "recommendation": {
     "kind": "THRESHOLD",
@@ -42,10 +42,10 @@
   },
   "weather": {
     "temp_c": 18.5,
-    "wind_kmh": 19.3,
-    "wind_deg": 233,
-    "wind_dir": "SW",
-    "gust_kmh": 38.5,
+    "wind_kmh": 12.5,
+    "wind_deg": 252,
+    "wind_dir": "W",
+    "gust_kmh": 31.0,
     "code": 3,
     "desc": "bedeckt"
   },
