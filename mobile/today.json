@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-08-20T16:27:06+00:00",
+  "generated_at": "2026-08-20T20:21:23+00:00",
   "date": "2026-08-20",
   "recommendation": {
     "kind": "REST",
@@ -41,13 +41,13 @@
     "method": "Karvonen/HRR"
   },
   "weather": {
-    "temp_c": 16.9,
-    "wind_kmh": 9.4,
-    "wind_deg": 252,
-    "wind_dir": "W",
-    "gust_kmh": 18.0,
-    "code": 61,
-    "desc": "leichter Regen"
+    "temp_c": 14.0,
+    "wind_kmh": 9.0,
+    "wind_deg": 209,
+    "wind_dir": "SW",
+    "gust_kmh": 20.2,
+    "code": 80,
+    "desc": "Regenschauer"
   },
   "milestone": {
     "total_km": 807.7,
