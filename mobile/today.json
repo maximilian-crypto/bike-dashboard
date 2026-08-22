@@ -1,53 +1,53 @@
 {
-  "generated_at": "2026-08-22T08:20:58+00:00",
+  "generated_at": "2026-08-22T12:25:57+00:00",
   "date": "2026-08-22",
   "recommendation": {
-    "kind": "ENDURANCE",
-    "title": "Grundlagenausdauer (Z2)",
-    "readiness_band": "unknown",
-    "recovery_score": null,
-    "zone_number": 2,
-    "zone_label": "Z2 · Grundlage",
-    "hr_low": 144,
-    "hr_high": 157,
-    "cadence": "85–95",
+    "kind": "THRESHOLD",
+    "title": "Schwellen-Intervalle (Z4)",
+    "readiness_band": "green",
+    "recovery_score": 83.0,
+    "zone_number": 4,
+    "zone_label": "Z4 · Schwelle",
+    "hr_low": 171,
+    "hr_high": 184,
+    "cadence": "85–100",
     "cadence_low": 85,
-    "cadence_high": 95,
-    "rpe": "3–4",
+    "cadence_high": 100,
+    "rpe": "7–8",
     "duration_min": [
-      91,
-      124
+      71,
+      96
     ],
     "distance_km": [
-      31.4,
-      38.3
+      26.5,
+      32.4
     ],
-    "target_distance_km": 34.8,
+    "target_distance_km": 29.4,
     "week_hours": 1.0,
     "target_hours": 2.1,
     "tsb": 13.1,
     "rationale": [
-      "Keine aktuelle Whoop-Recovery — neutrale Annahme.",
+      "Whoop-Recovery heute: 83 %.",
       "Diese Woche bisher 1.0 h / Ziel ~2.1 h (47 %).",
       "Form (TSB) aktuell +13.",
-      "Ohne Erholungsdaten konservativ: ruhige Grundlage (Z2)."
+      "Bestens erholt & Luft im Plan: gezielte harte Einheit (Z4-Schwelle) — an frischen Tagen den harten Reiz wirklich hart fahren."
     ]
   },
   "zones": {
     "max_hr": 197,
     "rest_hr": 65,
     "lthr": null,
-    "target_zone": 2,
+    "target_zone": 4,
     "method": "Karvonen/HRR"
   },
   "weather": {
-    "temp_c": 15.4,
-    "wind_kmh": 10.5,
-    "wind_deg": 286,
-    "wind_dir": "W",
-    "gust_kmh": 25.2,
-    "code": 80,
-    "desc": "Regenschauer"
+    "temp_c": 17.3,
+    "wind_kmh": 20.0,
+    "wind_deg": 298,
+    "wind_dir": "NW",
+    "gust_kmh": 45.4,
+    "code": 61,
+    "desc": "leichter Regen"
   },
   "milestone": {
     "total_km": 807.7,
