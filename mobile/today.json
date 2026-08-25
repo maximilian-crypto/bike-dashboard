@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-08-25T04:33:13+00:00",
+  "generated_at": "2026-08-25T08:34:57+00:00",
   "date": "2026-08-25",
   "recommendation": {
     "kind": "ENDURANCE",
@@ -8,8 +8,8 @@
     "recovery_score": 54.0,
     "zone_number": 2,
     "zone_label": "Z2 · Grundlage",
-    "hr_low": 144,
-    "hr_high": 157,
+    "hr_low": 145,
+    "hr_high": 158,
     "cadence": "85–95",
     "cadence_low": 85,
     "cadence_high": 95,
@@ -25,7 +25,7 @@
     "target_distance_km": 34.8,
     "week_hours": 0.0,
     "target_hours": 2.0,
-    "tsb": 13.1,
+    "tsb": 13.0,
     "rationale": [
       "Whoop-Recovery heute: 54 %.",
       "Diese Woche bisher 0.0 h / Ziel ~2.0 h (0 %).",
@@ -35,19 +35,19 @@
   },
   "zones": {
     "max_hr": 197,
-    "rest_hr": 65,
+    "rest_hr": 66,
     "lthr": null,
     "target_zone": 2,
     "method": "Karvonen/HRR"
   },
   "weather": {
-    "temp_c": 10.0,
-    "wind_kmh": 7.5,
-    "wind_deg": 73,
+    "temp_c": 18.0,
+    "wind_kmh": 13.4,
+    "wind_deg": 84,
     "wind_dir": "O",
-    "gust_kmh": 14.4,
-    "code": 1,
-    "desc": "überwiegend klar"
+    "gust_kmh": 27.7,
+    "code": 0,
+    "desc": "klar"
   },
   "milestone": {
     "total_km": 807.7,
