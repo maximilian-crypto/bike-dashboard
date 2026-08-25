@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-08-25T00:54:25+00:00",
+  "generated_at": "2026-08-25T04:33:13+00:00",
   "date": "2026-08-25",
   "recommendation": {
     "kind": "ENDURANCE",
@@ -41,13 +41,13 @@
     "method": "Karvonen/HRR"
   },
   "weather": {
-    "temp_c": 11.4,
-    "wind_kmh": 7.6,
-    "wind_deg": 87,
+    "temp_c": 10.0,
+    "wind_kmh": 7.5,
+    "wind_deg": 73,
     "wind_dir": "O",
-    "gust_kmh": 14.0,
-    "code": 0,
-    "desc": "klar"
+    "gust_kmh": 14.4,
+    "code": 1,
+    "desc": "überwiegend klar"
   },
   "milestone": {
     "total_km": 807.7,
