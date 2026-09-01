@@ -1,62 +1,62 @@
 {
-  "generated_at": "2026-09-01T03:02:33+00:00",
+  "generated_at": "2026-09-01T09:04:51+00:00",
   "date": "2026-09-01",
   "recommendation": {
-    "kind": "ENDURANCE",
-    "title": "Grundlagenausdauer (Z2)",
+    "kind": "REST",
+    "title": "Ruhetag",
     "readiness_band": "yellow",
-    "recovery_score": 40.0,
-    "zone_number": 2,
-    "zone_label": "Z2 · Grundlage",
-    "hr_low": 145,
-    "hr_high": 158,
-    "cadence": "85–95",
-    "cadence_low": 85,
-    "cadence_high": 95,
-    "rpe": "3–4",
+    "recovery_score": 47.0,
+    "zone_number": null,
+    "zone_label": null,
+    "hr_low": null,
+    "hr_high": null,
+    "cadence": "–",
+    "cadence_low": null,
+    "cadence_high": null,
+    "rpe": "–",
     "duration_min": [
-      91,
-      124
+      0,
+      0
     ],
     "distance_km": [
-      31.5,
-      38.5
+      0.0,
+      0.0
     ],
-    "target_distance_km": 35.0,
-    "week_hours": 1.0,
+    "target_distance_km": 0.0,
+    "week_hours": 1.2,
     "target_hours": 2.0,
-    "tsb": 7.9,
+    "tsb": -1.7,
     "rationale": [
-      "Whoop-Recovery heute: 40 %.",
-      "Diese Woche bisher 1.0 h / Ziel ~2.0 h (49 %).",
-      "Form (TSB) aktuell +8.",
-      "Erholung mittel & Woche noch dünn: ruhige Grundlage (Z2)."
+      "Whoop-Recovery heute: 47 %.",
+      "Diese Woche bisher 1.2 h / Ziel ~2.0 h (60 %).",
+      "Form (TSB) aktuell -2.",
+      "Du bist heute bereits gefahren — Fokus auf Regeneration."
     ]
   },
   "zones": {
     "max_hr": 197,
     "rest_hr": 66,
     "lthr": null,
-    "target_zone": 2,
+    "target_zone": null,
     "method": "Karvonen/HRR"
   },
   "weather": {
-    "temp_c": 15.3,
-    "wind_kmh": 13.8,
-    "wind_deg": 242,
+    "temp_c": 17.1,
+    "wind_kmh": 18.5,
+    "wind_deg": 243,
     "wind_dir": "SW",
-    "gust_kmh": 29.9,
-    "code": 80,
-    "desc": "Regenschauer"
+    "gust_kmh": 37.8,
+    "code": 3,
+    "desc": "bedeckt"
   },
   "milestone": {
-    "total_km": 852.6,
+    "total_km": 856.7,
     "orden_earned": 19,
     "orden_total": 31,
     "next_name": "Deutschland (Nord–Süd)",
     "next_icon": "🇩🇪",
     "next_kind": "orden",
-    "next_remaining_km": 23.4,
+    "next_remaining_km": 19.3,
     "next_km": 876.0
   }
 }
