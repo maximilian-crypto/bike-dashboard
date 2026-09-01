@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-09-01T15:55:01+00:00",
+  "generated_at": "2026-09-01T19:08:12+00:00",
   "date": "2026-09-01",
   "recommendation": {
     "kind": "REST",
@@ -41,11 +41,11 @@
     "method": "Karvonen/HRR"
   },
   "weather": {
-    "temp_c": 18.8,
-    "wind_kmh": 16.6,
-    "wind_deg": 275,
+    "temp_c": 15.7,
+    "wind_kmh": 11.2,
+    "wind_deg": 266,
     "wind_dir": "W",
-    "gust_kmh": 37.8,
+    "gust_kmh": 26.6,
     "code": 0,
     "desc": "klar"
   },
