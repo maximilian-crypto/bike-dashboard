@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-09-02T08:18:37+00:00",
+  "generated_at": "2026-09-02T15:47:32+00:00",
   "date": "2026-09-02",
   "recommendation": {
     "kind": "REST",
@@ -23,12 +23,12 @@
       0.0
     ],
     "target_distance_km": 0.0,
-    "week_hours": 1.6,
+    "week_hours": 1.8,
     "target_hours": 2.0,
     "tsb": -3.3,
     "rationale": [
       "Whoop-Recovery heute: 74 %.",
-      "Diese Woche bisher 1.6 h / Ziel ~2.0 h (78 %).",
+      "Diese Woche bisher 1.8 h / Ziel ~2.0 h (90 %).",
       "Form (TSB) aktuell -3.",
       "Du bist heute bereits gefahren — Fokus auf Regeneration."
     ]
@@ -41,22 +41,22 @@
     "method": "Karvonen/HRR"
   },
   "weather": {
-    "temp_c": 16.1,
-    "wind_kmh": 13.8,
-    "wind_deg": 208,
-    "wind_dir": "SW",
-    "gust_kmh": 28.8,
-    "code": 3,
-    "desc": "bedeckt"
+    "temp_c": 19.3,
+    "wind_kmh": 13.1,
+    "wind_deg": 279,
+    "wind_dir": "W",
+    "gust_kmh": 34.6,
+    "code": 80,
+    "desc": "Regenschauer"
   },
   "milestone": {
-    "total_km": 864.2,
+    "total_km": 868.1,
     "orden_earned": 19,
     "orden_total": 31,
     "next_name": "Deutschland (Nord–Süd)",
     "next_icon": "🇩🇪",
     "next_kind": "orden",
-    "next_remaining_km": 11.8,
+    "next_remaining_km": 7.9,
     "next_km": 876.0
   }
 }
