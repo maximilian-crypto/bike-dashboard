@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-09-03T08:27:54+00:00",
+  "generated_at": "2026-09-03T15:37:15+00:00",
   "date": "2026-09-03",
   "recommendation": {
     "kind": "RECOVERY",
@@ -41,11 +41,11 @@
     "method": "Karvonen/HRR"
   },
   "weather": {
-    "temp_c": 17.7,
-    "wind_kmh": 19.7,
-    "wind_deg": 220,
-    "wind_dir": "SW",
-    "gust_kmh": 41.8,
+    "temp_c": 20.5,
+    "wind_kmh": 17.6,
+    "wind_deg": 269,
+    "wind_dir": "W",
+    "gust_kmh": 42.1,
     "code": 3,
     "desc": "bedeckt"
   },
