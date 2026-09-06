@@ -1,11 +1,11 @@
 {
-  "generated_at": "2026-09-05T21:50:46+00:00",
-  "date": "2026-09-05",
+  "generated_at": "2026-09-06T02:22:43+00:00",
+  "date": "2026-09-06",
   "recommendation": {
     "kind": "ENDURANCE",
     "title": "Grundlagenausdauer (Z2)",
-    "readiness_band": "yellow",
-    "recovery_score": 37.0,
+    "readiness_band": "unknown",
+    "recovery_score": null,
     "zone_number": 2,
     "zone_label": "Z2 · Grundlage",
     "hr_low": 145,
@@ -27,10 +27,10 @@
     "target_hours": 2.0,
     "tsb": -3.3,
     "rationale": [
-      "Whoop-Recovery heute: 37 %.",
+      "Keine aktuelle Whoop-Recovery — neutrale Annahme.",
       "Diese Woche bisher 1.8 h / Ziel ~2.0 h (90 %).",
       "Form (TSB) aktuell -3.",
-      "Erholung mittel & Woche noch dünn: ruhige Grundlage (Z2)."
+      "Ohne Erholungsdaten konservativ: ruhige Grundlage (Z2)."
     ]
   },
   "zones": {
@@ -41,13 +41,13 @@
     "method": "Karvonen/HRR"
   },
   "weather": {
-    "temp_c": 13.3,
-    "wind_kmh": 11.9,
-    "wind_deg": 265,
+    "temp_c": 11.3,
+    "wind_kmh": 10.2,
+    "wind_deg": 252,
     "wind_dir": "W",
-    "gust_kmh": 24.5,
-    "code": 3,
-    "desc": "bedeckt"
+    "gust_kmh": 19.8,
+    "code": 1,
+    "desc": "überwiegend klar"
   },
   "milestone": {
     "total_km": 868.1,
