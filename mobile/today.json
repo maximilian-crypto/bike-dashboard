@@ -1,11 +1,11 @@
 {
-  "generated_at": "2026-09-07T17:01:52+00:00",
+  "generated_at": "2026-09-07T22:26:48+00:00",
   "date": "2026-09-07",
   "recommendation": {
     "kind": "REST",
     "title": "Ruhetag",
-    "readiness_band": "green",
-    "recovery_score": 68.0,
+    "readiness_band": "yellow",
+    "recovery_score": 55.0,
     "zone_number": null,
     "zone_label": null,
     "hr_low": null,
@@ -23,12 +23,12 @@
       0.0
     ],
     "target_distance_km": 0.0,
-    "week_hours": 0.2,
+    "week_hours": 0.9,
     "target_hours": 2.0,
     "tsb": 4.4,
     "rationale": [
-      "Whoop-Recovery heute: 68 %.",
-      "Diese Woche bisher 0.2 h / Ziel ~2.0 h (10 %).",
+      "Whoop-Recovery heute: 55 %.",
+      "Diese Woche bisher 0.9 h / Ziel ~2.0 h (46 %).",
       "Form (TSB) aktuell +4.",
       "Du bist heute bereits gefahren — Fokus auf Regeneration."
     ]
@@ -41,22 +41,22 @@
     "method": "Karvonen/HRR"
   },
   "weather": {
-    "temp_c": 23.8,
-    "wind_kmh": 7.6,
-    "wind_deg": 199,
-    "wind_dir": "S",
-    "gust_kmh": 15.8,
+    "temp_c": 17.5,
+    "wind_kmh": 7.8,
+    "wind_deg": 257,
+    "wind_dir": "W",
+    "gust_kmh": 18.0,
     "code": 3,
     "desc": "bedeckt"
   },
   "milestone": {
-    "total_km": 871.8,
-    "orden_earned": 19,
+    "total_km": 884.8,
+    "orden_earned": 20,
     "orden_total": 31,
-    "next_name": "Deutschland (Nord–Süd)",
-    "next_icon": "🇩🇪",
-    "next_kind": "orden",
-    "next_remaining_km": 4.2,
-    "next_km": 876.0
+    "next_name": "885 km",
+    "next_icon": "🎯",
+    "next_kind": "step",
+    "next_remaining_km": 0.2,
+    "next_km": 885.0
   }
 }
