@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-09-11T08:28:45+00:00",
+  "generated_at": "2026-09-11T15:41:25+00:00",
   "date": "2026-09-11",
   "recommendation": {
     "kind": "REST",
@@ -23,12 +23,12 @@
       0.0
     ],
     "target_distance_km": 0.0,
-    "week_hours": 1.6,
+    "week_hours": 1.8,
     "target_hours": 2.0,
     "tsb": 2.3,
     "rationale": [
       "Whoop-Recovery heute: 74 %.",
-      "Diese Woche bisher 1.6 h / Ziel ~2.0 h (79 %).",
+      "Diese Woche bisher 1.8 h / Ziel ~2.0 h (88 %).",
       "Form (TSB) aktuell +2.",
       "Du bist heute bereits gefahren — Fokus auf Regeneration."
     ]
@@ -41,22 +41,22 @@
     "method": "Karvonen/HRR"
   },
   "weather": {
-    "temp_c": 13.9,
-    "wind_kmh": 10.8,
-    "wind_deg": 178,
-    "wind_dir": "S",
-    "gust_kmh": 21.6,
-    "code": 3,
-    "desc": "bedeckt"
+    "temp_c": 15.7,
+    "wind_kmh": 8.0,
+    "wind_deg": 216,
+    "wind_dir": "SW",
+    "gust_kmh": 26.6,
+    "code": 80,
+    "desc": "Regenschauer"
   },
   "milestone": {
-    "total_km": 895.9,
+    "total_km": 899.4,
     "orden_earned": 20,
     "orden_total": 31,
     "next_name": "930 km",
     "next_icon": "🎯",
     "next_kind": "step",
-    "next_remaining_km": 34.1,
+    "next_remaining_km": 30.6,
     "next_km": 930.0
   }
 }
