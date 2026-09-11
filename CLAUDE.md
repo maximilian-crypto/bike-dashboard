@@ -4,8 +4,12 @@
 > das Projekt tut, was bereits umgesetzt ist, welche Entscheidungen bewusst so
 > getroffen wurden, **woran es aktuell hakt** und was als Nächstes zu tun ist.
 >
-> Ergänzende Detail-Übergabe (kompletter Code + Diff der neuen Features):
-> **`HANDOFF_NEUE_FEATURES.md`**.
+> Ergänzende Dokumente:
+> - **`FEATURE_INDEX.md`** — Überblick über alle Features, ihre Verknüpfungen und
+>   ihren Reifegrad. **Erste Anlaufstelle**, bevor du etwas änderst.
+> - **`OFFENE_AUFGABEN.md`** — was noch offen ist und warum.
+> - **`SICHERHEIT.md`** — Datenschutz-/Secrets-Prüfung (Stand 11.09.2026).
+> - **`HANDOFF_NEUE_FEATURES.md`** — Detail-Übergabe der Orden-/Wartungs-Runde.
 
 ---
 
@@ -48,7 +52,9 @@ bike-dashboard/
 │  ├─ zones.py            # HF-Zonen (LTHR > Karvonen/HRR > %max)
 │  ├─ recommend.py        # Tagesempfehlung (Kern-Heuristik)
 │  ├─ routing.py          # windkluge Rundkurse via ORS
-│  ├─ weather.py          # Open-Meteo
+│  ├─ weather.py          # Open-Meteo (aktuell + Stundenraster)
+│  ├─ daytime.py          # NEU: Tageszeit-Empfehlung (wann heute fahren?)
+│  ├─ shift.py            # NEU: Gangempfehlung aus Puls UND Kadenz
 │  ├─ windlab.py          # Wind-Performance-Analyse
 │  ├─ milestones.py       # NEU: Distanz-Meilensteine & Orden
 │  ├─ maintenance.py      # NEU: Verschleiss-/Wartungs-Tracker
@@ -95,6 +101,24 @@ Live-Ride-PWA mit BLE-Puls/-Kadenz und Karte.
 
 **Tests:** 46 grün (`python -m pytest -q`), inkl. neuer Suites
 `tests/test_milestones.py` und `tests/test_maintenance.py`.
+
+### Neu in Branch `claude/adoring-knuth-jepz3l`
+
+| # | Feature | Wo | Status |
+|---|---|---|---|
+| 1 | **Gangempfehlung richtet sich nach dem Tagesziel** — Entscheidungsmatrix aus Puls *und* Kadenz. Z2-Tag mit 90 U/min, aber 185 bpm → „leichter" statt „halten". Funktioniert jetzt auch mit nur *einem* Sensor. | `bikedash/shift.py` + `mobile/ride.html` | Code fertig, im Browser mit simulierten Werten verifiziert; **echte BLE-Sensoren ungetestet** |
+| 2 | **Tageszeit-Empfehlung** — bestes Zeitfenster aus dem Stundenraster; Mo–Fr 13–20 Uhr, Sa/So 8–20 Uhr. Bei durchweg gutem Wetter entscheidet der Wind. | `bikedash/daytime.py` | Code fertig; **Live-Abruf gegen Open-Meteo ungetestet** (im Container geblockt) |
+| 3 | **Zeitfenster im Morgen-Push**, im Dashboard-Tab „Heute" und im PWA-Banner | `report.py`, `dashboard.py`, `ride.html` | fertig |
+| 4 | **Stundenraster von Open-Meteo** | `weather.hourly_forecast` | fertig, gegen eine realitätsgetreue Antwort getestet |
+| 5 | **Sicherheitsprüfung** der gesamten Historie + zwei Härtungen | `SICHERHEIT.md`, `report.yml`, `.gitignore` | fertig |
+
+**Tests danach:** 89 grün — darunter 7 Tests, die den **echten PWA-Code** aus
+`ride.html` in Node ausführen (`tests/test_shift_pwa.py`).
+
+**Wichtig für Änderungen an der Gangempfehlung:** `bikedash/shift.py` ist die
+einzige Quelle der Wahrheit. Die Matrix wandert über `today.json` in die PWA; der
+Block zwischen `SHIFT_MATRIX_DEFAULT:BEGIN/END` in `ride.html` ist nur der
+Offline-Notnagel. `tests/test_shift.py` schlägt fehl, wenn beide auseinanderlaufen.
 
 ---
 
@@ -207,6 +231,12 @@ kein Bug.
 
 ## 6. Was als Nächstes zu tun ist
 
+> **Die gepflegte Liste steht in [`OFFENE_AUFGABEN.md`](OFFENE_AUFGABEN.md)** —
+> inklusive der beiden dringenden Punkte (öffentliche Gesundheitsdaten in
+> `today.json`, `APP_PASSWORD` im Streamlit-Deploy). Die Schritte unten sind die
+> Einrichtung am PC und gelten unverändert.
+
+
 ### Schritt 1 — Umgebung am PC herstellen (Blocker auflösen)
 ```powershell
 git fetch origin
@@ -271,9 +301,13 @@ Logik-Check ohne DB:
 
 ## 8. Hinweise für Claude Code
 
+- **Vor Änderungen: `FEATURE_INDEX.md` lesen** — besonders die Tabelle
+  „Verknüpfungen, die man leicht übersieht".
 - **Keine PR erstellen**, ausser der Nutzer bittet ausdrücklich darum.
-- Entwicklung läuft auf Branch `claude/fahrrad-app-neue-feature-ptpp0w`.
-- Vor „fertig": `python -m pytest -q` muss grün sein.
+- Entwicklung läuft aktuell auf Branch `claude/adoring-knuth-jepz3l`.
+- Vor „fertig": `python -m pytest -q` muss grün sein (aktuell 89 Tests).
+- **Nichts Personenbezogenes nach `today.json`** — die Datei ist öffentlich
+  (siehe `SICHERHEIT.md`).
 - Deutsche UI-Texte und Kommentare beibehalten.
 - Bei Änderungen an `recommend.py`-Templates daran denken, dass die Werte über
   `today.json` in die PWA fliessen — dort ggf. Defaults mitziehen.

@@ -1,6 +1,7 @@
 # Secrets & local data — never commit these
 config.toml
 tokens.json
+.env
 data/
 *.db
 *.sqlite3

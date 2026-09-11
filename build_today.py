@@ -25,7 +25,7 @@ import sys
 from pathlib import Path
 from typing import Any
 
-from bikedash import config, dataprep, milestones, recommend, weather, zones
+from bikedash import config, dataprep, daytime, milestones, recommend, shift, weather, zones
 
 ROOT = Path(__file__).resolve().parent
 DEFAULT_OUT = ROOT / "mobile" / "today.json"
@@ -96,6 +96,23 @@ def _weather_payload(cfg: dict[str, Any]) -> dict[str, Any] | None:
     }
 
 
+def _timing_payload(cfg: dict[str, Any], today: dt.date, rc) -> dict[str, Any] | None:
+    """Bestes Zeitfenster fuer die heutige Einheit.
+
+    Ruhetag oder fehlende Vorhersage -> Feld bleibt weg; das Frontend blendet die
+    Kachel dann aus. Ein Wetterfehler darf den Tagesplan nie kippen.
+    """
+    if rc.kind == "REST":
+        return None
+    try:
+        dp = daytime.plan(cfg, today, duration_min=rc.duration_min[1])
+    except Exception:  # noqa: BLE001
+        return None
+    if dp.best is None:
+        return None
+    return daytime.payload(dp)
+
+
 def build(out_path: Path = DEFAULT_OUT, today: dt.date | None = None) -> dict[str, Any]:
     cfg = _load_cfg()
     today = today or dt.date.today()
@@ -111,6 +128,7 @@ def build(out_path: Path = DEFAULT_OUT, today: dt.date | None = None) -> dict[st
     # veröffentlichen. Die PWA plant die Route weiter clientseitig aus dem GPS.
     wx = _weather_payload(cfg)
     milestone = _milestone_payload()
+    timing = _timing_payload(cfg, today, rc)
 
     payload: dict[str, Any] = {
         "generated_at": dt.datetime.now(dt.timezone.utc).isoformat(timespec="seconds"),
@@ -145,6 +163,13 @@ def build(out_path: Path = DEFAULT_OUT, today: dt.date | None = None) -> dict[st
         },
         "weather": wx,
         "milestone": milestone,
+        # Wann heute fahren (Mo–Fr 13–20 Uhr, Sa/So 8–20 Uhr) – nur Uhrzeiten
+        # und Wetterwerte, keine Koordinaten.
+        "timing": timing,
+        # Entscheidungsmatrix der Gangempfehlung. Einzige Quelle der Wahrheit ist
+        # bikedash/shift.py; die PWA schlaegt hier nur nach (Kopie in ride.html
+        # dient als Offline-Notnagel, Gleichheit prueft tests/test_shift.py).
+        "shift": shift.matrix_payload(),
     }
 
     out_path.parent.mkdir(parents=True, exist_ok=True)

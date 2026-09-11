@@ -17,7 +17,9 @@ Körper-/Erholungsdaten aus **Whoop** automatisch zusammenführt und auswertet:
 - **🔧 Verschleiß-Tracker** – km-Zähler pro Bauteil (Kette, Reifen, Kassette …) mit
   Wartungs-Ampel und „gewechselt"-Reset.
 - **🧠 KI-Coach** – Klartext-Beratung aus deinen Daten (Claude API) + Wochenrückblick.
-- **📱 Morgen-Report** – heutige Empfehlung + Wetter + Form früh aufs Handy (via ntfy).
+- **📱 Morgen-Report** – heutige Empfehlung + Wetter + Form früh aufs Handy (via ntfy),
+  inklusive **bestem Zeitfenster für heute** (Mo–Fr 13–20 Uhr, Sa/So 8–20 Uhr;
+  bei durchweg gutem Wetter entscheidet der Wind).
 
 Außerdem: **Form-Kurve** (Fitness/Ermüdung/Form, CTL/ATL/TSB) und **1-Klick-Backup**.
 

@@ -29,7 +29,8 @@ except Exception:
 
 from bikedash import (
     backup, coach, config, dataprep, form, maintenance, milestones, recommend,
-    report, routing, store, strava, weather, webauth, whoop, windlab, zones,
+    daytime, report, routing, store, strava, weather, webauth, whoop,
+    windlab, zones,
 )
 
 st.set_page_config(page_title="RIDE · Fahrrad-Dashboard", page_icon="🚴", layout="wide")
@@ -317,6 +318,19 @@ def load_cycles() -> pd.DataFrame:
 def load_weather():
     try:
         return weather.current(config.load_config_raw())
+    except Exception:  # noqa: BLE001
+        return None
+
+
+@st.cache_data(ttl=1800)
+def load_daytime(duration_min: int, day: dt.date):
+    """Bestes Zeitfenster fuer heute (Mo–Fr 13–20 Uhr, Sa/So 8–20 Uhr).
+
+    `duration_min` und `day` stehen in der Signatur, damit der Cache bei einer
+    neuen Tagesempfehlung bzw. am naechsten Tag verfaellt.
+    """
+    try:
+        return daytime.plan(config.load_config_raw(), day, duration_min=duration_min)
     except Exception:  # noqa: BLE001
         return None
 
@@ -758,6 +772,31 @@ with tab_today:
                   delta=f"aus {wx.wind_dir} · Böen {wx.gust_kmh:.0f}", delta_color="off")
         for tip in weather.advice(wx):
             st.markdown(f"- {tip}")
+
+    # --- Wann heute fahren? ---
+    # Bewertet das Stundenraster im erlaubten Tagesfenster (Mo–Fr 13–20 Uhr,
+    # Sa/So 8–20 Uhr). Logik: bikedash/daytime.py – hier wird nur gerendert.
+    if rc.kind != "REST":
+        dp = load_daytime(rc.duration_min[1], dt.date.today())
+        if dp is not None and dp.best is not None:
+            b = dp.best
+            st.subheader(":material/schedule: Wann heute fahren?", anchor=False)
+            t1, t2, t3, t4 = st.columns(4)
+            t1.metric(":material/alarm: Fenster", b.label,
+                      help=f"erlaubt {dp.window_from}–{dp.window_to} Uhr · "
+                           f"Einheit ~{dp.duration_h} h")
+            t2.metric(":material/thermostat: Gefühlt", f"{b.temp_c:.0f} °C",
+                      delta=f"{b.icon} {b.desc}", delta_color="off")
+            t3.metric(":material/air: Wind", f"{b.wind_kmh:.0f} km/h",
+                      delta=f"aus {b.wind_dir} · Böen {b.gust_kmh:.0f}", delta_color="off")
+            t4.metric(":material/water_drop: Regenrisiko", f"{b.precip_prob} %")
+            with st.expander("Warum dieses Zeitfenster?", icon=":material/lightbulb:"):
+                for line in dp.reasons:
+                    st.markdown(f"- {line}")
+                if dp.alternative is not None:
+                    st.markdown(f"- Alternative: **{dp.alternative.label}** "
+                                f"({dp.alternative.wind_kmh:.0f} km/h Wind, "
+                                f"{dp.alternative.precip_prob} % Regen).")
 
     # --- Route ---
     st.subheader(":material/map: Passende Route", anchor=False)

@@ -1,7 +1,7 @@
 // Service Worker: macht die App installierbar + offline-fähig.
 // Strategie: NETWORK-FIRST für die App-Hülle (immer die aktuelle Version laden,
 // nur ohne Netz aus dem Cache) – so gibt es keine veraltete ride.html.
-const CACHE = 'ride-v3';
+const CACHE = 'ride-v4';
 
 self.addEventListener('install', e => { self.skipWaiting(); });
 self.addEventListener('activate', e => e.waitUntil(

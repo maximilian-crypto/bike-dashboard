@@ -263,7 +263,7 @@
       <div class="lbl"><i class="ic" data-ic="gear" style="--s:13px"></i> Gang</div>
       <div id="shiftBadge">—</div>
       <div class="valrow"><span id="shift" class="val" style="font-size:34px">–</span></div>
-      <div id="shiftSub" class="sub" style="font-size:12px;color:var(--muted);margin-top:3px;font-weight:500">warte auf Kadenz</div>
+      <div id="shiftSub" class="sub" style="font-size:12px;color:var(--muted);margin-top:3px;font-weight:500">warte auf Puls oder Kadenz</div>
     </div>
   </div>
 
@@ -593,20 +593,162 @@ function calibrateGrad(){
 }
 
 // ---------- Gangempfehlung (Shift) ----------
-// Aus der Kadenz relativ zum Zielband: zu langsam treten → leichterer Gang,
-// zu schnell → schwererer Gang, im Band → halten.
+// Die Empfehlung richtet sich nach dem TAGESZIEL, nicht nur nach der Kadenz:
+// entscheidend ist die Kombination aus Puls (wie hart wird gefahren?) und
+// Kadenz (wie wird es mechanisch umgesetzt?). Beispiel Z2-Tag mit 90 U/min,
+// aber 185 bpm → „leichter", obwohl die Kadenz formal im Zielband liegt.
+//
+// Die Matrix kommt aus bikedash/shift.py über today.json. Der Block unten ist
+// nur der Offline-Notnagel; tests/test_shift.py prüft, dass er mit dem Python-
+// Modul übereinstimmt. NICHT von Hand ändern — shift.py ist die Quelle.
+// SHIFT_MATRIX_DEFAULT:BEGIN
+const SHIFT_MATRIX_DEFAULT = {
+ "hr_tolerance_bpm": 3,
+ "cad_tolerance_rpm": 2,
+ "dwell_seconds": 6,
+ "cells": {
+  "above|below": {
+   "action": "leichter",
+   "symbol": "⬇",
+   "color": "#3a9bdc",
+   "why": "Puls {hr} > {hr_high} bei nur {cad} U/min — leichterer Gang, runder treten."
+  },
+  "above|in": {
+   "action": "leichter",
+   "symbol": "⬇",
+   "color": "#3a9bdc",
+   "why": "Puls {hr} > {hr_high} — einen Gang leichter, Kadenz halten."
+  },
+  "above|above": {
+   "action": "lockerer",
+   "symbol": "⬇",
+   "color": "#3a9bdc",
+   "why": "Puls {hr} > {hr_high} trotz {cad} U/min — kein Gang hilft, Tempo rausnehmen."
+  },
+  "in|below": {
+   "action": "leichter",
+   "symbol": "⬇",
+   "color": "#3a9bdc",
+   "why": "Puls passt, Kadenz {cad} < {cad_low} — leichterer Gang bei gleichem Druck."
+  },
+  "in|in": {
+   "action": "halten",
+   "symbol": "✓",
+   "color": "#2ecc71",
+   "why": "Puls {hr} und Kadenz {cad} im Ziel — genau so weiterfahren."
+  },
+  "in|above": {
+   "action": "schwerer",
+   "symbol": "⬆",
+   "color": "#e8503a",
+   "why": "Puls passt, Kadenz {cad} > {cad_high} — schwererer Gang bei gleichem Druck."
+  },
+  "below|below": {
+   "action": "schneller treten",
+   "symbol": "⬆",
+   "color": "#e8503a",
+   "why": "Puls {hr} < {hr_low} und Kadenz {cad} niedrig — im gleichen Gang zulegen."
+  },
+  "below|in": {
+   "action": "schwerer",
+   "symbol": "⬆",
+   "color": "#e8503a",
+   "why": "Puls {hr} < {hr_low} — einen Gang schwerer, Kadenz halten."
+  },
+  "below|above": {
+   "action": "schwerer",
+   "symbol": "⬆",
+   "color": "#e8503a",
+   "why": "Puls {hr} < {hr_low} bei {cad} U/min — schwererer Gang bringt beides ins Ziel."
+  },
+  "unknown|below": {
+   "action": "leichter",
+   "symbol": "⬇",
+   "color": "#3a9bdc",
+   "why": "Kadenz {cad} < {cad_low} — leichterer Gang. (kein Puls verbunden)"
+  },
+  "unknown|in": {
+   "action": "halten",
+   "symbol": "✓",
+   "color": "#2ecc71",
+   "why": "Kadenz {cad} im Ziel {cad_low}–{cad_high}. (kein Puls verbunden)"
+  },
+  "unknown|above": {
+   "action": "schwerer",
+   "symbol": "⬆",
+   "color": "#e8503a",
+   "why": "Kadenz {cad} > {cad_high} — schwererer Gang. (kein Puls verbunden)"
+  },
+  "above|unknown": {
+   "action": "lockerer",
+   "symbol": "⬇",
+   "color": "#3a9bdc",
+   "why": "Puls {hr} > {hr_high} — leichterer Gang oder Tempo raus. (keine Kadenz)"
+  },
+  "in|unknown": {
+   "action": "halten",
+   "symbol": "✓",
+   "color": "#2ecc71",
+   "why": "Puls {hr} im Ziel {hr_low}–{hr_high}. (keine Kadenz)"
+  },
+  "below|unknown": {
+   "action": "mehr geben",
+   "symbol": "⬆",
+   "color": "#e8503a",
+   "why": "Puls {hr} < {hr_low} — schwererer Gang oder mehr Druck. (keine Kadenz)"
+  },
+  "unknown|unknown": {
+   "action": "–",
+   "symbol": "—",
+   "color": "#2a3142",
+   "why": "warte auf Puls oder Kadenz"
+  }
+ }
+};
+// SHIFT_MATRIX_DEFAULT:END
+let shiftMatrix = SHIFT_MATRIX_DEFAULT;
+// Verweilzeit gegen Flackern am Bandrand: der Puls hinkt der Leistung nach.
+let shiftKey=null, shiftSince=0, shiftShown=null;
+
+// Zielband des Pulses = HF-Zone der Tagesempfehlung (identisch zum Gauge).
+function hrBand(){ return GA.hr.band(); }
+
+function shiftStatus(v, lo, hi, tol){
+  if(v==null || lo==null || hi==null) return 'unknown';
+  if(v < lo-tol) return 'below';
+  if(v > hi+tol) return 'above';
+  return 'in';
+}
+
 function updateShift(){
   const el=$('shift'), sub=$('shiftSub'), badge=$('shiftBadge');
-  if(cadVal==null){ el.textContent='–'; el.style.color='var(--text)'; sub.textContent='warte auf Kadenz';
-    badge.textContent='—'; badge.style.background='#2a3142'; badge.style.color='var(--text)'; return; }
-  const st=statusOf('cad',cadVal);
-  let txt,sym,col,hint;
-  if(st==='below'){ txt='leichter'; sym='⬇'; col='#3a9bdc'; hint=`Kadenz ${cadVal} < ${cadLo} — leichteren Gang, schneller treten`; }
-  else if(st==='above'){ txt='schwerer'; sym='⬆'; col='#e8503a'; hint=`Kadenz ${cadVal} > ${cadHi} — schwereren Gang, kräftiger treten`; }
-  else { txt='halten'; sym='✓'; col='#2ecc71'; hint=`Kadenz ${cadVal} im Ziel ${cadLo}–${cadHi}`; }
-  el.textContent=txt; el.style.color=col; sub.textContent=hint;
-  badge.textContent=sym; badge.style.background=col; badge.style.color='#0a0c10';
+  const m=shiftMatrix||SHIFT_MATRIX_DEFAULT;
+  const [hrLo,hrHi]=hrBand();
+  const hrSt = shiftStatus(hrVal, hrLo, hrHi, m.hr_tolerance_bpm ?? 3);
+  const cadSt= shiftStatus(cadVal, cadLo, cadHi, m.cad_tolerance_rpm ?? 2);
+  const key  = hrSt+'|'+cadSt;
+
+  // Wechsel zwischen zwei bekannten Zuständen erst nach der Verweilzeit zeigen;
+  // kommt ein Sensor dazu oder fällt weg, sofort umschalten.
+  const now=Date.now();
+  if(key!==shiftKey){ shiftKey=key; shiftSince=now; }
+  const instant = shiftShown==null || key.includes('unknown') || (shiftShown||'').includes('unknown');
+  if(instant || now-shiftSince >= (m.dwell_seconds ?? 6)*1000) shiftShown=key;
+
+  const cell=(m.cells||{})[shiftShown] || (m.cells||{})[key];
+  if(!cell){ el.textContent='–'; sub.textContent='warte auf Puls oder Kadenz'; return; }
+
+  const vals={ hr:num(hrVal), cad:num(cadVal),
+               hr_low:num(hrLo), hr_high:num(hrHi),
+               cad_low:num(cadLo), cad_high:num(cadHi) };
+  const why=String(cell.why).replace(/\{(\w+)\}/g, (_,k)=> (k in vals ? vals[k] : '–'));
+
+  el.textContent=cell.action; el.style.color=cell.color;
+  sub.textContent=why;
+  badge.textContent=cell.symbol; badge.style.background=cell.color;
+  badge.style.color = cell.symbol==='—' ? 'var(--text)' : '#0a0c10';
 }
+function num(v){ return v==null ? '–' : String(Math.round(v)); }
 
 // ---------- Heart rate ----------
 async function connectHR(){
@@ -628,7 +770,7 @@ function onHR(hr){
   $('hrTile').classList.toggle('offzone',!inTarget);
   $('hrTxt').textContent=hr; $('hrPill').className=inTarget?'pill ok':(z<targetZone?'pill':'pill warn');
   if(lastZoneInTarget&&!inTarget&&navigator.vibrate) navigator.vibrate(180);
-  lastZoneInTarget=inTarget; updateGauge('hr',hr);
+  lastZoneInTarget=inTarget; updateGauge('hr',hr); updateShift();
 }
 
 // ---------- Cadence ----------
@@ -755,6 +897,7 @@ function applyTodayZones(d){
   if(z.target_zone) targetZone=z.target_zone;
   if(rec.cadence_low) cadLo=rec.cadence_low;
   if(rec.cadence_high) cadHi=rec.cadence_high;
+  if(d.shift && d.shift.cells) shiftMatrix=d.shift;   // Quelle: bikedash/shift.py
   if(rec.target_distance_km) targetKm=Math.round(rec.target_distance_km/5)*5;  // Slider-Schrittweite
   // In die Eingabefelder spiegeln, aber NICHT in localStorage schreiben –
   // today.json bleibt bei jedem Laden maßgeblich, manuelles Speichern geht weiter.
@@ -773,6 +916,8 @@ function showTodayBanner(d){
   if(rec.hr_low) bits.push(`Z${rec.zone_number} ${rec.hr_low}–${rec.hr_high} bpm`);
   if(rec.cadence && rec.cadence!=='–') bits.push(rec.cadence+' U/min');
   if(rec.target_distance_km) bits.push(`Ziel ~${Math.round(rec.target_distance_km)} km · „Route" tippen`);
+  const tm=d.timing;
+  if(tm && tm.best) bits.push(`🕑 am besten ${tm.best.label} (${tm.best.icon} ${Math.round(tm.best.temp_c)} °C, Wind ${Math.round(tm.best.wind_kmh)} km/h ${tm.best.wind_dir})`);
   const ms=d.milestone;
   if(ms && ms.next_name && ms.next_remaining_km!=null){
     const rem=Math.round(ms.next_remaining_km);

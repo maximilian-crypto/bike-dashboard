@@ -69,3 +69,57 @@ def test_build_writes_valid_today_json(tmp_path):
     assert "route" not in data
     # Ohne Heimat-Koordinaten & ohne Netz kein Wetter.
     assert data["weather"] is None
+
+
+def test_today_json_enthaelt_die_shift_matrix(tmp_path):
+    """Die PWA schlaegt die Gangempfehlung in today.json nach."""
+    from bikedash import shift
+
+    today = dt.date(2026, 6, 15)
+    _seed(today)
+    payload = build_today.build(tmp_path / "today.json", today=today)
+
+    assert payload["shift"]["cells"]["above|in"]["action"] == "leichter"
+    assert payload["shift"] == json.loads(json.dumps(shift.matrix_payload()))
+
+
+def test_timing_bleibt_leer_ohne_wetter(tmp_path):
+    """Ohne Heimat-Koordinate gibt es keine Vorhersage – das Feld faellt weg."""
+    today = dt.date(2026, 6, 15)
+    _seed(today)
+    payload = build_today.build(tmp_path / "today.json", today=today)
+    assert payload["timing"] is None
+
+
+def test_timing_landet_in_today_json(tmp_path, monkeypatch):
+    """Mit Vorhersage steht das beste Zeitfenster route- und koordinatenfrei drin."""
+    import datetime as _dt
+
+    from bikedash import daytime, weather
+
+    today = _dt.date(2026, 6, 15)          # Montag -> Fenster 13–20 Uhr
+    _seed(today)
+
+    def fake_hours(cfg, days=2):
+        out = []
+        for h in range(24):
+            windig = not (16 <= h < 19)
+            out.append(weather.Hour(
+                time=_dt.datetime.combine(today, _dt.time(h)),
+                temp_c=19.0, feels_c=19.0, precip_mm=0.0, precip_prob=0, code=0,
+                wind_kmh=32.0 if windig else 7.0,
+                gust_kmh=45.0 if windig else 10.0,
+                wind_deg=225.0, uv=3.0, is_day=True,
+            ))
+        return out
+
+    monkeypatch.setattr(weather, "hourly_forecast", fake_hours)
+    monkeypatch.setattr(daytime.weather, "hourly_forecast", fake_hours)
+
+    payload = build_today.build(tmp_path / "today.json", today=today)
+    timing = payload["timing"]
+    assert timing is not None
+    assert timing["window_from"] == 13 and timing["window_to"] == 20
+    assert timing["settled"] is True                      # schoener Tag -> Wind entscheidet
+    assert timing["best"]["start"].startswith("16")       # windstillstes Fenster
+    assert "lat" not in json.dumps(timing) and "lon" not in json.dumps(timing)

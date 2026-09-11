@@ -6,7 +6,8 @@ und daraus abgeleitete, fahrtbezogene Hinweise.
 
 from __future__ import annotations
 
-from dataclasses import dataclass, field
+import datetime as dt
+from dataclasses import dataclass
 
 import requests
 
@@ -59,6 +60,108 @@ class Weather:
     @property
     def wind_dir(self) -> str:
         return wind_dir_label(self.wind_deg)
+
+
+@dataclass
+class Hour:
+    """Eine Stunde aus dem Vorhersage-Raster (Ortszeit)."""
+
+    time: dt.datetime
+    temp_c: float
+    feels_c: float
+    precip_mm: float
+    precip_prob: int
+    code: int
+    wind_kmh: float
+    gust_kmh: float
+    wind_deg: float
+    uv: float
+    is_day: bool
+
+    @property
+    def icon(self) -> str:
+        return WMO.get(self.code, ("\U0001f321\ufe0f", "?"))[0]
+
+    @property
+    def desc(self) -> str:
+        return WMO.get(self.code, ("", "unbekannt"))[1]
+
+    @property
+    def wind_dir(self) -> str:
+        return wind_dir_label(self.wind_deg)
+
+
+def _home(cfg: dict) -> tuple[float, float] | None:
+    """Heimat-Koordinate aus der Einrichtung — None, wenn nicht gesetzt."""
+    ath = config.athlete(cfg)
+    lat = float(ath.get("home_lat", 0) or 0)
+    lon = float(ath.get("home_lon", 0) or 0)
+    if lat == 0 and lon == 0:
+        return None
+    return lat, lon
+
+
+def hourly_forecast(cfg: dict, days: int = 2) -> list[Hour]:
+    """Stundenraster fuer die naechsten Tage (fuer die Tageszeit-Empfehlung).
+
+    Leere Liste bei fehlender Koordinate oder API-Problem — der Aufrufer faellt
+    dann still auf "keine Empfehlung" zurueck.
+    """
+    home = _home(cfg)
+    if home is None:
+        return []
+    lat, lon = home
+    params = {
+        "latitude": lat,
+        "longitude": lon,
+        "hourly": (
+            "temperature_2m,apparent_temperature,precipitation,precipitation_probability,"
+            "weather_code,wind_speed_10m,wind_gusts_10m,wind_direction_10m,uv_index,is_day"
+        ),
+        "wind_speed_unit": "kmh",
+        "timezone": "auto",
+        "forecast_days": max(1, min(int(days), 7)),
+    }
+    try:
+        resp = requests.get(API_URL, params=params, timeout=20)
+        resp.raise_for_status()
+        d = resp.json()
+    except (requests.RequestException, ValueError):
+        return []
+
+    h = d.get("hourly") or {}
+    times = h.get("time") or []
+
+    def col(name: str) -> list:
+        vals = h.get(name) or []
+        return list(vals) + [None] * (len(times) - len(vals))
+
+    temps, feels = col("temperature_2m"), col("apparent_temperature")
+    prec, prob = col("precipitation"), col("precipitation_probability")
+    codes = col("weather_code")
+    wind, gust, wdeg = col("wind_speed_10m"), col("wind_gusts_10m"), col("wind_direction_10m")
+    uv, isday = col("uv_index"), col("is_day")
+
+    out: list[Hour] = []
+    for i, ts in enumerate(times):
+        try:
+            when = dt.datetime.fromisoformat(ts)
+        except (TypeError, ValueError):
+            continue
+        out.append(Hour(
+            time=when,
+            temp_c=float(temps[i] or 0.0),
+            feels_c=float(feels[i] if feels[i] is not None else (temps[i] or 0.0)),
+            precip_mm=float(prec[i] or 0.0),
+            precip_prob=int(prob[i] or 0),
+            code=int(codes[i] or 0),
+            wind_kmh=float(wind[i] or 0.0),
+            gust_kmh=float(gust[i] or 0.0),
+            wind_deg=float(wdeg[i] or 0.0),
+            uv=float(uv[i] or 0.0),
+            is_day=bool(isday[i]) if isday[i] is not None else True,
+        ))
+    return out
 
 
 def current(cfg: dict) -> Weather | None:

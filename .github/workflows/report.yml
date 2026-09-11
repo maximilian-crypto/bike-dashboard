@@ -7,6 +7,12 @@ on:
     - cron: "30 4 * * *"
   workflow_dispatch: {}
 
+# Der Job liest nur Daten und schickt einen Push – er braucht keinen
+# Schreibzugriff aufs Repo. Ausdrücklich einschränken, damit ein kompromittiertes
+# Abhängigkeitspaket mit dem GITHUB_TOKEN nichts committen kann.
+permissions:
+  contents: read
+
 jobs:
   report:
     runs-on: ubuntu-latest

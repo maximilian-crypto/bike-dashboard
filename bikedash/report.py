@@ -11,7 +11,7 @@ from typing import Any
 
 import requests
 
-from . import config, dataprep, form, recommend, weather
+from . import config, dataprep, daytime, form, recommend, weather
 
 
 def build_text(cfg: dict[str, Any]) -> tuple[str, str]:
@@ -45,6 +45,20 @@ def build_text(cfg: dict[str, Any]) -> tuple[str, str]:
         tips = weather.advice(wx)
         if tips and not tips[0].startswith("👍"):
             parts.append(tips[0])
+
+    # Wann heute fahren? Bestes Zeitfenster im erlaubten Tagesfenster
+    # (Mo–Fr 13–20 Uhr, Sa/So 8–20 Uhr) — Details in bikedash/daytime.py.
+    if rc.kind != "REST":
+        try:
+            dp = daytime.plan(cfg, duration_min=rc.duration_min[1])
+        except Exception:  # noqa: BLE001  – ein Wetterfehler darf den Push nicht kippen
+            dp = None
+        if dp is not None and dp.best is not None:
+            parts.append(f"🕑 {dp.headline}")
+            if dp.reasons:
+                parts.append(dp.reasons[0])
+            if dp.alternative is not None:
+                parts.append(f"Alternative: {dp.alternative.label}.")
 
     fdf = form.compute(dataprep.prep_rides())
     if len(fdf) >= 7:
