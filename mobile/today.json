@@ -1,53 +1,53 @@
 {
-  "generated_at": "2026-09-12T02:37:12+00:00",
+  "generated_at": "2026-09-12T08:17:39+00:00",
   "date": "2026-09-12",
   "recommendation": {
-    "kind": "RECOVERY",
-    "title": "Lockerer Erholungs-Spin",
-    "readiness_band": "red",
-    "recovery_score": 1.0,
-    "zone_number": 1,
-    "zone_label": "Z1 · Erholung",
-    "hr_low": 120,
-    "hr_high": 145,
+    "kind": "ENDURANCE",
+    "title": "Grundlagenausdauer (Z2)",
+    "readiness_band": "yellow",
+    "recovery_score": 49.0,
+    "zone_number": 2,
+    "zone_label": "Z2 · Grundlage",
+    "hr_low": 145,
+    "hr_high": 158,
     "cadence": "85–95",
     "cadence_low": 85,
     "cadence_high": 95,
-    "rpe": "2–3",
+    "rpe": "3–4",
     "duration_min": [
-      34,
-      46
+      76,
+      103
     ],
     "distance_km": [
-      10.3,
-      12.6
+      26.0,
+      31.8
     ],
-    "target_distance_km": 11.4,
+    "target_distance_km": 28.9,
     "week_hours": 1.8,
     "target_hours": 2.0,
     "tsb": 2.3,
     "rationale": [
-      "Whoop-Recovery heute: 1 %.",
+      "Whoop-Recovery heute: 49 %.",
       "Diese Woche bisher 1.8 h / Ziel ~2.0 h (88 %).",
       "Form (TSB) aktuell +2.",
-      "Erholung niedrig (rot): heute nur locker (Z1) oder Pause."
+      "Erholung mittel & Woche noch dünn: ruhige Grundlage (Z2)."
     ]
   },
   "zones": {
     "max_hr": 197,
     "rest_hr": 68,
     "lthr": null,
-    "target_zone": 1,
+    "target_zone": 2,
     "method": "Karvonen/HRR"
   },
   "weather": {
-    "temp_c": 13.2,
-    "wind_kmh": 9.1,
-    "wind_deg": 236,
+    "temp_c": 15.7,
+    "wind_kmh": 11.6,
+    "wind_deg": 234,
     "wind_dir": "SW",
-    "gust_kmh": 17.6,
-    "code": 3,
-    "desc": "bedeckt"
+    "gust_kmh": 23.0,
+    "code": 2,
+    "desc": "teils bewölkt"
   },
   "milestone": {
     "total_km": 899.4,
