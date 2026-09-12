@@ -1,53 +1,53 @@
 {
-  "generated_at": "2026-09-11T22:09:19+00:00",
-  "date": "2026-09-11",
+  "generated_at": "2026-09-12T02:37:12+00:00",
+  "date": "2026-09-12",
   "recommendation": {
-    "kind": "REST",
-    "title": "Ruhetag",
-    "readiness_band": "green",
-    "recovery_score": 74.0,
-    "zone_number": null,
-    "zone_label": null,
-    "hr_low": null,
-    "hr_high": null,
-    "cadence": "–",
-    "cadence_low": null,
-    "cadence_high": null,
-    "rpe": "–",
+    "kind": "RECOVERY",
+    "title": "Lockerer Erholungs-Spin",
+    "readiness_band": "red",
+    "recovery_score": 1.0,
+    "zone_number": 1,
+    "zone_label": "Z1 · Erholung",
+    "hr_low": 120,
+    "hr_high": 145,
+    "cadence": "85–95",
+    "cadence_low": 85,
+    "cadence_high": 95,
+    "rpe": "2–3",
     "duration_min": [
-      0,
-      0
+      34,
+      46
     ],
     "distance_km": [
-      0.0,
-      0.0
+      10.3,
+      12.6
     ],
-    "target_distance_km": 0.0,
+    "target_distance_km": 11.4,
     "week_hours": 1.8,
     "target_hours": 2.0,
     "tsb": 2.3,
     "rationale": [
-      "Whoop-Recovery heute: 74 %.",
+      "Whoop-Recovery heute: 1 %.",
       "Diese Woche bisher 1.8 h / Ziel ~2.0 h (88 %).",
       "Form (TSB) aktuell +2.",
-      "Du bist heute bereits gefahren — Fokus auf Regeneration."
+      "Erholung niedrig (rot): heute nur locker (Z1) oder Pause."
     ]
   },
   "zones": {
     "max_hr": 197,
-    "rest_hr": 67,
+    "rest_hr": 68,
     "lthr": null,
-    "target_zone": null,
+    "target_zone": 1,
     "method": "Karvonen/HRR"
   },
   "weather": {
-    "temp_c": 14.3,
-    "wind_kmh": 9.9,
-    "wind_deg": 237,
+    "temp_c": 13.2,
+    "wind_kmh": 9.1,
+    "wind_deg": 236,
     "wind_dir": "SW",
-    "gust_kmh": 20.9,
-    "code": 2,
-    "desc": "teils bewölkt"
+    "gust_kmh": 17.6,
+    "code": 3,
+    "desc": "bedeckt"
   },
   "milestone": {
     "total_km": 899.4,
