@@ -1,6 +1,6 @@
 {
-  "generated_at": "2026-09-13T22:00:36+00:00",
-  "date": "2026-09-13",
+  "generated_at": "2026-09-14T02:51:46+00:00",
+  "date": "2026-09-14",
   "recommendation": {
     "kind": "RECOVERY",
     "title": "Lockerer Erholungs-Spin",
@@ -15,20 +15,20 @@
     "cadence_high": 95,
     "rpe": "2–3",
     "duration_min": [
-      34,
-      46
+      40,
+      55
     ],
     "distance_km": [
-      10.3,
-      12.6
+      12.4,
+      15.1
     ],
-    "target_distance_km": 11.4,
-    "week_hours": 1.8,
+    "target_distance_km": 13.8,
+    "week_hours": 0.0,
     "target_hours": 2.0,
     "tsb": 2.3,
     "rationale": [
       "Whoop-Recovery heute: 31 %.",
-      "Diese Woche bisher 1.8 h / Ziel ~2.0 h (88 %).",
+      "Diese Woche bisher 0.0 h / Ziel ~2.0 h (0 %).",
       "Form (TSB) aktuell +2.",
       "Erholung niedrig (rot): heute nur locker (Z1) oder Pause."
     ]
@@ -41,11 +41,11 @@
     "method": "Karvonen/HRR"
   },
   "weather": {
-    "temp_c": 12.2,
-    "wind_kmh": 7.7,
-    "wind_deg": 311,
-    "wind_dir": "NW",
-    "gust_kmh": 15.1,
+    "temp_c": 11.2,
+    "wind_kmh": 4.4,
+    "wind_deg": 261,
+    "wind_dir": "W",
+    "gust_kmh": 11.9,
     "code": 2,
     "desc": "teils bewölkt"
   },
