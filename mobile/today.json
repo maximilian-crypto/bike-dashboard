@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-09-14T17:24:56+00:00",
+  "generated_at": "2026-09-14T22:54:44+00:00",
   "date": "2026-09-14",
   "recommendation": {
     "kind": "REST",
@@ -41,13 +41,13 @@
     "method": "Karvonen/HRR"
   },
   "weather": {
-    "temp_c": 17.4,
-    "wind_kmh": 2.2,
-    "wind_deg": 189,
+    "temp_c": 14.2,
+    "wind_kmh": 8.0,
+    "wind_deg": 170,
     "wind_dir": "S",
-    "gust_kmh": 10.1,
-    "code": 2,
-    "desc": "teils bewölkt"
+    "gust_kmh": 14.8,
+    "code": 3,
+    "desc": "bedeckt"
   },
   "milestone": {
     "total_km": 903.0,
