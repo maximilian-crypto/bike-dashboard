@@ -95,7 +95,14 @@ Die Workflows liegen schon im Repo (`.github/workflows/`). Trage die Secrets ein
 | `STRAVA_CLIENT_ID`, `STRAVA_CLIENT_SECRET` | aus Strava |
 | `WHOOP_CLIENT_ID`, `WHOOP_CLIENT_SECRET` | aus Whoop |
 | `ORS_API_KEY`, `ATHLETE_HOME_LAT`, `ATHLETE_HOME_LON` | Routen/Wetter |
+| `ATHLETE_LTHR`, `ATHLETE_FTP` | Schwellen-HF (bpm) und FTP (Watt) aus dem Test |
+| `ATHLETE_SEASON_START` | Zieldatum des Saisonplans, z. B. `2027-03-01` |
 | `NTFY_TOPIC` | dein ntfy-Thema (für den Report) |
+
+> **Wichtig:** `ATHLETE_LTHR` und `ATHLETE_FTP` gehören **sowohl** in die
+> Streamlit-Secrets **als auch** in die Actions-Secrets. Fehlen sie hier, rechnen
+> `build_today.py` und der Morgen-Report mit geschätzten Werten — die HF-Zonen in
+> der PWA weichen dann von denen im Dashboard ab.
 
 Testen: **Actions → „Sync Strava + Whoop" → Run workflow**. Danach läuft der Sync
 alle 4 h automatisch, der Report morgens (04:30 UTC ≈ 06:30 DE-Sommerzeit).

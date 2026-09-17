@@ -44,6 +44,11 @@ jobs:
           DATABASE_URL: ${{ secrets.DATABASE_URL }}
           ATHLETE_HOME_LAT: ${{ secrets.ATHLETE_HOME_LAT }}   # nur fürs Wetter
           ATHLETE_HOME_LON: ${{ secrets.ATHLETE_HOME_LON }}
+          # Zonen und Trainingslast müssen hier identisch zum Dashboard
+          # gerechnet werden, sonst weicht today.json davon ab.
+          ATHLETE_LTHR: ${{ secrets.ATHLETE_LTHR }}
+          ATHLETE_FTP: ${{ secrets.ATHLETE_FTP }}
+          ATHLETE_SEASON_START: ${{ secrets.ATHLETE_SEASON_START }}
         run: python build_today.py
 
       - name: today.json committen (nur bei Änderung)
