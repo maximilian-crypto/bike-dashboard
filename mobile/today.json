@@ -1,62 +1,63 @@
 {
-  "generated_at": "2026-09-17T16:02:01+00:00",
+  "generated_at": "2026-09-17T17:11:01+00:00",
   "date": "2026-09-17",
   "recommendation": {
-    "kind": "THRESHOLD",
-    "title": "Schwellen-Intervalle (Z4)",
+    "kind": "REST",
+    "title": "Ruhetag",
     "readiness_band": "green",
     "recovery_score": 73.0,
-    "zone_number": 4,
-    "zone_label": "Z4 · Schwelle",
-    "hr_low": 171,
-    "hr_high": 184,
-    "cadence": "85–100",
-    "cadence_low": 85,
-    "cadence_high": 100,
-    "rpe": "7–8",
+    "zone_number": null,
+    "zone_label": null,
+    "hr_low": null,
+    "hr_high": null,
+    "cadence": "–",
+    "cadence_low": null,
+    "cadence_high": null,
+    "rpe": "–",
     "duration_min": [
-      71,
-      96
+      0,
+      0
     ],
     "distance_km": [
-      26.4,
-      32.2
+      0.0,
+      0.0
     ],
-    "target_distance_km": 29.3,
-    "week_hours": 0.2,
-    "target_hours": 2.0,
-    "tsb": 4.8,
+    "target_distance_km": 0.0,
+    "week_hours": 0.6,
+    "target_hours": 0.8,
+    "tsb": 3.1,
     "rationale": [
       "Whoop-Recovery heute: 73 %.",
-      "Diese Woche bisher 0.2 h / Ziel ~2.0 h (9 %).",
-      "Form (TSB) aktuell +5.",
-      "Bestens erholt & Luft im Plan: gezielte harte Einheit (Z4-Schwelle) — an frischen Tagen den harten Reiz wirklich hart fahren."
+      "Diese Woche bisher 47 / Ziel 50 Last (94 %, ≈ 0.8 h).",
+      "Planwoche 1, Phase „Grundlage“ — noch 23 Wochen bis zum Saisonstart.",
+      "Form (TSB) aktuell +3.",
+      "Du bist heute bereits gefahren — Fokus auf Regeneration."
     ]
   },
   "zones": {
     "max_hr": 197,
     "rest_hr": 68,
     "lthr": null,
-    "target_zone": 4,
+    "target_zone": null,
     "method": "Karvonen/HRR"
   },
   "weather": {
-    "temp_c": 16.4,
-    "wind_kmh": 15.8,
-    "wind_deg": 215,
+    "temp_c": 15.9,
+    "wind_kmh": 17.0,
+    "wind_deg": 212,
     "wind_dir": "SW",
-    "gust_kmh": 35.3,
+    "gust_kmh": 34.2,
     "code": 61,
     "desc": "leichter Regen"
   },
   "milestone": {
-    "total_km": 903.0,
+    "total_km": 913.4,
     "orden_earned": 20,
     "orden_total": 31,
     "next_name": "930 km",
     "next_icon": "🎯",
     "next_kind": "step",
-    "next_remaining_km": 27.0,
+    "next_remaining_km": 16.6,
     "next_km": 930.0
   }
 }
