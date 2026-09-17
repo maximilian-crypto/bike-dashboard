@@ -694,8 +694,12 @@ else:
 )
 
 # Kumulierte Gesamtdistanz über die GANZE Historie (nicht der Zeitraumfilter) –
-# Grundlage für Orden-Meilensteine und den Verschleiß-Tracker.
+# Grundlage für Orden-Meilensteine und den Verschleiß-Tracker. Für den
+# Verschleiß zusätzlich nach Straße/Rolle getrennt: Indoor-Kilometer belasten
+# nur den Antrieb, nicht Reifen, Bremsen oder Züge.
 total_km_all = float(rides["distance_km"].sum())
+outdoor_km_all = float(rides["distance_km_outdoor"].sum())
+indoor_km_all = float(rides["distance_km_indoor"].sum())
 
 
 # ===========================================================================
@@ -1201,22 +1205,25 @@ with tab_orden:
 with tab_maint:
     st.subheader(":material/build: Verschleiß & Wartung", anchor=False)
     maint_state = maintenance.load_state()
-    stats = maintenance.statuses(maint_state, total_km_all)
+    stats = maintenance.statuses(maint_state, outdoor_km_all, indoor_km_all)
     n_due = sum(1 for s in stats if s.status == maintenance.STATUS_DUE)
     n_soon = sum(1 for s in stats if s.status == maintenance.STATUS_SOON)
 
-    k1, k2, k3 = st.columns(3)
-    k1.metric(":material/route: Kilometerstand", de_num(total_km_all, "km", 0),
-              help="Kumulierte Strava-Gesamtdistanz über die ganze Historie.")
-    k2.metric(":material/warning: Fällig", f"{n_due}")
-    k3.metric(":material/schedule: Bald fällig", f"{n_soon}")
+    k1, k2, k3, k4 = st.columns(4)
+    k1.metric(":material/route: Straße", de_num(outdoor_km_all, "km", 0),
+              help="Kilometer draußen — zählen für alle Bauteile voll.")
+    k2.metric(":material/home: Rolle", de_num(indoor_km_all, "km", 0),
+              help="Indoor-Kilometer — zählen nur anteilig und nur für den Antrieb.")
+    k3.metric(":material/warning: Fällig", f"{n_due}")
+    k4.metric(":material/schedule: Bald fällig", f"{n_soon}")
 
     st.caption(
         "Verschleiß zählt ab dem Kilometerstand beim letzten Wechsel. Frisch "
         "eingerichtet? Einmal **„Alle ab jetzt frisch“** klicken, dann stimmt die Basis."
     )
     if st.button(":material/restart_alt: Alle ab jetzt frisch tracken"):
-        maintenance.save_state(maintenance.reset_all(maint_state, total_km_all))
+        maintenance.save_state(
+            maintenance.reset_all(maint_state, outdoor_km_all, indoor_km_all))
         st.rerun()
 
     STATUS_STYLE = {
@@ -1230,10 +1237,13 @@ with tab_maint:
         with c1:
             rem = (f"noch {de_num(s.remaining_km, 'km', 0)}" if s.remaining_km >= 0
                    else f"überfällig um {de_num(-s.remaining_km, 'km', 0)}")
+            # Nur erwähnen, wenn Indoor-km bei diesem Bauteil überhaupt zählen.
+            ind = (f" · inkl. {de_num(s.indoor_km_counted, 'km', 0)} Rolle "
+                   f"({s.indoor_factor:.0%})") if s.indoor_km_counted > 0 else ""
             st.markdown(
                 f"{s.icon} **{s.name}** · <span style='color:{color}'>{txt}</span>  \n"
                 f"<span style='color:{MUTED};font-size:13px'>"
-                f"{de_num(s.wear_km, 'km', 0)} / {de_num(s.interval_km, 'km', 0)} · {rem}"
+                f"{de_num(s.wear_km, 'km', 0)} / {de_num(s.interval_km, 'km', 0)} · {rem}{ind}"
                 f"</span>",
                 unsafe_allow_html=True,
             )
@@ -1241,21 +1251,30 @@ with tab_maint:
         with c2:
             if st.button("Gewechselt", key=f"maint_reset_{s.id}",
                          help="Bauteil als frisch gewechselt markieren"):
-                maintenance.save_state(
-                    maintenance.reset_component(maint_state, s.id, total_km_all))
+                maintenance.save_state(maintenance.reset_component(
+                    maint_state, s.id, outdoor_km_all, indoor_km_all))
                 st.rerun()
 
     with st.expander(":material/tune: Bauteile & Intervalle bearbeiten"):
         st.caption("Zeilen hinzufügen/entfernen oder Intervalle ändern, dann speichern. "
-                   "Neue Bauteile starten ab dem aktuellen Kilometerstand.")
+                   "Neue Bauteile starten ab dem aktuellen Kilometerstand. "
+                   "**Rolle zählt** steuert, wie stark Indoor-Kilometer auf dieses "
+                   "Bauteil gehen — 0 % = gar nicht, 100 % = wie Straße.")
         edit_df = pd.DataFrame([
-            {"Emoji": c["icon"], "Bauteil": c["name"], "Intervall (km)": int(c["interval_km"])}
+            {"Emoji": c["icon"], "Bauteil": c["name"],
+             "Intervall (km)": int(c["interval_km"]),
+             "Rolle zählt (%)": int(round(100 * float(
+                 c.get("indoor_factor", maintenance.DEFAULT_INDOOR_FACTOR))))}
             for c in maint_state
         ])
         edited = st.data_editor(
             edit_df, num_rows="dynamic", width="stretch", key="maint_editor",
             column_config={
                 "Intervall (km)": st.column_config.NumberColumn(min_value=1, step=50),
+                "Rolle zählt (%)": st.column_config.NumberColumn(
+                    min_value=0, max_value=100, step=10,
+                    help="Anteil, zu dem ein Rollen-Kilometer wie ein Straßen-Kilometer zählt.",
+                ),
             },
         )
         if st.button(":material/save: Speichern", type="primary", key="maint_save"):
@@ -1267,13 +1286,20 @@ with tab_maint:
                     continue
                 prev = by_name.get(name.lower())
                 slug = "".join(ch if ch.isalnum() else "_" for ch in name.lower())
-                new_state.append({
+                factor = float(row.get("Rolle zählt (%)") or 0.0) / 100.0
+                comp = {
                     "id": prev["id"] if prev else slug,
                     "name": name,
                     "icon": str(row.get("Emoji") or "🔧"),
                     "interval_km": float(row.get("Intervall (km)") or 1000),
-                    "installed_km": float(prev["installed_km"] if prev else total_km_all),
-                })
+                    "indoor_factor": factor,
+                }
+                # Neue Bauteile starten beim aktuellen Stand ihrer eigenen Skala.
+                comp["installed_km"] = float(
+                    prev["installed_km"] if prev
+                    else maintenance.odometer(comp, outdoor_km_all, indoor_km_all)
+                )
+                new_state.append(comp)
             if new_state:
                 maintenance.save_state(new_state)
                 st.success("Gespeichert.")

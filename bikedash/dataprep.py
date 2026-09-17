@@ -6,10 +6,34 @@ damit beide identisch rechnen.
 
 from __future__ import annotations
 
+import json
+
 import pandas as pd
 
 from . import load as load_mod
 from . import store, zones
+
+# Strava-Typen, die eine Indoor-/Rollen-Einheit kennzeichnen. Zwift meldet seine
+# Fahrten grundsätzlich als ``VirtualRide``.
+INDOOR_TYPES = {"VirtualRide"}
+
+
+def is_indoor(type_: str | None, sport_type: str | None,
+              raw_json: str | None = None) -> bool:
+    """Ist die Aktivität eine Indoor-/Rollenfahrt?
+
+    Primär über den Strava-Typ (Zwift & Co. melden ``VirtualRide``). Zusätzlich
+    greift Stravas ``trainer``-Flag aus dem Rohdatensatz — das deckt Rollen-
+    Einheiten ab, die ein Head-Unit ganz normal als ``Ride`` aufzeichnet.
+    """
+    if (sport_type or "") in INDOOR_TYPES or (type_ or "") in INDOOR_TYPES:
+        return True
+    if raw_json:
+        try:
+            return bool(json.loads(raw_json).get("trainer"))
+        except (ValueError, TypeError):
+            return False
+    return False
 
 
 def prep_rides() -> pd.DataFrame:
@@ -31,6 +55,20 @@ def prep_rides() -> pd.DataFrame:
     df["moving_h"] = df["moving_time_s"] / 3600
     df["avg_speed_kmh"] = df["average_speed_ms"] * 3.6
     df["elev_m"] = df["total_elevation_gain_m"]
+
+    # Indoor/Outdoor trennen: Rollen-Kilometer sind für Verschleiß, Tempo- und
+    # Windauswertung etwas grundsätzlich anderes als Kilometer auf der Straße.
+    def _col(name: str) -> pd.Series:
+        if name in df.columns:
+            return df[name]
+        return pd.Series([None] * len(df), index=df.index)
+
+    df["is_indoor"] = [
+        is_indoor(t, s, r)
+        for t, s, r in zip(_col("type"), _col("sport_type"), _col("raw_json"))
+    ]
+    df["distance_km_outdoor"] = df["distance_km"].where(~df["is_indoor"], 0.0)
+    df["distance_km_indoor"] = df["distance_km"].where(df["is_indoor"], 0.0)
 
     # Tageslast als transparentes Banister-TRIMP (HF-basiert). Fällt HF/Ruhepuls
     # weg, greift Stravas Relative Effort, zuletzt eine grobe Dauer×HF-Schätzung.
