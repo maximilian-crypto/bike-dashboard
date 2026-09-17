@@ -49,6 +49,25 @@ def _parse_cadence(text: str) -> tuple[int | None, int | None]:
     return None, None
 
 
+def _load_sources(days: int = 28) -> dict[str, int]:
+    """Zählt, woraus die Trainingslast der letzten Wochen berechnet wurde.
+
+    Dient der Selbstkontrolle des gehosteten Laufs: steht hier kein ``power``,
+    obwohl Rollen-Einheiten gefahren wurden, fehlt ``ATHLETE_FTP`` in den
+    Actions-Secrets — ein Fehler, der sonst nur an still zu niedrigen Lastwerten
+    auffiele.
+    """
+    try:
+        rides = dataprep.prep_rides()
+        if rides.empty or "load_source" not in rides.columns:
+            return {}
+        cutoff = dt.date.today() - dt.timedelta(days=days)
+        recent = rides[rides["date"] >= cutoff]
+        return {str(k): int(v) for k, v in recent["load_source"].value_counts().items()}
+    except Exception:  # noqa: BLE001 – Diagnosefeld darf den Tagesplan nie kippen
+        return {}
+
+
 def _milestone_payload() -> dict[str, Any] | None:
     """Kompakter Meilenstein für die Ride-PWA: nächstes Ziel + Orden-Zähler.
 
@@ -104,6 +123,7 @@ def build(out_path: Path = DEFAULT_OUT, today: dt.date | None = None) -> dict[st
     max_hr = zones.max_hr_from_data()
     rest_hr = zones.resting_hr_baseline()
     lthr = zones.lthr_from_config()
+    ftp = config.ftp_from_config()
     cad_lo, cad_hi = _parse_cadence(rc.cadence)
 
     # Bewusst OHNE Routen-Polyline: today.json liegt öffentlich auf GitHub Pages,
@@ -111,6 +131,7 @@ def build(out_path: Path = DEFAULT_OUT, today: dt.date | None = None) -> dict[st
     # veröffentlichen. Die PWA plant die Route weiter clientseitig aus dem GPS.
     wx = _weather_payload(cfg)
     milestone = _milestone_payload()
+    load_sources = _load_sources()
 
     payload: dict[str, Any] = {
         "generated_at": dt.datetime.now(dt.timezone.utc).isoformat(timespec="seconds"),
@@ -140,8 +161,14 @@ def build(out_path: Path = DEFAULT_OUT, today: dt.date | None = None) -> dict[st
             "max_hr": max_hr,
             "rest_hr": rest_hr,
             "lthr": lthr,
+            "ftp": ftp,
             "target_zone": rc.zone_number,
             "method": zones.method_label(rest_hr, lthr),
+            # Womit die Trainingslast dieser Woche gerechnet wurde. Macht von
+            # aussen sichtbar, ob ATHLETE_FTP/ATHLETE_LTHR im gehosteten Lauf
+            # tatsächlich angekommen sind — sonst merkt man eine fehlende
+            # Umgebungsvariable erst an stillschweigend falschen Zahlen.
+            "load_sources": load_sources,
         },
         "weather": wx,
         "milestone": milestone,
