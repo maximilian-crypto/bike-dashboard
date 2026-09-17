@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-09-17T17:11:01+00:00",
+  "generated_at": "2026-09-17T17:14:00+00:00",
   "date": "2026-09-17",
   "recommendation": {
     "kind": "REST",
@@ -38,8 +38,13 @@
     "max_hr": 197,
     "rest_hr": 68,
     "lthr": null,
+    "ftp": 170,
     "target_zone": null,
-    "method": "Karvonen/HRR"
+    "method": "Karvonen/HRR",
+    "load_sources": {
+      "hr": 14,
+      "power": 1
+    }
   },
   "weather": {
     "temp_c": 15.9,
