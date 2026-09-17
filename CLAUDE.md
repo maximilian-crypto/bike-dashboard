@@ -128,7 +128,7 @@ Live-Ride-PWA mit BLE-Puls/-Kadenz und Karte.
 | 6 | **Gangempfehlung (Shift)** — leichter/halten/schwerer aus Kadenz vs. Zielband | `mobile/ride.html` | rendert, **braucht BLE-Kadenzsensor** |
 
 **Tests:** 103 grün (`python -m pytest -q`), inkl. Suites
-`tests/test_milestones.py`, `tests/test_maintenance.py`, `tests/test_dataprep.py` `tests/test_season.py` und `tests/test_power.py`.
+`tests/test_milestones.py`, `tests/test_maintenance.py`, `tests/test_dataprep.py`, `tests/test_season.py` und `tests/test_power.py`.
 
 ---
 
