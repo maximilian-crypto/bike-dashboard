@@ -31,3 +31,30 @@ def test_placeholder_creds_are_invalid():
     raw = config.load_config_raw()
     assert not config.provider_creds_ok(raw, "strava")
     assert not config.has_routing(raw)
+
+
+# --- Env-Overlay: robust gegen kopierte Anfuehrungszeichen -----------------
+
+def test_env_value_cleaning():
+    assert config._clean_env_value('  170 ') == "170"
+    assert config._clean_env_value('"2027-03-01"') == "2027-03-01"
+    assert config._clean_env_value("'170'") == "170"
+    assert config._clean_env_value("170") == "170"
+    # Kein Kahlschlag bei Anfuehrungszeichen mitten im Wert.
+    assert config._clean_env_value('ab"cd') == 'ab"cd'
+
+
+def test_quoted_env_secrets_still_apply(monkeypatch):
+    """TOML-Zeile versehentlich in ein GitHub-Secret kopiert: darf nicht still
+    auf den Vorgabewert zurueckfallen."""
+    monkeypatch.setenv("ATHLETE_FTP", '"170"')
+    monkeypatch.setenv("ATHLETE_SEASON_START", '"2027-03-01"')
+    assert config.ftp_from_config() == 170
+
+    from bikedash import season
+    assert season.season_start_from_config().isoformat() == "2027-03-01"
+
+
+def test_blank_env_var_does_not_override(monkeypatch):
+    monkeypatch.setenv("ATHLETE_FTP", "   ")
+    assert config.ftp_from_config() is None
