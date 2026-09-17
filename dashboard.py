@@ -545,6 +545,24 @@ def render_setup() -> None:
                  "leistungsbasiert bewertet statt über die Herzfrequenz.",
         )
 
+        # Beim Hosting kommen diese Werte aus den Secrets und haben Vorrang vor
+        # config.toml. Die Felder oben lesen NUR die Datei — ohne diesen Hinweis
+        # stünde dort eine 0, obwohl längst der Secret-Wert wirkt, und man würde
+        # an der falschen Stelle suchen.
+        _env_labels = [("ATHLETE_LTHR", "LTHR"), ("ATHLETE_FTP", "FTP"),
+                       ("ATHLETE_SEASON_START", "Saisonstart")]
+        _active = [(lbl, config._clean_env_value(os.environ[name]))
+                   for name, lbl in _env_labels if os.environ.get(name, "").strip()]
+        if _active:
+            st.info(
+                "Aus den Secrets/Umgebungsvariablen gesetzt und **aktuell wirksam**: "
+                + " · ".join(f"**{lbl} {val}**" for lbl, val in _active)
+                + ".  \nDiese haben Vorrang vor den Feldern oben — die zeigen nur, "
+                "was in `config.toml` steht. Ändern also dort, wo sie herkommen "
+                "(Streamlit → Settings → Secrets bzw. GitHub → Actions-Secrets).",
+                icon=":material/cloud_done:",
+            )
+
     with st.expander("4) KI-Coach + Morgen-Report (optional)", icon=":material/psychology:",
                      expanded=False):
         st.markdown(
