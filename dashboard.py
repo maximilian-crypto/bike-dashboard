@@ -29,7 +29,8 @@ except Exception:
 
 from bikedash import (
     backup, coach, config, dataprep, form, maintenance, milestones, recommend,
-    report, routing, store, strava, weather, webauth, whoop, windlab, zones,
+    report, routing, season, store, strava, weather, webauth, whoop, windlab,
+    zones,
 )
 
 st.set_page_config(page_title="RIDE · Fahrrad-Dashboard", page_icon="🚴", layout="wide")
@@ -511,9 +512,24 @@ def render_setup() -> None:
                            format="%.6f", key="cfg_home_lat")
         hc[1].number_input("Heimat Länge (lon)", value=float(a.get("home_lon", 0) or 0),
                            format="%.6f", key="cfg_home_lon")
-        st.number_input("Wochen-Stundenziel (0 = automatisch)",
-                        value=int(a.get("weekly_hours_target", 0) or 0), min_value=0,
-                        key="cfg_weekly")
+        st.text_input(
+            "Saisonstart (JJJJ-MM-TT) – Zieldatum des Trainingsplans",
+            value=str(a.get("season_start", "") or ""), key="cfg_season_start",
+            placeholder=str(season.DEFAULT_SEASON_START),
+            help="Worauf hin aufgebaut wird. Bestimmt Phase (Grundlage → Aufbau → Formaufbau) und wie steil die Wochenlast steigt. Leer = Vorgabewert.",
+        )
+        _anchor = season.load_anchor()
+        if _anchor:
+            _start, _base = _anchor
+            st.caption(
+                f"Plan läuft seit **{_start.isoformat()}**, Ausgangslast "
+                f"{_base:.0f} pro Woche (≈ {_base / season.TSS_PER_HOUR:.1f} h). "
+                "Neu verankern, wenn sich dein Ausgangsniveau grundlegend geändert hat "
+                "— der Plan startet dann bei deinem aktuellen Volumen neu."
+            )
+            if st.button(":material/restart_alt: Plan neu verankern", key="season_reset"):
+                season.clear_anchor()
+                st.rerun()
         st.number_input(
             "LTHR – Laktatschwellen-HF (0 = aus, dann %HRR aus Whoop-HFmax)",
             value=int(a.get("lthr", 0) or 0), min_value=0, max_value=230, key="cfg_lthr",
@@ -564,7 +580,7 @@ def render_setup() -> None:
             "athlete": {
                 "home_lat": float(st.session_state.cfg_home_lat),
                 "home_lon": float(st.session_state.cfg_home_lon),
-                "weekly_hours_target": int(st.session_state.cfg_weekly),
+                "season_start": st.session_state.cfg_season_start.strip(),
                 "lthr": int(st.session_state.cfg_lthr),
                 "ftp": int(st.session_state.cfg_ftp),
             },
@@ -746,10 +762,14 @@ with tab_today:
 
     pcol, _ = st.columns([2, 1])
     with pcol:
-        prog = min(rc.week_hours / rc.target_hours, 1.0) if rc.target_hours else 0.0
+        prog = min(rc.week_load / rc.target_load, 1.0) if rc.target_load else 0.0
+        phase = f"Phase „{rc.phase_label}“" if rc.phase_label else ""
+        deload = " · **Entlastungswoche**" if rc.is_deload else ""
+        rest = f" · noch {rc.weeks_to_go} Wochen bis zur Saison" if rc.weeks_to_go else ""
         st.caption(
-            f"Wochenfortschritt: {rc.week_hours:.1f} h von ~{rc.target_hours:.1f} h "
-            f"· {rc.week_rides} Fahrten · {rc.week_km:.0f} km"
+            f"Wochenfortschritt: {rc.week_load:.0f} von {rc.target_load:.0f} Last "
+            f"(≈ {rc.target_hours:.1f} h) · {rc.week_rides} Fahrten · {rc.week_km:.0f} km  \n"
+            f"{phase}{deload}{rest}"
         )
         st.progress(prog)
 

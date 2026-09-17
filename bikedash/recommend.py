@@ -12,7 +12,7 @@ from dataclasses import dataclass, field
 
 import pandas as pd
 
-from . import dataprep, form, zones
+from . import dataprep, form, season, zones
 
 # Form-Schwellen (TSB = CTL − ATL). Praktiker-Heuristik (Allen/Coggan) — bewusst
 # als kalibrierbare Startwerte, NICHT als hart validierte Grenzen (siehe Doku).
@@ -58,6 +58,13 @@ class Recommendation:
     target_hours: float
     tsb: float | None = None
     rationale: list[str] = field(default_factory=list)
+    # Saisonplan-Kontext (siehe season.py)
+    week_load: float = 0.0
+    target_load: float = 0.0
+    phase: str | None = None
+    phase_label: str | None = None
+    weeks_to_go: int | None = None
+    is_deload: bool = False
 
     @property
     def target_distance_mid(self) -> float:
@@ -123,14 +130,14 @@ def build(today: dt.date | None = None) -> Recommendation:
         week_rides = int(len(week))
         med_speed = float(rides["avg_speed_kmh"].median() or 24.0)
 
-    # Wochenziel: aus Schnitt der letzten 4 Wochen, mind. 2 h.
-    if not rides.empty:
-        last28 = rides[rides["date"] >= week_start - dt.timedelta(days=28)]
-        chronic_weekly = float(last28["moving_h"].sum()) / 4.0
-    else:
-        chronic_weekly = 0.0
-    target_hours = max(chronic_weekly, 2.0)
-    progress = week_hours / target_hours if target_hours else 0.0
+    # Wochenziel kommt aus dem Saisonplan — gesteuert wird über die **Last**
+    # (TSS), nicht über Stunden: 2 h Grundlage und 2 h Intervalle sind nicht
+    # derselbe Reiz. Die Stundenzahl ist nur noch die Übersetzung fürs Auge.
+    plan = season.build(rides, today)
+    week_load = float(week["load"].sum()) if not week.empty else 0.0
+    target_load = plan.target_load
+    target_hours = plan.target_hours
+    progress = week_load / target_load if target_load else 0.0
 
     # --- Bereitschaft ---
     score = _latest_recovery(rec, today)
@@ -167,15 +174,17 @@ def build(today: dt.date | None = None) -> Recommendation:
     else:
         reasons.append("Keine aktuelle Whoop-Recovery — neutrale Annahme.")
     reasons.append(
-        f"Diese Woche bisher {week_hours:.1f} h / Ziel ~{target_hours:.1f} h "
-        f"({progress*100:.0f} %)."
+        f"Diese Woche bisher {week_load:.0f} / Ziel {target_load:.0f} Last "
+        f"({progress*100:.0f} %, ≈ {target_hours:.1f} h)."
     )
+    reasons.extend(plan.rationale)
     if tsb is not None:
         reasons.append(f"Form (TSB) aktuell {tsb:+.0f}.")
 
-    # Polarisiert: ~80 % locker (Z1–2), harte Reize dosiert (≈2×/Woche, ~20 %),
-    # Z3-„Grauzone" meiden. Autoregulation über die Whoop-Recovery.
-    POLARIZED_HARD_CAP = 2
+    # Polarisiert: ~80 % locker (Z1–2), harte Reize dosiert, Z3-„Grauzone"
+    # meiden. Wie viele harte Einheiten die Woche verträgt, gibt die Phase des
+    # Saisonplans vor — in der Grundlage bewusst nur eine.
+    POLARIZED_HARD_CAP = plan.hard_days_max
 
     if rode_today:
         kind = "REST"
@@ -283,4 +292,10 @@ def build(today: dt.date | None = None) -> Recommendation:
         target_hours=round(target_hours, 1),
         tsb=round(tsb, 1) if tsb is not None else None,
         rationale=reasons,
+        week_load=round(week_load, 1),
+        target_load=round(target_load, 1),
+        phase=plan.phase,
+        phase_label=plan.phase_label,
+        weeks_to_go=plan.weeks_to_go,
+        is_deload=plan.is_deload,
     )

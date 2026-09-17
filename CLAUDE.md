@@ -47,6 +47,7 @@ bike-dashboard/
 │  ├─ form.py             # CTL/ATL/TSB (Fitness/Ermüdung/Form)
 │  ├─ zones.py            # HF-Zonen (LTHR > Karvonen/HRR > %max)
 │  ├─ recommend.py        # Tagesempfehlung (Kern-Heuristik)
+│  ├─ season.py           # Saisonplan: Wochenlast-Sollkurve aufs Zieldatum
 │  ├─ routing.py          # windkluge Rundkurse via ORS
 │  ├─ weather.py          # Open-Meteo
 │  ├─ windlab.py          # Wind-Performance-Analyse
@@ -79,6 +80,16 @@ wer die Normierung entfernt, bremst den Athleten unabsichtlich aus.
 Tracker gewichtet Indoor-km je Bauteil über `indoor_factor` (Antrieb anteilig,
 Reifen/Bremsen/Züge gar nicht) — siehe `maintenance.odometer()`.
 
+**Zwei Steuerebenen, bewusst getrennt:** `season.py` sagt, **wie viel** Last
+diese Woche anstehen sollte (Richtung, progressive Überlast bis zum Saisonstart);
+`recommend.py` entscheidet über Whoop/TSB, **ob heute** davon etwas geliefert
+wird (Sicherheit). Gesteuert wird über Last, nicht über Stunden — 2 h Grundlage
+und 2 h Intervalle sind nicht derselbe Reiz. Der Plananker (Startdatum +
+Ausgangslast) liegt in `app_kv`, damit die Kurve Richtung behält statt dem
+rollenden Mittelwert zu folgen. Steigerung ist **prozentual** (+10 %/Woche), nicht
+als absolute CTL-Rampe: „+3 bis +5 CTL/Woche" stammt von trainierten Fahrern und
+ist bei niedrigem Ausgangsniveau eine Vervielfachung.
+
 **Wichtige Konventionen:**
 - Design-Tokens (`C_IN`, `C_ABOVE`, `PANEL_A`, `MUTED`, `ACCENT` …) stehen oben
   in `dashboard.py` und spiegeln 1:1 die CSS-Variablen in `mobile/ride.html`.
@@ -108,8 +119,8 @@ Live-Ride-PWA mit BLE-Puls/-Kadenz und Karte.
 | 5 | **Steigung** — aus DeviceOrientation-Pitch, kalibrierbar (Kachel antippen = 0 %) | `mobile/ride.html` | rendert, **am Handy ungetestet** |
 | 6 | **Gangempfehlung (Shift)** — leichter/halten/schwerer aus Kadenz vs. Zielband | `mobile/ride.html` | rendert, **braucht BLE-Kadenzsensor** |
 
-**Tests:** 72 grün (`python -m pytest -q`), inkl. Suites
-`tests/test_milestones.py`, `tests/test_maintenance.py` und `tests/test_dataprep.py`.
+**Tests:** 88 grün (`python -m pytest -q`), inkl. Suites
+`tests/test_milestones.py`, `tests/test_maintenance.py`, `tests/test_dataprep.py` und `tests/test_season.py`.
 
 ---
 
