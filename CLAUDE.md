@@ -298,10 +298,54 @@ Logik-Check ohne DB:
 ## 8. Hinweise für Claude Code
 
 - **Keine PR erstellen**, ausser der Nutzer bittet ausdrücklich darum.
-- Entwicklung läuft auf Branch `claude/fahrrad-app-neue-feature-ptpp0w`.
-- Vor „fertig": `python -m pytest -q` muss grün sein.
+- Entwicklung läuft auf einem `claude/…`-Branch, **nie direkt auf `main`**.
 - Deutsche UI-Texte und Kommentare beibehalten.
-- Bei Änderungen an `recommend.py`-Templates daran denken, dass die Werte über
-  `today.json` in die PWA fliessen — dort ggf. Defaults mitziehen.
 - `dashboard.py` ist gross: neue Logik in ein `bikedash/`-Modul auslagern und im
   Dashboard nur rendern.
+
+### 8a. Fertig heisst: gemerged  ⚠️
+
+**Nach `main` mergen, sobald etwas fertig ist — ohne Rückfrage.** Der Nutzer hat
+das ausdrücklich so angeordnet (Sept 2026). Grund: Streamlit Community Cloud
+deployt aus `main`, GitHub Pages liefert die PWA aus `main`. Code auf einem
+Feature-Branch ist für den Nutzer **nicht vorhanden** — er sieht das alte
+Dashboard und meldet „Features fehlen". Das ist in diesem Projekt schon zweimal
+passiert (Abschnitt 5b, Befund 1; und erneut im September 2026).
+
+„Fertig" ist definiert als: `python -m pytest -q` grün **und** die betroffene
+Oberfläche real im Browser geprüft (Streamlit starten, Tab anklicken, auf
+Traceback und JS-Fehler schauen) — nicht „kompiliert durch".
+
+### 8b. Nach jeder Änderung: Ausbreitung prüfen  ⚠️
+
+Ein neuer Wert oder eine neue Einstellung lebt in diesem Projekt an **sechs**
+Stellen. Wer nur zwei davon anfasst, baut einen stillen Fehler: das Dashboard
+rechnet dann anders als `today.json`, und niemand merkt es. Genau so waren
+`ATHLETE_LTHR` (nie in den Workflows) und `weekly_hours_target` (nirgends
+gelesen) monatelang kaputt. Checkliste:
+
+| # | Stelle | wofür |
+|---|---|---|
+| 1 | `bikedash/config.py` → `_ENV_MAP` | Env-Overlay beim Hosting |
+| 2 | `config.example.toml` | lokale Einrichtung |
+| 3 | `.streamlit/secrets.toml.example` | Streamlit-Secrets |
+| 4 | `.github/workflows/sync.yml` + `report.yml` | **die vergessene Stelle** |
+| 5 | `DEPLOY.md` (Secrets-Tabelle) | damit der Nutzer es findet |
+| 6 | Einrichtungs-Tab in `dashboard.py` | Eingabe + Speichern |
+
+Gegenprobe vor dem Commit:
+`grep -rn "DEIN_NEUER_WERT" --include=*.py --include=*.toml --include=*.yml --include=*.md .`
+— taucht er in weniger als sechs Dateien auf, fehlt etwas.
+
+Weitere Fallen, die hier schon zugeschlagen haben:
+- **Rechnet der gehostete Pfad wie das Dashboard?** `build_today.py` läuft in
+  GitHub Actions ohne `config.toml` — alles muss über Env-Variablen ankommen.
+- **Bestehende Tests, die eine kaputte Annahme zementieren.** Beim Umstellen der
+  Lastskala war ein Test auf die falsche Skala kalibriert. Schlägt ein Test nach
+  einer bewussten Änderung fehl: erst prüfen, welche der beiden Seiten recht hat.
+- **`pandas.resample("W-MON")` gruppiert rechtsseitig** und zerschneidet
+  Trainingswochen. Für Montag-bis-Sonntag `closed="left", label="left"` setzen.
+- **`pkill -f "streamlit run"`** killt die eigene Shell mit, weil die Kommandozeile
+  den Suchstring selbst enthält. `pkill -f "[s]treamlit.run"` benutzen.
+- Bei Änderungen an `recommend.py`-Templates daran denken, dass die Werte über
+  `today.json` in die PWA fliessen — dort ggf. Defaults mitziehen.
