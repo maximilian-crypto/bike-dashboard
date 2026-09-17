@@ -155,6 +155,13 @@ def build(out_path: Path = DEFAULT_OUT, today: dt.date | None = None) -> dict[st
             "week_hours": rc.week_hours,
             "target_hours": rc.target_hours,
             "tsb": rc.tsb,
+            # Wattvorgabe fuer die Rolle: drinnen die steuerbare Groesse, weil
+            # die Herzfrequenz dem Reiz nachlaeuft und mit der Hitze driftet.
+            # Ohne hinterlegte FTP bleiben die Felder null.
+            "power_low": rc.power_low,
+            "power_high": rc.power_high,
+            "power_summary": rc.power_summary,
+            "power_plan": rc.power_plan,
             "rationale": rc.rationale,
         },
         "zones": {

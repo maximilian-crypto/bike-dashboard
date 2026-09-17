@@ -12,7 +12,7 @@ from dataclasses import dataclass, field
 
 import pandas as pd
 
-from . import dataprep, form, season, zones
+from . import config, dataprep, form, power, season, zones
 
 # Form-Schwellen (TSB = CTL − ATL). Praktiker-Heuristik (Allen/Coggan) — bewusst
 # als kalibrierbare Startwerte, NICHT als hart validierte Grenzen (siehe Doku).
@@ -61,6 +61,12 @@ class Recommendation:
     # Saisonplan-Kontext (siehe season.py)
     week_load: float = 0.0
     target_load: float = 0.0
+    # Wattvorgaben (nur mit hinterlegter FTP) — drinnen die steuerbare Groesse
+    ftp: int | None = None
+    power_low: int | None = None
+    power_high: int | None = None
+    power_plan: list[dict] = field(default_factory=list)
+    power_summary: str | None = None
     phase: str | None = None
     phase_label: str | None = None
     weeks_to_go: int | None = None
@@ -265,6 +271,26 @@ def build(today: dt.date | None = None) -> Recommendation:
         z = zones.zone_for(tpl["zone"], max_hr, rest_hr, lthr)
         znum, zlabel, zlow, zhigh = z.number, z.label, z.low_bpm, z.high_bpm
 
+    # Wattvorgabe + abfahrbare Struktur. Drinnen ist Leistung die steuerbare
+    # Groesse: die Herzfrequenz hinkt dem Reiz hinterher und driftet mit der
+    # Hitze. Ohne hinterlegte FTP bleibt alles leer und es aendert sich nichts.
+    ftp = config.ftp_from_config()
+    p_low = p_high = None
+    p_blocks: list[dict] = []
+    p_summary = None
+    if ftp and tpl["zone"]:
+        pz = power.zone_for(tpl["zone"], ftp)
+        if pz:
+            p_low, p_high = pz.low_w, pz.high_w
+        mid = int(sum(dur) / 2) if dur[1] else 0
+        blocks = power.structure(kind, mid, ftp, tpl["cadence"])
+        p_blocks = [
+            {"label": b.label, "minutes": b.minutes, "low_w": b.low_w,
+             "high_w": b.high_w, "zone": b.zone, "cadence": b.cadence}
+            for b in blocks
+        ]
+        p_summary = power.describe(blocks) or None
+
     # Distanzschätzung aus Dauer × zonentypischem Tempo.
     if base == 0:
         dist = (0.0, 0.0)
@@ -298,4 +324,9 @@ def build(today: dt.date | None = None) -> Recommendation:
         phase_label=plan.phase_label,
         weeks_to_go=plan.weeks_to_go,
         is_deload=plan.is_deload,
+        ftp=ftp,
+        power_low=p_low,
+        power_high=p_high,
+        power_plan=p_blocks,
+        power_summary=p_summary,
     )

@@ -48,6 +48,7 @@ bike-dashboard/
 │  ├─ zones.py            # HF-Zonen (LTHR > Karvonen/HRR > %max)
 │  ├─ recommend.py        # Tagesempfehlung (Kern-Heuristik)
 │  ├─ season.py           # Saisonplan: Wochenlast-Sollkurve aufs Zieldatum
+│  ├─ power.py            # Leistungszonen (%FTP) + abfahrbare Einheiten-Struktur
 │  ├─ routing.py          # windkluge Rundkurse via ORS
 │  ├─ weather.py          # Open-Meteo
 │  ├─ windlab.py          # Wind-Performance-Analyse
@@ -90,6 +91,13 @@ rollenden Mittelwert zu folgen. Steigerung ist **prozentual** (+10 %/Woche), nic
 als absolute CTL-Rampe: „+3 bis +5 CTL/Woche" stammt von trainierten Fahrern und
 ist bei niedrigem Ausgangsniveau eine Vervielfachung.
 
+**Drinnen Watt, draussen Herzfrequenz.** `zones.py` liefert HF-Zonen (draussen
+ohne Powermeter die einzige Groesse), `power.py` Leistungszonen als Anteil der
+FTP plus eine abfahrbare Struktur (`structure()`: Einfahren, Intervalle bzw.
+Hauptteil, Ausfahren). Auf der Rolle ist Watt die richtige Waehrung: die
+Herzfrequenz hinkt dem Reiz 1-2 min hinterher und driftet mit der Hitze. Ohne
+hinterlegte `athlete.ftp` bleiben alle Wattfelder leer — nie erzwingen.
+
 **Wichtige Konventionen:**
 - Design-Tokens (`C_IN`, `C_ABOVE`, `PANEL_A`, `MUTED`, `ACCENT` …) stehen oben
   in `dashboard.py` und spiegeln 1:1 die CSS-Variablen in `mobile/ride.html`.
@@ -119,8 +127,8 @@ Live-Ride-PWA mit BLE-Puls/-Kadenz und Karte.
 | 5 | **Steigung** — aus DeviceOrientation-Pitch, kalibrierbar (Kachel antippen = 0 %) | `mobile/ride.html` | rendert, **am Handy ungetestet** |
 | 6 | **Gangempfehlung (Shift)** — leichter/halten/schwerer aus Kadenz vs. Zielband | `mobile/ride.html` | rendert, **braucht BLE-Kadenzsensor** |
 
-**Tests:** 88 grün (`python -m pytest -q`), inkl. Suites
-`tests/test_milestones.py`, `tests/test_maintenance.py`, `tests/test_dataprep.py` und `tests/test_season.py`.
+**Tests:** 103 grün (`python -m pytest -q`), inkl. Suites
+`tests/test_milestones.py`, `tests/test_maintenance.py`, `tests/test_dataprep.py` `tests/test_season.py` und `tests/test_power.py`.
 
 ---
 

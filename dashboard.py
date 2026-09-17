@@ -791,6 +791,31 @@ with tab_today:
         )
         st.progress(prog)
 
+    # --- Wattplan für die Rolle ---
+    # Drinnen ist Leistung die steuerbare Größe: die Herzfrequenz hinkt dem Reiz
+    # ein bis zwei Minuten hinterher und driftet mit der Hitze. Ohne hinterlegte
+    # FTP bleibt der Abschnitt weg und es ändert sich nichts am Bisherigen.
+    if rc.power_plan:
+        st.subheader(":material/bolt: So fährst du das auf der Rolle", anchor=False)
+        st.markdown(
+            f"**{rc.power_summary}** &nbsp;·&nbsp; "
+            f"<span style='color:{MUTED}'>Trittfrequenz {rc.cadence} · "
+            f"FTP {rc.ftp} W</span>",
+            unsafe_allow_html=True,
+        )
+        plan_df = pd.DataFrame([
+            {"Abschnitt": b["label"], "Minuten": b["minutes"],
+             "Watt": f"{b['low_w']}–{b['high_w']}", "Zone": f"Z{b['zone']}"}
+            for b in rc.power_plan
+        ])
+        st.dataframe(plan_df, width="stretch", hide_index=True)
+        st.caption(
+            "Zwift im freien Ritt starten und die Wattzahl über das virtuelle "
+            "Schalten halten — oder ein Workout aus der Bibliothek nehmen, das "
+            "dieser Struktur entspricht. Im ERG-Modus regelt der Trainer die "
+            "Leistung selbst, du hältst nur die Trittfrequenz."
+        )
+
     with st.expander("Warum diese Empfehlung?", icon=":material/lightbulb:", expanded=True):
         for line in rc.rationale:
             st.markdown(f"- {line}")
