@@ -67,12 +67,28 @@ _ENV_MAP: dict[str, tuple[str, str, type]] = {
 }
 
 
+def _clean_env_value(val: str) -> str:
+    """Leerraum und umschliessende Anführungszeichen entfernen.
+
+    In den Streamlit-Secrets steht TOML (``ATHLETE_SEASON_START = "2027-03-01"``),
+    in den GitHub-Actions-Secrets dagegen der nackte Wert. Wer die Zeile aus der
+    einen Oberfläche in die andere kopiert, schleppt die Anführungszeichen mit —
+    und dann scheitert die Typumwandlung **still**: die Einstellung fällt
+    kommentarlos auf ihren Vorgabewert zurück.
+    """
+    val = val.strip()
+    if len(val) >= 2 and val[0] == val[-1] and val[0] in "\"'":
+        val = val[1:-1].strip()
+    return val
+
+
 def _overlay_env(cfg: dict[str, Any]) -> None:
     """Setzt/überschreibt Config-Werte aus den Umgebungsvariablen (in-place)."""
     for env_name, (section, key, cast) in _ENV_MAP.items():
         val = os.environ.get(env_name)
-        if val is None or val == "":
+        if val is None or val.strip() == "":
             continue
+        val = _clean_env_value(val)
         try:
             cfg.setdefault(section, {})[key] = cast(val)
         except (TypeError, ValueError):
