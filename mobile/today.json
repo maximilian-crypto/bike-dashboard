@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-09-17T17:14:00+00:00",
+  "generated_at": "2026-09-17T22:35:48+00:00",
   "date": "2026-09-17",
   "recommendation": {
     "kind": "REST",
@@ -26,6 +26,10 @@
     "week_hours": 0.6,
     "target_hours": 0.8,
     "tsb": 3.1,
+    "power_low": null,
+    "power_high": null,
+    "power_summary": null,
+    "power_plan": [],
     "rationale": [
       "Whoop-Recovery heute: 73 %.",
       "Diese Woche bisher 47 / Ziel 50 Last (94 %, ≈ 0.8 h).",
@@ -47,13 +51,13 @@
     }
   },
   "weather": {
-    "temp_c": 15.9,
-    "wind_kmh": 17.0,
-    "wind_deg": 212,
+    "temp_c": 14.4,
+    "wind_kmh": 14.8,
+    "wind_deg": 229,
     "wind_dir": "SW",
-    "gust_kmh": 34.2,
-    "code": 61,
-    "desc": "leichter Regen"
+    "gust_kmh": 32.8,
+    "code": 3,
+    "desc": "bedeckt"
   },
   "milestone": {
     "total_km": 913.4,
