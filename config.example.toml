@@ -38,6 +38,12 @@ weekly_hours_target = 0
 # die Durchschnitts-HF dieser 20 Minuten ist deine LTHR.
 # Lässt sich auch im Dashboard unter „Einrichtung" eintragen.
 lthr = 0
+# Funktionelle Schwellenleistung (FTP) in Watt. 0 = unbekannt.
+# Ist sie gesetzt, rechnet das Dashboard die Trainingslast von Einheiten mit
+# echten Wattdaten (Smart-Trainer, Powermeter) leistungsbasiert statt über die
+# Herzfrequenz — genauer, und indoor nicht durch Hitze verfälscht.
+# Aus demselben 20-Minuten-Test: FTP = 95 % der Durchschnittsleistung.
+ftp = 0
 
 # --- KI-Coach (optional) ---
 [coach]

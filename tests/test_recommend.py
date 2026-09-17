@@ -6,10 +6,17 @@ from .helpers import recovery, ride
 
 
 def _seed_rides(today):
-    """Dichter Block (8 Fahrten in ~17 Tagen) → hohe Ermüdung / stark negativer TSB."""
-    rides = [ride(100 + i, dt.datetime.combine(today - dt.timedelta(days=i * 2 + 3),
+    """Dichter Block (12 Fahrten an 12 Tagen in Folge) → tiefe Ermüdung.
+
+    Kalibriert auf die TSS-Skala (1 h an der Schwelle = 100), auf der die
+    Schwellen in `recommend.py` definiert sind: dieser Block ergibt TSB ≈ −40.
+    Der frühere, lockerere Block (8 Fahrten über 17 Tage) kam nur auf ≈ −19 und
+    galt bloß deshalb als „tiefe Ermüdung", weil rohes Banister-TRIMP rund 1,6-
+    mal heißer läuft als TSS.
+    """
+    rides = [ride(100 + i, dt.datetime.combine(today - dt.timedelta(days=i + 1),
                                                dt.time(9)))
-             for i in range(8)]
+             for i in range(12)]
     store.upsert_strava_activities(rides)
     store.set_state("whoop_max_hr", "185")
 

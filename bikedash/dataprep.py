@@ -10,6 +10,7 @@ import json
 
 import pandas as pd
 
+from . import config
 from . import load as load_mod
 from . import store, zones
 
@@ -70,24 +71,45 @@ def prep_rides() -> pd.DataFrame:
     df["distance_km_outdoor"] = df["distance_km"].where(~df["is_indoor"], 0.0)
     df["distance_km_indoor"] = df["distance_km"].where(df["is_indoor"], 0.0)
 
-    # Tageslast als transparentes Banister-TRIMP (HF-basiert). Fällt HF/Ruhepuls
-    # weg, greift Stravas Relative Effort, zuletzt eine grobe Dauer×HF-Schätzung.
+    # Trainingslast auf einheitlicher TSS-Skala (1 h an der Schwelle = 100).
+    # Reihenfolge nach Verlässlichkeit: echte Wattdaten → Herzfrequenz →
+    # Stravas Relative Effort → grobe Dauer×HF-Schätzung.
     max_hr = zones.max_hr_from_data()
     rest_hr = zones.resting_hr_baseline()
+    lthr = zones.lthr_from_config()
+    ftp = config.ftp_from_config()
     hr_factor = (df["average_heartrate"].fillna(120) / 120).clip(0.6, 2.0)
     estimate = df["moving_h"] * 50 * hr_factor
 
-    def _row_load(row) -> float:
-        trimp = load_mod.banister_trimp(
-            row["moving_time_s"], row["average_heartrate"], max_hr, rest_hr
-        )
-        if trimp is not None:
-            return trimp
-        if pd.notna(row["suffer_score"]):
-            return float(row["suffer_score"])
-        return float(estimate.loc[row.name])
+    def _has_power_meter(raw: str | None) -> bool:
+        """Echte Wattdaten? Stravas ``device_watts`` unterscheidet Powermeter
+        (bzw. Smart-Trainer) von Stravas Schätzung aus Tempo und Höhenprofil."""
+        if not raw:
+            return False
+        try:
+            return bool(json.loads(raw).get("device_watts"))
+        except (ValueError, TypeError):
+            return False
 
-    df["load"] = df.apply(_row_load, axis=1)
+    def _row_load(row) -> tuple[float, str]:
+        if _has_power_meter(row.get("raw_json")):
+            tss = load_mod.power_tss(
+                row["moving_time_s"], row.get("weighted_average_watts"), ftp
+            )
+            if tss is not None:
+                return tss, "power"
+        tss = load_mod.hr_tss(
+            row["moving_time_s"], row["average_heartrate"], max_hr, rest_hr, lthr
+        )
+        if tss is not None:
+            return tss, "hr"
+        if pd.notna(row["suffer_score"]):
+            return float(row["suffer_score"]), "suffer_score"
+        return float(estimate.loc[row.name]), "estimate"
+
+    computed = [_row_load(row) for _, row in df.iterrows()]
+    df["load"] = [c[0] for c in computed]
+    df["load_source"] = [c[1] for c in computed]
     return df
 
 

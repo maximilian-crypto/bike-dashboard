@@ -42,8 +42,8 @@ bike-dashboard/
 │  ├─ store.py            # SQLite lokal / Postgres via DATABASE_URL
 │  ├─ auth.py, webauth.py # OAuth-Flows
 │  ├─ strava.py, whoop.py # API-Anbindung + Sync
-│  ├─ dataprep.py         # Rohtabellen -> DataFrames
-│  ├─ load.py             # Banister-TRIMP (Trainingslast)
+│  ├─ dataprep.py         # Rohtabellen -> DataFrames, Indoor-/Outdoor-Erkennung
+│  ├─ load.py             # Trainingslast auf TSS-Skala (1 h Schwelle = 100)
 │  ├─ form.py             # CTL/ATL/TSB (Fitness/Ermüdung/Form)
 │  ├─ zones.py            # HF-Zonen (LTHR > Karvonen/HRR > %max)
 │  ├─ recommend.py        # Tagesempfehlung (Kern-Heuristik)
@@ -63,6 +63,21 @@ bike-dashboard/
 ├─ *.ps1                  # Windows-Helfer (siehe Abschnitt 5 — AKTUELLER BLOCKER)
 └─ .github/workflows/     # sync.yml, report.yml, keepalive.yml (laufen auf Linux)
 ```
+
+**Trainingslast — eine Skala für alles (seit Indoor-Saison 2026/27):**
+Jede Einheit wird auf **TSS** normiert: *eine Stunde an der Schwelle = 100*.
+Quellen in dieser Reihenfolge (`dataprep.prep_rides`, Spalte `load_source`):
+`power` (echte Wattdaten, erkennbar an Stravas `device_watts`, braucht
+`athlete.ftp`) → `hr` (Banister-TRIMP, normiert über `load.hr_tss`) →
+`suffer_score` → grobe Schätzung. Wichtig: Die TSB-Schwellen in `recommend.py`
+stammen aus der TSS-Welt (Allen/Coggan). Rohes TRIMP läuft ~1,6-mal heißer —
+wer die Normierung entfernt, bremst den Athleten unabsichtlich aus.
+
+**Indoor ≠ Outdoor:** `dataprep.is_indoor()` erkennt Rollenfahrten
+(`VirtualRide` bzw. Stravas `trainer`-Flag). `prep_rides` liefert
+`is_indoor`, `distance_km_indoor`, `distance_km_outdoor`. Der Verschleiß-
+Tracker gewichtet Indoor-km je Bauteil über `indoor_factor` (Antrieb anteilig,
+Reifen/Bremsen/Züge gar nicht) — siehe `maintenance.odometer()`.
 
 **Wichtige Konventionen:**
 - Design-Tokens (`C_IN`, `C_ABOVE`, `PANEL_A`, `MUTED`, `ACCENT` …) stehen oben
@@ -93,8 +108,8 @@ Live-Ride-PWA mit BLE-Puls/-Kadenz und Karte.
 | 5 | **Steigung** — aus DeviceOrientation-Pitch, kalibrierbar (Kachel antippen = 0 %) | `mobile/ride.html` | rendert, **am Handy ungetestet** |
 | 6 | **Gangempfehlung (Shift)** — leichter/halten/schwerer aus Kadenz vs. Zielband | `mobile/ride.html` | rendert, **braucht BLE-Kadenzsensor** |
 
-**Tests:** 46 grün (`python -m pytest -q`), inkl. neuer Suites
-`tests/test_milestones.py` und `tests/test_maintenance.py`.
+**Tests:** 72 grün (`python -m pytest -q`), inkl. Suites
+`tests/test_milestones.py`, `tests/test_maintenance.py` und `tests/test_dataprep.py`.
 
 ---
 

@@ -521,6 +521,13 @@ def render_setup() -> None:
                  "Verankert die HF-Zonen individuell an deiner Schwelle statt an der "
                  "unsicheren geschätzten Maximal-HF.",
         )
+        st.number_input(
+            "FTP – Schwellenleistung in Watt (0 = aus, dann Last immer über HF)",
+            value=int(a.get("ftp", 0) or 0), min_value=0, max_value=600, key="cfg_ftp",
+            help="Aus dem 20-Minuten-Test: 95 % deiner Durchschnittsleistung. "
+                 "Einheiten mit echten Wattdaten (Rolle, Powermeter) werden damit "
+                 "leistungsbasiert bewertet statt über die Herzfrequenz.",
+        )
 
     with st.expander("4) KI-Coach + Morgen-Report (optional)", icon=":material/psychology:",
                      expanded=False):
@@ -559,6 +566,7 @@ def render_setup() -> None:
                 "home_lon": float(st.session_state.cfg_home_lon),
                 "weekly_hours_target": int(st.session_state.cfg_weekly),
                 "lthr": int(st.session_state.cfg_lthr),
+                "ftp": int(st.session_state.cfg_ftp),
             },
             "coach": {
                 "api_key": st.session_state.get("cfg_coach_key", "").strip(),
@@ -903,6 +911,21 @@ with tab1:
 # ===========================================================================
 with tab2:
     st.subheader(":material/fitness_center: Wie viel & wie hart trainierst du?", anchor=False)
+
+    # Woher die Last je Fahrt stammt — Wattdaten sind genauer als Herzfrequenz,
+    # die indoor durch Hitze nach oben verzerrt.
+    SRC_LABELS = {"power": "Wattmessung", "hr": "Herzfrequenz",
+                  "suffer_score": "Strava Relative Effort", "estimate": "grobe Schätzung"}
+    src = r["load_source"].value_counts() if "load_source" in r.columns else None
+    src_txt = (" · ".join(f"{SRC_LABELS.get(k, k)}: {v}" for k, v in src.items())
+               if src is not None else "")
+    st.caption(
+        "Last auf der **TSS-Skala: eine Stunde an der Schwelle = 100 Punkte.** "
+        "Damit sind Einheiten mit und ohne Wattmessung vergleichbar, und die "
+        "Form-Schwellen weiter unten bedeuten das, was in der Literatur (Coggan) "
+        f"darunter verstanden wird.  \nQuellen im gewählten Zeitraum — {src_txt}"
+    )
+
     daily = r.set_index("start")["load"].resample("D").sum().fillna(0)
     full_idx = pd.date_range(daily.index.min(), daily.index.max(), freq="D")
     daily = daily.reindex(full_idx, fill_value=0)
@@ -920,7 +943,7 @@ with tab2:
     with colA:
         fig = px.bar(weekly_load, x="start", y="load", title="Trainingslast pro Woche")
         fig.update_traces(marker_color=ACCENT)
-        fig.update_layout(xaxis_title="", yaxis_title="Last (Relative Effort)")
+        fig.update_layout(xaxis_title="", yaxis_title="Last (TSS)")
         st.plotly_chart(fig, width="stretch")
     with colB:
         fig = px.bar(weekly_load, x="start", y="hours", title="Trainingsstunden pro Woche")
