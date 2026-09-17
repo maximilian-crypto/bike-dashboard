@@ -31,6 +31,13 @@ home_lon = 0.0
 # Optionales Wochen-Stundenziel. 0 = automatisch aus deinem Schnitt der
 # letzten 4 Wochen ableiten.
 weekly_hours_target = 0
+# Laktatschwellen-Herzfrequenz (LTHR) aus einem Feldtest, in bpm. 0 = unbekannt.
+# Ist sie gesetzt, verankert das Dashboard die HF-Zonen an diesem Wert
+# (Friel-Schwellenzonen) statt an der geschätzten Whoop-HFmax — deutlich
+# treffsicherer. So kommst du an den Wert: 20-Minuten-Test all-out fahren,
+# die Durchschnitts-HF dieser 20 Minuten ist deine LTHR.
+# Lässt sich auch im Dashboard unter „Einrichtung" eintragen.
+lthr = 0
 
 # --- KI-Coach (optional) ---
 [coach]
