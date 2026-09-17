@@ -30,5 +30,8 @@ jobs:
           ORS_API_KEY: ${{ secrets.ORS_API_KEY }}
           ATHLETE_HOME_LAT: ${{ secrets.ATHLETE_HOME_LAT }}
           ATHLETE_HOME_LON: ${{ secrets.ATHLETE_HOME_LON }}
+          ATHLETE_LTHR: ${{ secrets.ATHLETE_LTHR }}
+          ATHLETE_FTP: ${{ secrets.ATHLETE_FTP }}
+          ATHLETE_SEASON_START: ${{ secrets.ATHLETE_SEASON_START }}
           NTFY_TOPIC: ${{ secrets.NTFY_TOPIC }}
         run: python send_report.py

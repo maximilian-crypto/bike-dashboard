@@ -57,8 +57,9 @@ _ENV_MAP: dict[str, tuple[str, str, type]] = {
     "ORS_PROFILE": ("ors", "profile", str),
     "ATHLETE_HOME_LAT": ("athlete", "home_lat", float),
     "ATHLETE_HOME_LON": ("athlete", "home_lon", float),
-    "ATHLETE_WEEKLY_HOURS_TARGET": ("athlete", "weekly_hours_target", float),
+    "ATHLETE_SEASON_START": ("athlete", "season_start", str),
     "ATHLETE_LTHR": ("athlete", "lthr", int),
+    "ATHLETE_FTP": ("athlete", "ftp", int),
     "ANTHROPIC_API_KEY": ("coach", "api_key", str),
     "COACH_MODEL": ("coach", "model", str),
     "NTFY_TOPIC": ("report", "ntfy_topic", str),
@@ -158,6 +159,21 @@ def has_routing(cfg: dict[str, Any]) -> bool:
 
 def athlete(cfg: dict[str, Any]) -> dict[str, Any]:
     return cfg.get("athlete", {})
+
+
+def ftp_from_config() -> int | None:
+    """Funktionelle Schwellenleistung (FTP) in Watt, falls hinterlegt.
+
+    Grundlage für die leistungsbasierte Trainingslast von Rollen-Einheiten.
+    Env-Overlay (``ATHLETE_FTP``) wird berücksichtigt.
+    """
+    cfg = load_config_raw()
+    _overlay_env(cfg)
+    try:
+        ftp = int(round(float(athlete(cfg).get("ftp"))))
+    except (TypeError, ValueError):
+        return None
+    return ftp if ftp > 0 else None
 
 
 def ors(cfg: dict[str, Any]) -> dict[str, Any]:

@@ -28,9 +28,23 @@ profile = "cycling-regular"
 # in Google Maps rechtsklickst -> die erste Zeile sind  lat, lon.
 home_lat = 0.0
 home_lon = 0.0
-# Optionales Wochen-Stundenziel. 0 = automatisch aus deinem Schnitt der
-# letzten 4 Wochen ableiten.
-weekly_hours_target = 0
+# Zieldatum des Saisonplans (JJJJ-MM-TT) – worauf hin aufgebaut wird.
+# Bestimmt die Trainingsphase und wie steil die Wochenlast steigt.
+# Leer/fehlend = Vorgabewert aus bikedash/season.py.
+season_start = "2027-03-01"
+# Laktatschwellen-Herzfrequenz (LTHR) aus einem Feldtest, in bpm. 0 = unbekannt.
+# Ist sie gesetzt, verankert das Dashboard die HF-Zonen an diesem Wert
+# (Friel-Schwellenzonen) statt an der geschätzten Whoop-HFmax — deutlich
+# treffsicherer. So kommst du an den Wert: 20-Minuten-Test all-out fahren,
+# die Durchschnitts-HF dieser 20 Minuten ist deine LTHR.
+# Lässt sich auch im Dashboard unter „Einrichtung" eintragen.
+lthr = 0
+# Funktionelle Schwellenleistung (FTP) in Watt. 0 = unbekannt.
+# Ist sie gesetzt, rechnet das Dashboard die Trainingslast von Einheiten mit
+# echten Wattdaten (Smart-Trainer, Powermeter) leistungsbasiert statt über die
+# Herzfrequenz — genauer, und indoor nicht durch Hitze verfälscht.
+# Aus demselben 20-Minuten-Test: FTP = 95 % der Durchschnittsleistung.
+ftp = 0
 
 # --- KI-Coach (optional) ---
 [coach]

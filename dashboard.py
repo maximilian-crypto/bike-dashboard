@@ -29,7 +29,8 @@ except Exception:
 
 from bikedash import (
     backup, coach, config, dataprep, form, maintenance, milestones, recommend,
-    report, routing, store, strava, weather, webauth, whoop, windlab, zones,
+    report, routing, season, store, strava, weather, webauth, whoop, windlab,
+    zones,
 )
 
 st.set_page_config(page_title="RIDE · Fahrrad-Dashboard", page_icon="🚴", layout="wide")
@@ -511,15 +512,37 @@ def render_setup() -> None:
                            format="%.6f", key="cfg_home_lat")
         hc[1].number_input("Heimat Länge (lon)", value=float(a.get("home_lon", 0) or 0),
                            format="%.6f", key="cfg_home_lon")
-        st.number_input("Wochen-Stundenziel (0 = automatisch)",
-                        value=int(a.get("weekly_hours_target", 0) or 0), min_value=0,
-                        key="cfg_weekly")
+        st.text_input(
+            "Saisonstart (JJJJ-MM-TT) – Zieldatum des Trainingsplans",
+            value=str(a.get("season_start", "") or ""), key="cfg_season_start",
+            placeholder=str(season.DEFAULT_SEASON_START),
+            help="Worauf hin aufgebaut wird. Bestimmt Phase (Grundlage → Aufbau → Formaufbau) und wie steil die Wochenlast steigt. Leer = Vorgabewert.",
+        )
+        _anchor = season.load_anchor()
+        if _anchor:
+            _start, _base = _anchor
+            st.caption(
+                f"Plan läuft seit **{_start.isoformat()}**, Ausgangslast "
+                f"{_base:.0f} pro Woche (≈ {_base / season.TSS_PER_HOUR:.1f} h). "
+                "Neu verankern, wenn sich dein Ausgangsniveau grundlegend geändert hat "
+                "— der Plan startet dann bei deinem aktuellen Volumen neu."
+            )
+            if st.button(":material/restart_alt: Plan neu verankern", key="season_reset"):
+                season.clear_anchor()
+                st.rerun()
         st.number_input(
             "LTHR – Laktatschwellen-HF (0 = aus, dann %HRR aus Whoop-HFmax)",
             value=int(a.get("lthr", 0) or 0), min_value=0, max_value=230, key="cfg_lthr",
             help="Feldtest: 30 min solo all-out fahren, Ø-HF der letzten 20 min eintragen. "
                  "Verankert die HF-Zonen individuell an deiner Schwelle statt an der "
                  "unsicheren geschätzten Maximal-HF.",
+        )
+        st.number_input(
+            "FTP – Schwellenleistung in Watt (0 = aus, dann Last immer über HF)",
+            value=int(a.get("ftp", 0) or 0), min_value=0, max_value=600, key="cfg_ftp",
+            help="Aus dem 20-Minuten-Test: 95 % deiner Durchschnittsleistung. "
+                 "Einheiten mit echten Wattdaten (Rolle, Powermeter) werden damit "
+                 "leistungsbasiert bewertet statt über die Herzfrequenz.",
         )
 
     with st.expander("4) KI-Coach + Morgen-Report (optional)", icon=":material/psychology:",
@@ -557,8 +580,9 @@ def render_setup() -> None:
             "athlete": {
                 "home_lat": float(st.session_state.cfg_home_lat),
                 "home_lon": float(st.session_state.cfg_home_lon),
-                "weekly_hours_target": int(st.session_state.cfg_weekly),
+                "season_start": st.session_state.cfg_season_start.strip(),
                 "lthr": int(st.session_state.cfg_lthr),
+                "ftp": int(st.session_state.cfg_ftp),
             },
             "coach": {
                 "api_key": st.session_state.get("cfg_coach_key", "").strip(),
@@ -694,8 +718,12 @@ else:
 )
 
 # Kumulierte Gesamtdistanz über die GANZE Historie (nicht der Zeitraumfilter) –
-# Grundlage für Orden-Meilensteine und den Verschleiß-Tracker.
+# Grundlage für Orden-Meilensteine und den Verschleiß-Tracker. Für den
+# Verschleiß zusätzlich nach Straße/Rolle getrennt: Indoor-Kilometer belasten
+# nur den Antrieb, nicht Reifen, Bremsen oder Züge.
 total_km_all = float(rides["distance_km"].sum())
+outdoor_km_all = float(rides["distance_km_outdoor"].sum())
+indoor_km_all = float(rides["distance_km_indoor"].sum())
 
 
 # ===========================================================================
@@ -734,10 +762,14 @@ with tab_today:
 
     pcol, _ = st.columns([2, 1])
     with pcol:
-        prog = min(rc.week_hours / rc.target_hours, 1.0) if rc.target_hours else 0.0
+        prog = min(rc.week_load / rc.target_load, 1.0) if rc.target_load else 0.0
+        phase = f"Phase „{rc.phase_label}“" if rc.phase_label else ""
+        deload = " · **Entlastungswoche**" if rc.is_deload else ""
+        rest = f" · noch {rc.weeks_to_go} Wochen bis zur Saison" if rc.weeks_to_go else ""
         st.caption(
-            f"Wochenfortschritt: {rc.week_hours:.1f} h von ~{rc.target_hours:.1f} h "
-            f"· {rc.week_rides} Fahrten · {rc.week_km:.0f} km"
+            f"Wochenfortschritt: {rc.week_load:.0f} von {rc.target_load:.0f} Last "
+            f"(≈ {rc.target_hours:.1f} h) · {rc.week_rides} Fahrten · {rc.week_km:.0f} km  \n"
+            f"{phase}{deload}{rest}"
         )
         st.progress(prog)
 
@@ -899,6 +931,21 @@ with tab1:
 # ===========================================================================
 with tab2:
     st.subheader(":material/fitness_center: Wie viel & wie hart trainierst du?", anchor=False)
+
+    # Woher die Last je Fahrt stammt — Wattdaten sind genauer als Herzfrequenz,
+    # die indoor durch Hitze nach oben verzerrt.
+    SRC_LABELS = {"power": "Wattmessung", "hr": "Herzfrequenz",
+                  "suffer_score": "Strava Relative Effort", "estimate": "grobe Schätzung"}
+    src = r["load_source"].value_counts() if "load_source" in r.columns else None
+    src_txt = (" · ".join(f"{SRC_LABELS.get(k, k)}: {v}" for k, v in src.items())
+               if src is not None else "")
+    st.caption(
+        "Last auf der **TSS-Skala: eine Stunde an der Schwelle = 100 Punkte.** "
+        "Damit sind Einheiten mit und ohne Wattmessung vergleichbar, und die "
+        "Form-Schwellen weiter unten bedeuten das, was in der Literatur (Coggan) "
+        f"darunter verstanden wird.  \nQuellen im gewählten Zeitraum — {src_txt}"
+    )
+
     daily = r.set_index("start")["load"].resample("D").sum().fillna(0)
     full_idx = pd.date_range(daily.index.min(), daily.index.max(), freq="D")
     daily = daily.reindex(full_idx, fill_value=0)
@@ -916,7 +963,7 @@ with tab2:
     with colA:
         fig = px.bar(weekly_load, x="start", y="load", title="Trainingslast pro Woche")
         fig.update_traces(marker_color=ACCENT)
-        fig.update_layout(xaxis_title="", yaxis_title="Last (Relative Effort)")
+        fig.update_layout(xaxis_title="", yaxis_title="Last (TSS)")
         st.plotly_chart(fig, width="stretch")
     with colB:
         fig = px.bar(weekly_load, x="start", y="hours", title="Trainingsstunden pro Woche")
@@ -1201,22 +1248,25 @@ with tab_orden:
 with tab_maint:
     st.subheader(":material/build: Verschleiß & Wartung", anchor=False)
     maint_state = maintenance.load_state()
-    stats = maintenance.statuses(maint_state, total_km_all)
+    stats = maintenance.statuses(maint_state, outdoor_km_all, indoor_km_all)
     n_due = sum(1 for s in stats if s.status == maintenance.STATUS_DUE)
     n_soon = sum(1 for s in stats if s.status == maintenance.STATUS_SOON)
 
-    k1, k2, k3 = st.columns(3)
-    k1.metric(":material/route: Kilometerstand", de_num(total_km_all, "km", 0),
-              help="Kumulierte Strava-Gesamtdistanz über die ganze Historie.")
-    k2.metric(":material/warning: Fällig", f"{n_due}")
-    k3.metric(":material/schedule: Bald fällig", f"{n_soon}")
+    k1, k2, k3, k4 = st.columns(4)
+    k1.metric(":material/route: Straße", de_num(outdoor_km_all, "km", 0),
+              help="Kilometer draußen — zählen für alle Bauteile voll.")
+    k2.metric(":material/home: Rolle", de_num(indoor_km_all, "km", 0),
+              help="Indoor-Kilometer — zählen nur anteilig und nur für den Antrieb.")
+    k3.metric(":material/warning: Fällig", f"{n_due}")
+    k4.metric(":material/schedule: Bald fällig", f"{n_soon}")
 
     st.caption(
         "Verschleiß zählt ab dem Kilometerstand beim letzten Wechsel. Frisch "
         "eingerichtet? Einmal **„Alle ab jetzt frisch“** klicken, dann stimmt die Basis."
     )
     if st.button(":material/restart_alt: Alle ab jetzt frisch tracken"):
-        maintenance.save_state(maintenance.reset_all(maint_state, total_km_all))
+        maintenance.save_state(
+            maintenance.reset_all(maint_state, outdoor_km_all, indoor_km_all))
         st.rerun()
 
     STATUS_STYLE = {
@@ -1230,10 +1280,13 @@ with tab_maint:
         with c1:
             rem = (f"noch {de_num(s.remaining_km, 'km', 0)}" if s.remaining_km >= 0
                    else f"überfällig um {de_num(-s.remaining_km, 'km', 0)}")
+            # Nur erwähnen, wenn Indoor-km bei diesem Bauteil überhaupt zählen.
+            ind = (f" · inkl. {de_num(s.indoor_km_counted, 'km', 0)} Rolle "
+                   f"({s.indoor_factor:.0%})") if s.indoor_km_counted > 0 else ""
             st.markdown(
                 f"{s.icon} **{s.name}** · <span style='color:{color}'>{txt}</span>  \n"
                 f"<span style='color:{MUTED};font-size:13px'>"
-                f"{de_num(s.wear_km, 'km', 0)} / {de_num(s.interval_km, 'km', 0)} · {rem}"
+                f"{de_num(s.wear_km, 'km', 0)} / {de_num(s.interval_km, 'km', 0)} · {rem}{ind}"
                 f"</span>",
                 unsafe_allow_html=True,
             )
@@ -1241,21 +1294,30 @@ with tab_maint:
         with c2:
             if st.button("Gewechselt", key=f"maint_reset_{s.id}",
                          help="Bauteil als frisch gewechselt markieren"):
-                maintenance.save_state(
-                    maintenance.reset_component(maint_state, s.id, total_km_all))
+                maintenance.save_state(maintenance.reset_component(
+                    maint_state, s.id, outdoor_km_all, indoor_km_all))
                 st.rerun()
 
     with st.expander(":material/tune: Bauteile & Intervalle bearbeiten"):
         st.caption("Zeilen hinzufügen/entfernen oder Intervalle ändern, dann speichern. "
-                   "Neue Bauteile starten ab dem aktuellen Kilometerstand.")
+                   "Neue Bauteile starten ab dem aktuellen Kilometerstand. "
+                   "**Rolle zählt** steuert, wie stark Indoor-Kilometer auf dieses "
+                   "Bauteil gehen — 0 % = gar nicht, 100 % = wie Straße.")
         edit_df = pd.DataFrame([
-            {"Emoji": c["icon"], "Bauteil": c["name"], "Intervall (km)": int(c["interval_km"])}
+            {"Emoji": c["icon"], "Bauteil": c["name"],
+             "Intervall (km)": int(c["interval_km"]),
+             "Rolle zählt (%)": int(round(100 * float(
+                 c.get("indoor_factor", maintenance.DEFAULT_INDOOR_FACTOR))))}
             for c in maint_state
         ])
         edited = st.data_editor(
             edit_df, num_rows="dynamic", width="stretch", key="maint_editor",
             column_config={
                 "Intervall (km)": st.column_config.NumberColumn(min_value=1, step=50),
+                "Rolle zählt (%)": st.column_config.NumberColumn(
+                    min_value=0, max_value=100, step=10,
+                    help="Anteil, zu dem ein Rollen-Kilometer wie ein Straßen-Kilometer zählt.",
+                ),
             },
         )
         if st.button(":material/save: Speichern", type="primary", key="maint_save"):
@@ -1267,13 +1329,20 @@ with tab_maint:
                     continue
                 prev = by_name.get(name.lower())
                 slug = "".join(ch if ch.isalnum() else "_" for ch in name.lower())
-                new_state.append({
+                factor = float(row.get("Rolle zählt (%)") or 0.0) / 100.0
+                comp = {
                     "id": prev["id"] if prev else slug,
                     "name": name,
                     "icon": str(row.get("Emoji") or "🔧"),
                     "interval_km": float(row.get("Intervall (km)") or 1000),
-                    "installed_km": float(prev["installed_km"] if prev else total_km_all),
-                })
+                    "indoor_factor": factor,
+                }
+                # Neue Bauteile starten beim aktuellen Stand ihrer eigenen Skala.
+                comp["installed_km"] = float(
+                    prev["installed_km"] if prev
+                    else maintenance.odometer(comp, outdoor_km_all, indoor_km_all)
+                )
+                new_state.append(comp)
             if new_state:
                 maintenance.save_state(new_state)
                 st.success("Gespeichert.")

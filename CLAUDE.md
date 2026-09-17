@@ -42,11 +42,12 @@ bike-dashboard/
 │  ├─ store.py            # SQLite lokal / Postgres via DATABASE_URL
 │  ├─ auth.py, webauth.py # OAuth-Flows
 │  ├─ strava.py, whoop.py # API-Anbindung + Sync
-│  ├─ dataprep.py         # Rohtabellen -> DataFrames
-│  ├─ load.py             # Banister-TRIMP (Trainingslast)
+│  ├─ dataprep.py         # Rohtabellen -> DataFrames, Indoor-/Outdoor-Erkennung
+│  ├─ load.py             # Trainingslast auf TSS-Skala (1 h Schwelle = 100)
 │  ├─ form.py             # CTL/ATL/TSB (Fitness/Ermüdung/Form)
 │  ├─ zones.py            # HF-Zonen (LTHR > Karvonen/HRR > %max)
 │  ├─ recommend.py        # Tagesempfehlung (Kern-Heuristik)
+│  ├─ season.py           # Saisonplan: Wochenlast-Sollkurve aufs Zieldatum
 │  ├─ routing.py          # windkluge Rundkurse via ORS
 │  ├─ weather.py          # Open-Meteo
 │  ├─ windlab.py          # Wind-Performance-Analyse
@@ -63,6 +64,31 @@ bike-dashboard/
 ├─ *.ps1                  # Windows-Helfer (siehe Abschnitt 5 — AKTUELLER BLOCKER)
 └─ .github/workflows/     # sync.yml, report.yml, keepalive.yml (laufen auf Linux)
 ```
+
+**Trainingslast — eine Skala für alles (seit Indoor-Saison 2026/27):**
+Jede Einheit wird auf **TSS** normiert: *eine Stunde an der Schwelle = 100*.
+Quellen in dieser Reihenfolge (`dataprep.prep_rides`, Spalte `load_source`):
+`power` (echte Wattdaten, erkennbar an Stravas `device_watts`, braucht
+`athlete.ftp`) → `hr` (Banister-TRIMP, normiert über `load.hr_tss`) →
+`suffer_score` → grobe Schätzung. Wichtig: Die TSB-Schwellen in `recommend.py`
+stammen aus der TSS-Welt (Allen/Coggan). Rohes TRIMP läuft ~1,6-mal heißer —
+wer die Normierung entfernt, bremst den Athleten unabsichtlich aus.
+
+**Indoor ≠ Outdoor:** `dataprep.is_indoor()` erkennt Rollenfahrten
+(`VirtualRide` bzw. Stravas `trainer`-Flag). `prep_rides` liefert
+`is_indoor`, `distance_km_indoor`, `distance_km_outdoor`. Der Verschleiß-
+Tracker gewichtet Indoor-km je Bauteil über `indoor_factor` (Antrieb anteilig,
+Reifen/Bremsen/Züge gar nicht) — siehe `maintenance.odometer()`.
+
+**Zwei Steuerebenen, bewusst getrennt:** `season.py` sagt, **wie viel** Last
+diese Woche anstehen sollte (Richtung, progressive Überlast bis zum Saisonstart);
+`recommend.py` entscheidet über Whoop/TSB, **ob heute** davon etwas geliefert
+wird (Sicherheit). Gesteuert wird über Last, nicht über Stunden — 2 h Grundlage
+und 2 h Intervalle sind nicht derselbe Reiz. Der Plananker (Startdatum +
+Ausgangslast) liegt in `app_kv`, damit die Kurve Richtung behält statt dem
+rollenden Mittelwert zu folgen. Steigerung ist **prozentual** (+10 %/Woche), nicht
+als absolute CTL-Rampe: „+3 bis +5 CTL/Woche" stammt von trainierten Fahrern und
+ist bei niedrigem Ausgangsniveau eine Vervielfachung.
 
 **Wichtige Konventionen:**
 - Design-Tokens (`C_IN`, `C_ABOVE`, `PANEL_A`, `MUTED`, `ACCENT` …) stehen oben
@@ -93,8 +119,8 @@ Live-Ride-PWA mit BLE-Puls/-Kadenz und Karte.
 | 5 | **Steigung** — aus DeviceOrientation-Pitch, kalibrierbar (Kachel antippen = 0 %) | `mobile/ride.html` | rendert, **am Handy ungetestet** |
 | 6 | **Gangempfehlung (Shift)** — leichter/halten/schwerer aus Kadenz vs. Zielband | `mobile/ride.html` | rendert, **braucht BLE-Kadenzsensor** |
 
-**Tests:** 46 grün (`python -m pytest -q`), inkl. neuer Suites
-`tests/test_milestones.py` und `tests/test_maintenance.py`.
+**Tests:** 88 grün (`python -m pytest -q`), inkl. Suites
+`tests/test_milestones.py`, `tests/test_maintenance.py`, `tests/test_dataprep.py` und `tests/test_season.py`.
 
 ---
 
@@ -272,10 +298,54 @@ Logik-Check ohne DB:
 ## 8. Hinweise für Claude Code
 
 - **Keine PR erstellen**, ausser der Nutzer bittet ausdrücklich darum.
-- Entwicklung läuft auf Branch `claude/fahrrad-app-neue-feature-ptpp0w`.
-- Vor „fertig": `python -m pytest -q` muss grün sein.
+- Entwicklung läuft auf einem `claude/…`-Branch, **nie direkt auf `main`**.
 - Deutsche UI-Texte und Kommentare beibehalten.
-- Bei Änderungen an `recommend.py`-Templates daran denken, dass die Werte über
-  `today.json` in die PWA fliessen — dort ggf. Defaults mitziehen.
 - `dashboard.py` ist gross: neue Logik in ein `bikedash/`-Modul auslagern und im
   Dashboard nur rendern.
+
+### 8a. Fertig heisst: gemerged  ⚠️
+
+**Nach `main` mergen, sobald etwas fertig ist — ohne Rückfrage.** Der Nutzer hat
+das ausdrücklich so angeordnet (Sept 2026). Grund: Streamlit Community Cloud
+deployt aus `main`, GitHub Pages liefert die PWA aus `main`. Code auf einem
+Feature-Branch ist für den Nutzer **nicht vorhanden** — er sieht das alte
+Dashboard und meldet „Features fehlen". Das ist in diesem Projekt schon zweimal
+passiert (Abschnitt 5b, Befund 1; und erneut im September 2026).
+
+„Fertig" ist definiert als: `python -m pytest -q` grün **und** die betroffene
+Oberfläche real im Browser geprüft (Streamlit starten, Tab anklicken, auf
+Traceback und JS-Fehler schauen) — nicht „kompiliert durch".
+
+### 8b. Nach jeder Änderung: Ausbreitung prüfen  ⚠️
+
+Ein neuer Wert oder eine neue Einstellung lebt in diesem Projekt an **sechs**
+Stellen. Wer nur zwei davon anfasst, baut einen stillen Fehler: das Dashboard
+rechnet dann anders als `today.json`, und niemand merkt es. Genau so waren
+`ATHLETE_LTHR` (nie in den Workflows) und `weekly_hours_target` (nirgends
+gelesen) monatelang kaputt. Checkliste:
+
+| # | Stelle | wofür |
+|---|---|---|
+| 1 | `bikedash/config.py` → `_ENV_MAP` | Env-Overlay beim Hosting |
+| 2 | `config.example.toml` | lokale Einrichtung |
+| 3 | `.streamlit/secrets.toml.example` | Streamlit-Secrets |
+| 4 | `.github/workflows/sync.yml` + `report.yml` | **die vergessene Stelle** |
+| 5 | `DEPLOY.md` (Secrets-Tabelle) | damit der Nutzer es findet |
+| 6 | Einrichtungs-Tab in `dashboard.py` | Eingabe + Speichern |
+
+Gegenprobe vor dem Commit:
+`grep -rn "DEIN_NEUER_WERT" --include=*.py --include=*.toml --include=*.yml --include=*.md .`
+— taucht er in weniger als sechs Dateien auf, fehlt etwas.
+
+Weitere Fallen, die hier schon zugeschlagen haben:
+- **Rechnet der gehostete Pfad wie das Dashboard?** `build_today.py` läuft in
+  GitHub Actions ohne `config.toml` — alles muss über Env-Variablen ankommen.
+- **Bestehende Tests, die eine kaputte Annahme zementieren.** Beim Umstellen der
+  Lastskala war ein Test auf die falsche Skala kalibriert. Schlägt ein Test nach
+  einer bewussten Änderung fehl: erst prüfen, welche der beiden Seiten recht hat.
+- **`pandas.resample("W-MON")` gruppiert rechtsseitig** und zerschneidet
+  Trainingswochen. Für Montag-bis-Sonntag `closed="left", label="left"` setzen.
+- **`pkill -f "streamlit run"`** killt die eigene Shell mit, weil die Kommandozeile
+  den Suchstring selbst enthält. `pkill -f "[s]treamlit.run"` benutzen.
+- Bei Änderungen an `recommend.py`-Templates daran denken, dass die Werte über
+  `today.json` in die PWA fliessen — dort ggf. Defaults mitziehen.
