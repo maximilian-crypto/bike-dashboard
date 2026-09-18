@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-09-18T18:47:58+00:00",
+  "generated_at": "2026-09-18T22:10:06+00:00",
   "date": "2026-09-18",
   "recommendation": {
     "kind": "REST",
@@ -51,11 +51,11 @@
     }
   },
   "weather": {
-    "temp_c": 14.2,
-    "wind_kmh": 10.9,
-    "wind_deg": 226,
+    "temp_c": 13.2,
+    "wind_kmh": 12.9,
+    "wind_deg": 216,
     "wind_dir": "SW",
-    "gust_kmh": 24.5,
+    "gust_kmh": 26.6,
     "code": 3,
     "desc": "bedeckt"
   },
@@ -75,6 +75,6 @@
     "event_id": null,
     "detail": "Ruhetag",
     "date": "2026-09-18",
-    "at": "2026-09-18T18:47:57+00:00"
+    "at": "2026-09-18T22:10:05+00:00"
   }
 }
