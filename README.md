@@ -122,6 +122,20 @@ ein Hinweis statt der Karte.
    .\setup_report_task.ps1 -At "07:15"
    ```
 
+### E) Tagesworkout automatisch in Zwift (optional)
+
+Das berechnete Tagesworkout liegt ohne Zutun in deiner Zwift-Bibliothek
+(**Workouts → Custom → Intervals.icu**), auch am Handy. Der Weg führt über
+**intervals.icu** (kostenlos, offizielle Zwift-Anbindung):
+1. Konto auf https://intervals.icu, dort **Settings → Zwift → Connect**.
+2. **Settings → Developer Settings**: API-Key erzeugen, Athleten-ID (`i12345`) notieren.
+3. Im Tab **⚙️ Einrichtung → 5) Zwift** eintragen (beim Hosting: Actions-Secrets, siehe DEPLOY.md).
+4. FTP in Zwift auf denselben Wert wie im Dashboard setzen.
+
+Jeder Lauf von `build_today.py` (in GitHub Actions alle 4 h, lokal
+`python build_today.py`) schickt danach das aktuelle Tagesworkout; Details in
+`bikedash/zwift.py`.
+
 ## Automatischer Sync (auch mehrmals täglich)
 
 Eine geplante Windows-Aufgabe einrichten (in PowerShell im Projektordner):

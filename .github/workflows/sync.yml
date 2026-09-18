@@ -49,6 +49,10 @@ jobs:
           ATHLETE_LTHR: ${{ secrets.ATHLETE_LTHR }}
           ATHLETE_FTP: ${{ secrets.ATHLETE_FTP }}
           ATHLETE_SEASON_START: ${{ secrets.ATHLETE_SEASON_START }}
+          # Tagesworkout automatisch nach Zwift (über intervals.icu). Fehlen die
+          # beiden, wird der Schritt still übersprungen (today.json: zwift.status).
+          INTERVALS_API_KEY: ${{ secrets.INTERVALS_API_KEY }}
+          INTERVALS_ATHLETE_ID: ${{ secrets.INTERVALS_ATHLETE_ID }}
         run: python build_today.py
 
       - name: today.json committen (nur bei Änderung)

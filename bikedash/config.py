@@ -63,6 +63,9 @@ _ENV_MAP: dict[str, tuple[str, str, type]] = {
     "ANTHROPIC_API_KEY": ("coach", "api_key", str),
     "COACH_MODEL": ("coach", "model", str),
     "NTFY_TOPIC": ("report", "ntfy_topic", str),
+    # Tagesworkout → intervals.icu → Zwift-Bibliothek (siehe bikedash/zwift.py)
+    "INTERVALS_API_KEY": ("intervals", "api_key", str),
+    "INTERVALS_ATHLETE_ID": ("intervals", "athlete_id", str),
     "SERVER_PORT": ("server", "port", int),
 }
 
