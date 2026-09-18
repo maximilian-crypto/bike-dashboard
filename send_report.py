@@ -1,9 +1,11 @@
 """Erzeugt den Morgen-Report und schickt ihn (falls konfiguriert) ans Handy.
 
-Für eine geplante Windows-Aufgabe gedacht (z. B. täglich 6:30 Uhr) — siehe README.
 Benutzung:
-    python send_report.py            # bauen + pushen
+    python send_report.py            # bauen + sofort pushen (manuell / Test)
     python send_report.py --print    # nur anzeigen, nicht senden
+    python send_report.py --if-due   # nur senden, wenn fällig (Sync-Workflow):
+                                     # heutige Whoop-Recovery da oder Frist erreicht,
+                                     # und heute noch nicht gesendet
 """
 
 from __future__ import annotations
@@ -19,6 +21,11 @@ def main() -> int:
     except config.ConfigError as exc:
         print(f"⚠️  {exc}")
         return 1
+
+    if "--if-due" in sys.argv:
+        status, why = report.send_if_due(cfg)
+        print(f"Morgen-Report: {status} ({why})")
+        return 0
 
     title, message = report.build_text(cfg)
     print(title)

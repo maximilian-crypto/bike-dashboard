@@ -97,7 +97,8 @@ Die Workflows liegen schon im Repo (`.github/workflows/`). Trage die Secrets ein
 | `ORS_API_KEY`, `ATHLETE_HOME_LAT`, `ATHLETE_HOME_LON` | Routen/Wetter |
 | `ATHLETE_LTHR`, `ATHLETE_FTP` | Schwellen-HF (bpm) und FTP (Watt) aus dem Test |
 | `ATHLETE_SEASON_START` | Zieldatum des Saisonplans, z. B. `2027-03-01` |
-| `NTFY_TOPIC` | dein ntfy-Thema (für den Report) |
+| `NTFY_TOPIC` | dein ntfy-Thema (für den Morgen-Report) |
+| `DASHBOARD_URL` | optional: `https://<name>.streamlit.app` — Tipp auf den Push öffnet das Dashboard |
 | `INTERVALS_API_KEY`, `INTERVALS_ATHLETE_ID` | Tagesworkout automatisch nach Zwift (siehe Schritt 8) |
 
 > **Wichtig:** `ATHLETE_LTHR` und `ATHLETE_FTP` gehören **sowohl** in die
@@ -106,7 +107,17 @@ Die Workflows liegen schon im Repo (`.github/workflows/`). Trage die Secrets ein
 > der PWA weichen dann von denen im Dashboard ab.
 
 Testen: **Actions → „Sync Strava + Whoop" → Run workflow**. Danach läuft der Sync
-alle 4 h automatisch, der Report morgens (04:30 UTC ≈ 06:30 DE-Sommerzeit).
+alle 4 h automatisch, morgens zusätzlich alle 30 Minuten.
+
+**Morgen-Report:** Es gibt keinen eigenen Zeitplan mehr. Der Sync-Workflow
+prüft bei jedem Lauf, ob der Report fällig ist, und schickt ihn **einmal pro
+Tag, sobald die heutige Whoop-Recovery in der Datenbank liegt** — spätestens um
+10:00 deutscher Zeit, dann mit dem Hinweis, dass die Recovery noch fehlt. Eine
+feste Uhrzeit (früher 06:30) hätte die Recovery von gestern verwendet. Damit der
+Push ankommt: ntfy-App installieren, ein langes geheimes Thema abonnieren, als
+`NTFY_TOPIC` eintragen. Einmal manuell testen: im Dashboard-Tab **Coach** →
+„Test-Report jetzt senden". GitHub-Cron kommt oft 10–30 Minuten zu spät, der
+Zeitpunkt ist also nicht minutengenau.
 
 ## Schritt 6 — Ride-PWA (unterwegs) auf GitHub Pages
 1. **Repo → Settings → Pages** → Source „Deploy from branch", Branch `main`,

@@ -65,7 +65,7 @@ bike-dashboard/
 ├─ mobile/                # Live-Ride-PWA (ride.html, sw.js, manifest.json)
 ├─ tests/                 # pytest, isolierte Wegwerf-DB via conftest.py
 ├─ *.ps1                  # Windows-Helfer (siehe Abschnitt 5 — AKTUELLER BLOCKER)
-└─ .github/workflows/     # sync.yml, report.yml, keepalive.yml (laufen auf Linux)
+└─ .github/workflows/     # sync.yml (Sync + Tagesplan + Morgen-Report), keepalive.yml
 ```
 
 **Trainingslast — eine Skala für alles (seit Indoor-Saison 2026/27):**
@@ -116,6 +116,18 @@ die Zwift-FTP muss `ATHLETE_FTP` entsprechen. Bewusst **kein** `.zwo`-Dateiweg
 Einrichtung: Secrets `INTERVALS_API_KEY` + `INTERVALS_ATHLETE_ID`, DEPLOY.md
 Schritt 8.
 
+**Morgen-Report ereignisgesteuert (seit 2026-09-18):** kein eigener
+Zeitplan mehr (`report.yml` gelöscht). Der Sync-Workflow läuft morgens alle
+30 Minuten (`*/30 5-9 * * *` UTC) und ruft `send_report.py --if-due`;
+`report.due()` entscheidet: heute schon gesendet → nein; heutige Whoop-Recovery
+in der DB → senden; Frist 10:00 deutscher Zeit erreicht → senden mit Hinweis
+„Recovery fehlt noch"; nie vor 06:00. Marker `report_sent_date` in `app_kv`.
+Grund: die alte feste Uhrzeit 06:30 lag vor der Whoop-Recovery und hätte still
+mit dem Wert von gestern gerechnet. Erste Zeile trägt die Entscheidung (Einheit,
+Dauer, Watt, Zwift bereit), Wetter nur an Fahrtagen. Kanal ntfy (Secret
+`NTFY_TOPIC`), optional `DASHBOARD_URL` als Klick-Ziel. Nutzerentscheid
+(Sept 2026): ntfy, morgens, spätestens 10:00.
+
 **Wichtige Konventionen:**
 - Design-Tokens (`C_IN`, `C_ABOVE`, `PANEL_A`, `MUTED`, `ACCENT` …) stehen oben
   in `dashboard.py` und spiegeln 1:1 die CSS-Variablen in `mobile/ride.html`.
@@ -151,8 +163,13 @@ Live-Ride-PWA mit BLE-Puls/-Kadenz und Karte.
 |---|---|---|---|
 | 7 | **Zwift-Zustellung via intervals.icu** — Tagesworkout landet ohne Zutun unter Zwift → Workouts → Custom → „Intervals.icu“ | `bikedash/zwift.py`, `build_today.py`, Einrichtung „5) Zwift“, Statuszeile unter dem Wattplan | Code fertig, Tests grün, Dashboard im Browser geprüft. **Offen: einmalige Einrichtung durch den Nutzer + Sichtprüfung am Handy** (Abschnitt 6, Schritt 0) |
 
-**Tests:** 124 grün (`python -m pytest -q`), inkl. Suites
-`tests/test_milestones.py`, `tests/test_maintenance.py`, `tests/test_dataprep.py`, `tests/test_season.py`, `tests/test_power.py` und `tests/test_zwift.py`.
+| 8 | **Morgen-Report ereignisgesteuert** — Push, sobald die heutige Whoop-Recovery da ist, spätestens 10:00; erste Zeile = Entscheidung | `bikedash/report.py`, `send_report.py --if-due`, `sync.yml` | Code fertig, Tests grün. **Offen: `NTFY_TOPIC` als Actions-Secret + ntfy-App abonnieren** |
+
+**Tests:** 139 grün (`python -m pytest -q`), inkl. Suites
+`tests/test_milestones.py`, `tests/test_maintenance.py`, `tests/test_dataprep.py`, `tests/test_season.py`, `tests/test_power.py`, `tests/test_zwift.py` und `tests/test_report.py`.
+
+**Zwift-Zustellung verifiziert (2026-09-18, Lauf #346):** `today.json` meldet
+`zwift.status = sent`, Event-ID 136989140 im intervals.icu-Kalender.
 
 ---
 
@@ -376,7 +393,7 @@ gelesen) monatelang kaputt. Checkliste:
 | 1 | `bikedash/config.py` → `_ENV_MAP` | Env-Overlay beim Hosting |
 | 2 | `config.example.toml` | lokale Einrichtung |
 | 3 | `.streamlit/secrets.toml.example` | Streamlit-Secrets |
-| 4 | `.github/workflows/sync.yml` + `report.yml` | **die vergessene Stelle** |
+| 4 | `.github/workflows/sync.yml` (beide Schritte: Tagesplan **und** Morgen-Report) | **die vergessene Stelle** |
 | 5 | `DEPLOY.md` (Secrets-Tabelle) | damit der Nutzer es findet |
 | 6 | Einrichtungs-Tab in `dashboard.py` | Eingabe + Speichern |
 
