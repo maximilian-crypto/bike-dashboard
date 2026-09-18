@@ -1,11 +1,11 @@
 {
-  "generated_at": "2026-09-18T02:40:28+00:00",
+  "generated_at": "2026-09-18T06:23:03+00:00",
   "date": "2026-09-18",
   "recommendation": {
     "kind": "ENDURANCE",
     "title": "Grundlagenausdauer (Z2)",
-    "readiness_band": "unknown",
-    "recovery_score": null,
+    "readiness_band": "green",
+    "recovery_score": 74.0,
     "zone_number": 2,
     "zone_label": "Z2 · Grundlage",
     "hr_low": 145,
@@ -56,11 +56,11 @@
       }
     ],
     "rationale": [
-      "Keine aktuelle Whoop-Recovery — neutrale Annahme.",
+      "Whoop-Recovery heute: 74 %.",
       "Diese Woche bisher 47 / Ziel 50 Last (94 %, ≈ 0.8 h).",
       "Planwoche 1, Phase „Grundlage“ — noch 23 Wochen bis zum Saisonstart.",
       "Form (TSB) aktuell +3.",
-      "Ohne Erholungsdaten konservativ: ruhige Grundlage (Z2)."
+      "Schon 1 harte Einheiten diese Woche — nach der 80/20-Regel bleibt der Rest locker (Z2)."
     ]
   },
   "zones": {
@@ -76,11 +76,11 @@
     }
   },
   "weather": {
-    "temp_c": 13.1,
-    "wind_kmh": 12.5,
+    "temp_c": 12.8,
+    "wind_kmh": 16.5,
     "wind_deg": 224,
     "wind_dir": "SW",
-    "gust_kmh": 25.2,
+    "gust_kmh": 33.8,
     "code": 2,
     "desc": "teils bewölkt"
   },
@@ -93,5 +93,13 @@
     "next_kind": "step",
     "next_remaining_km": 16.6,
     "next_km": 930.0
+  },
+  "zwift": {
+    "status": "sent",
+    "name": "Bikedash 18-09 Grundlage Z2 89min",
+    "event_id": 136989140,
+    "detail": null,
+    "date": "2026-09-18",
+    "at": "2026-09-18T06:23:02+00:00"
   }
 }
