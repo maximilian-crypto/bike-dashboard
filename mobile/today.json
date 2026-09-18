@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-09-18T15:37:37+00:00",
+  "generated_at": "2026-09-18T18:47:58+00:00",
   "date": "2026-09-18",
   "recommendation": {
     "kind": "REST",
@@ -51,11 +51,11 @@
     }
   },
   "weather": {
-    "temp_c": 16.0,
-    "wind_kmh": 16.2,
-    "wind_deg": 249,
-    "wind_dir": "W",
-    "gust_kmh": 38.5,
+    "temp_c": 14.2,
+    "wind_kmh": 10.9,
+    "wind_deg": 226,
+    "wind_dir": "SW",
+    "gust_kmh": 24.5,
     "code": 3,
     "desc": "bedeckt"
   },
@@ -70,11 +70,11 @@
     "next_km": 930.0
   },
   "zwift": {
-    "status": "deleted",
-    "name": "Bikedash 18-09 Grundlage Z2 89min",
-    "event_id": 136989140,
-    "detail": "Ruhetag – Workout entfernt",
+    "status": "skipped",
+    "name": null,
+    "event_id": null,
+    "detail": "Ruhetag",
     "date": "2026-09-18",
-    "at": "2026-09-18T15:37:36+00:00"
+    "at": "2026-09-18T18:47:57+00:00"
   }
 }
