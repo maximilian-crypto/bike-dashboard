@@ -1304,8 +1304,11 @@ with tab_maint:
     k4.metric(":material/schedule: Bald fällig", f"{n_soon}")
 
     st.caption(
-        "Verschleiß zählt ab dem Kilometerstand beim letzten Wechsel. Frisch "
-        "eingerichtet? Einmal **„Alle ab jetzt frisch“** klicken, dann stimmt die Basis."
+        "Verschleiß zählt ab dem Kilometerstand beim letzten Wechsel. "
+        "**„Alle ab jetzt frisch“ nur klicken, wenn die Bauteile wirklich neu sind** "
+        "— sonst sind die bisher gefahrenen Kilometer weg. Für die Rolle ist kein "
+        "Reset nötig: Indoor-Kilometer zählen ohnehin nur für den Antrieb, das "
+        "übrige Rad pausiert einfach."
     )
     if st.button(":material/restart_alt: Alle ab jetzt frisch tracken"):
         maintenance.save_state(

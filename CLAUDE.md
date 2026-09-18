@@ -6,10 +6,7 @@
 >
 > Ergänzende Detail-Übergabe (kompletter Code + Diff der neuen Features):
 > **`HANDOFF_NEUE_FEATURES.md`**.
->
-> **Offene Hauptaufgabe:** das Tagesworkout automatisch in die Zwift-Bibliothek
-> bringen — Recherchestand, Lösungswege und Abnahmekriterium in
-> **`HANDOFF_ZWIFT_AUTOMATION.md`**.
+
 
 ---
 
