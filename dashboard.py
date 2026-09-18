@@ -30,7 +30,7 @@ except Exception:
 from bikedash import (
     backup, coach, config, dataprep, form, maintenance, milestones, recommend,
     report, routing, season, store, strava, weather, webauth, whoop, windlab,
-    zones,
+    zones, zwift,
 )
 
 st.set_page_config(page_title="RIDE · Fahrrad-Dashboard", page_icon="🚴", layout="wide")
@@ -419,6 +419,28 @@ ORS_HELP = """
    Startort **rechtsklicken** – die erste Zeile sind `Breite, Länge` (lat, lon).
 """
 
+ZWIFT_HELP = """
+**Tagesworkout automatisch in der Zwift-Bibliothek** — ohne Suchen, ohne Datei,
+ohne PC. Der Weg läuft über **intervals.icu** (kostenlos), das eine offizielle
+Zwift-Anbindung hat: das Dashboard legt das heutige Workout in deinen
+intervals.icu-Kalender, intervals.icu schiebt es nach Zwift. In Zwift findest du
+es unter **Workouts → Custom → Ordner „Intervals.icu"** — auch am Handy.
+
+Einmalig einrichten:
+1. Konto bei intervals.icu anlegen (Button unten), dort **Settings → Zwift →
+   Connect** und den Zugriff in Zwift bestätigen.
+2. In intervals.icu unter **Settings → Developer Settings** den **API-Key**
+   erzeugen; dort steht auch deine **Athleten-ID** (Form `i12345`). Beides hier
+   eintragen — beim Hosting zusätzlich als GitHub-Actions-Secrets
+   `INTERVALS_API_KEY` / `INTERVALS_ATHLETE_ID` (dort läuft der Sync).
+3. **FTP in Zwift** auf denselben Wert wie oben setzen: Zwift rechnet die
+   Wattziele als Anteil *seiner* FTP.
+
+Ab dann schickt jeder Sync-Lauf (alle 4 h) das aktuelle Tagesworkout. Ändert
+sich die Empfehlung über den Tag, wird der Eintrag aktualisiert; ein Ruhetag
+entfernt ihn wieder.
+"""
+
 ORS_PROFILES = ["cycling-regular", "cycling-road", "cycling-mountain", "cycling-electric"]
 
 
@@ -466,8 +488,12 @@ def render_setup() -> None:
         "klicke Speichern. Alles bleibt lokal in `config.toml`."
     )
 
-    sc = st.columns(3)
+    sc = st.columns(4)
     strava_ok, whoop_ok, ors_ok = strava.is_connected(), whoop.is_connected(), config.has_routing(raw)
+    # Zwift-Anbindung: Datei ODER Umgebung (beim Hosting kommen die Werte aus den Secrets).
+    _zw_cfg = config.load_config_raw()
+    config._overlay_env(_zw_cfg)
+    zwift_ok = zwift.configured(_zw_cfg)
     sc[0].metric("Strava", "Verbunden" if strava_ok else "Ausstehend",
                 delta="bereit" if strava_ok else "einrichten",
                 delta_color="normal" if strava_ok else "off")
@@ -477,6 +503,9 @@ def render_setup() -> None:
     sc[2].metric("Routen (ORS)", "Bereit" if ors_ok else "Ausstehend",
                 delta="aktiv" if ors_ok else "einrichten",
                 delta_color="normal" if ors_ok else "off")
+    sc[3].metric("Zwift-Workout", "Automatisch" if zwift_ok else "Ausstehend",
+                delta="via intervals.icu" if zwift_ok else "einrichten",
+                delta_color="normal" if zwift_ok else "off")
 
     with st.expander("1) Strava — Fahrtdaten", icon=":material/directions_bike:",
                      expanded=not strava_ok):
@@ -580,6 +609,30 @@ def render_setup() -> None:
         st.text_input("ntfy-Thema (für Handy-Push)", value=str(rep.get("ntfy_topic", "")),
                       key="cfg_ntfy_topic", help="z. B. max-bike-7f3a — in der ntfy-App abonnieren")
 
+    with st.expander("5) Zwift — Tagesworkout automatisch in die Bibliothek (optional)",
+                     icon=":material/directions_bike:", expanded=not zwift_ok):
+        st.markdown(ZWIFT_HELP)
+        st.link_button("intervals.icu öffnen", "https://intervals.icu/settings",
+                       icon=":material/open_in_new:")
+        iv = raw.get("intervals", {})
+        st.text_input("intervals.icu API-Key", value=str(iv.get("api_key", "")),
+                      type="password", key="cfg_intervals_key")
+        st.text_input("intervals.icu Athleten-ID", value=str(iv.get("athlete_id", "")),
+                      key="cfg_intervals_athlete", placeholder="i12345",
+                      help="Settings → Developer Settings. Leer = Besitzer des API-Keys.")
+        _zw_env = [(n, config._clean_env_value(os.environ[n]))
+                   for n in ("INTERVALS_ATHLETE_ID",) if os.environ.get(n, "").strip()]
+        if os.environ.get("INTERVALS_API_KEY", "").strip():
+            st.info(
+                "Aus den Secrets/Umgebungsvariablen gesetzt und **aktuell wirksam**: "
+                "**INTERVALS_API_KEY**"
+                + "".join(f" · **{n} {v}**" for n, v in _zw_env)
+                + ". Diese haben Vorrang vor den Feldern oben.",
+                icon=":material/cloud_done:",
+            )
+        _last = zwift.last_result()
+        st.caption("Status: " + zwift.status_line(_last))
+
     if st.button("Speichern", type="primary", icon=":material/save:", width="stretch"):
         config.save_config({
             "strava": {
@@ -609,6 +662,10 @@ def render_setup() -> None:
             },
             "report": {
                 "ntfy_topic": st.session_state.get("cfg_ntfy_topic", "").strip(),
+            },
+            "intervals": {
+                "api_key": st.session_state.get("cfg_intervals_key", "").strip(),
+                "athlete_id": st.session_state.get("cfg_intervals_athlete", "").strip(),
             },
         })
         st.success("In config.toml gespeichert. Jetzt unten verbinden.", icon=":material/check_circle:")
@@ -809,12 +866,25 @@ with tab_today:
             for b in rc.power_plan
         ])
         st.dataframe(plan_df, width="stretch", hide_index=True)
-        st.caption(
-            "Zwift im freien Ritt starten und die Wattzahl über das virtuelle "
-            "Schalten halten — oder ein Workout aus der Bibliothek nehmen, das "
-            "dieser Struktur entspricht. Im ERG-Modus regelt der Trainer die "
-            "Leistung selbst, du hältst nur die Trittfrequenz."
-        )
+        # Die Tabelle ist die Anleitung; die Automatik ist das Zwift-Workout.
+        # Ohne Einrichtung steht hier, wo man sie einschaltet — sonst der
+        # Status des letzten Sync-Laufs (kam das Workout wirklich an?).
+        _zw_cfg = config.load_config_raw()
+        config._overlay_env(_zw_cfg)
+        if zwift.configured(_zw_cfg):
+            _last = zwift.last_result()
+            _line = zwift.status_line(_last)
+            if _last is not None and _last.status == "error":
+                st.warning(f":material/sync_problem: {_line}")
+            else:
+                st.markdown(f":material/directions_bike: {_line}")
+        else:
+            st.caption(
+                "Dieses Workout kann automatisch in deiner Zwift-Bibliothek liegen — "
+                "einmalig unter **Einrichtung → 5) Zwift** einschalten. Bis dahin: "
+                "Zwift im freien Ritt starten und die Wattzahl über das virtuelle "
+                "Schalten halten."
+            )
 
     with st.expander("Warum diese Empfehlung?", icon=":material/lightbulb:", expanded=True):
         for line in rc.rationale:

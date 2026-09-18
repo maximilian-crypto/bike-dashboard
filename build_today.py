@@ -25,7 +25,7 @@ import sys
 from pathlib import Path
 from typing import Any
 
-from bikedash import config, dataprep, milestones, recommend, weather, zones
+from bikedash import config, dataprep, milestones, recommend, weather, zones, zwift
 
 ROOT = Path(__file__).resolve().parent
 DEFAULT_OUT = ROOT / "mobile" / "today.json"
@@ -133,6 +133,12 @@ def build(out_path: Path = DEFAULT_OUT, today: dt.date | None = None) -> dict[st
     milestone = _milestone_payload()
     load_sources = _load_sources()
 
+    # Tagesworkout in die Zwift-Bibliothek (über intervals.icu). Wirft nie;
+    # das Ergebnis steht in today.json und app_kv, damit man im Dashboard
+    # sieht, ob das Workout wirklich angekommen ist.
+    push = zwift.push_today(cfg, rc, today)
+    zwift.remember(push)
+
     payload: dict[str, Any] = {
         "generated_at": dt.datetime.now(dt.timezone.utc).isoformat(timespec="seconds"),
         "date": today.isoformat(),
@@ -179,6 +185,9 @@ def build(out_path: Path = DEFAULT_OUT, today: dt.date | None = None) -> dict[st
         },
         "weather": wx,
         "milestone": milestone,
+        # Ist das heutige Workout in Zwift angekommen? (sent/updated/unchanged =
+        # ja; skipped = nicht eingerichtet oder Ruhetag; error = Fehlertext)
+        "zwift": push.to_dict(),
     }
 
     out_path.parent.mkdir(parents=True, exist_ok=True)
@@ -191,6 +200,10 @@ def main() -> int:
     payload = build(out)
     rc = payload["recommendation"]
     print(f"today.json geschrieben -> {out}  ({rc['kind']}, route-frei)")
+    z = payload["zwift"]
+    print(f"Zwift-Workout: {z['status']}"
+          + (f" – {z['name']}" if z.get("name") else "")
+          + (f" ({z['detail']})" if z.get("detail") else ""))
     return 0
 
 

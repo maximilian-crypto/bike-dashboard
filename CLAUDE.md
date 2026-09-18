@@ -55,6 +55,7 @@ bike-dashboard/
 │  ├─ windlab.py          # Wind-Performance-Analyse
 │  ├─ milestones.py       # NEU: Distanz-Meilensteine & Orden
 │  ├─ maintenance.py      # NEU: Verschleiss-/Wartungs-Tracker
+│  ├─ zwift.py            # NEU: Tagesworkout → intervals.icu-Kalender → Zwift-Bibliothek
 │  ├─ coach.py            # KI-Coach (Claude API)
 │  ├─ report.py           # Morgen-Report (ntfy-Push)
 │  └─ backup.py           # Datensicherung
@@ -99,6 +100,22 @@ Hauptteil, Ausfahren). Auf der Rolle ist Watt die richtige Waehrung: die
 Herzfrequenz hinkt dem Reiz 1-2 min hinterher und driftet mit der Hitze. Ohne
 hinterlegte `athlete.ftp` bleiben alle Wattfelder leer — nie erzwingen.
 
+**Tagesworkout automatisch in Zwift (seit 2026-09-18):** `bikedash/zwift.py`
+übersetzt `Recommendation.power_plan` in die native intervals.icu-Workout-
+Syntax (ein Schritt je Block, Wattziel als **Anteil der FTP**, Kadenz als
+Bandmitte) und legt den Eintrag per API im intervals.icu-Kalender an;
+intervals.icu schiebt ihn über seine offizielle Zwift-Anbindung in die Zwift-
+Bibliothek (Workouts → Custom → Ordner „Intervals.icu“), auch aufs iPhone.
+Läuft in `build_today.py` (Actions alle 4 h), idempotent über
+`external_id = bikedash-JJJJ-MM-TT`: pro Tag ein Eintrag, unverändert = kein
+erneuter Push, Ruhetag = Eintrag wird gelöscht. Ergebnis steht in `today.json`
+(`zwift`) und `app_kv` (`zwift_last_push`), das Dashboard zeigt es unter dem
+Wattplan. Prozent statt Watt, weil Zwift im ERG mit *seiner* FTP multipliziert —
+die Zwift-FTP muss `ATHLETE_FTP` entsprechen. Bewusst **kein** `.zwo`-Dateiweg
+(braucht einen PC, der Zwift startet) und **keine** inoffizielle Zwift-API.
+Einrichtung: Secrets `INTERVALS_API_KEY` + `INTERVALS_ATHLETE_ID`, DEPLOY.md
+Schritt 8.
+
 **Wichtige Konventionen:**
 - Design-Tokens (`C_IN`, `C_ABOVE`, `PANEL_A`, `MUTED`, `ACCENT` …) stehen oben
   in `dashboard.py` und spiegeln 1:1 die CSS-Variablen in `mobile/ride.html`.
@@ -128,8 +145,14 @@ Live-Ride-PWA mit BLE-Puls/-Kadenz und Karte.
 | 5 | **Steigung** — aus DeviceOrientation-Pitch, kalibrierbar (Kachel antippen = 0 %) | `mobile/ride.html` | rendert, **am Handy ungetestet** |
 | 6 | **Gangempfehlung (Shift)** — leichter/halten/schwerer aus Kadenz vs. Zielband | `mobile/ride.html` | rendert, **braucht BLE-Kadenzsensor** |
 
-**Tests:** 103 grün (`python -m pytest -q`), inkl. Suites
-`tests/test_milestones.py`, `tests/test_maintenance.py`, `tests/test_dataprep.py`, `tests/test_season.py` und `tests/test_power.py`.
+### Neu (2026-09-18): Tagesworkout automatisch in die Zwift-Bibliothek
+
+| # | Feature | Wo | Status |
+|---|---|---|---|
+| 7 | **Zwift-Zustellung via intervals.icu** — Tagesworkout landet ohne Zutun unter Zwift → Workouts → Custom → „Intervals.icu“ | `bikedash/zwift.py`, `build_today.py`, Einrichtung „5) Zwift“, Statuszeile unter dem Wattplan | Code fertig, Tests grün, Dashboard im Browser geprüft. **Offen: einmalige Einrichtung durch den Nutzer + Sichtprüfung am Handy** (Abschnitt 6, Schritt 0) |
+
+**Tests:** 124 grün (`python -m pytest -q`), inkl. Suites
+`tests/test_milestones.py`, `tests/test_maintenance.py`, `tests/test_dataprep.py`, `tests/test_season.py`, `tests/test_power.py` und `tests/test_zwift.py`.
 
 ---
 
@@ -241,6 +264,21 @@ kein Bug.
 ---
 
 ## 6. Was als Nächstes zu tun ist
+
+### Schritt 0 — Zwift-Zustellung scharf schalten (einmalig, ~10 Minuten)
+1. Konto auf intervals.icu → **Settings → Zwift → Connect** (Zugriff in Zwift bestätigen).
+2. **Settings → Developer Settings**: API-Key erzeugen, Athleten-ID (`i12345`) notieren.
+3. GitHub → Settings → Secrets → Actions: `INTERVALS_API_KEY`, `INTERVALS_ATHLETE_ID`.
+4. **FTP in Zwift = `ATHLETE_FTP`** (170) prüfen — Zwift rechnet die Wattziele daraus.
+5. Actions → „Sync Strava + Whoop“ → Run workflow. Im Log: `Zwift-Workout: sent – Bikedash …`.
+6. Zwift am Handy: Workouts → Custom → Ordner „Intervals.icu“ → Eintrag antippen.
+
+Was aus der Sandbox heraus **nicht** verifiziert werden konnte (intervals.icu
+ist dort netzseitig gesperrt): der echte API-Aufruf und die Sichtprüfung in
+Zwift. Die API-Semantik stammt aus der OpenAPI-Spezifikation von intervals.icu
+(Basic-Auth `API_KEY:<key>`, `POST/PUT /api/v1/athlete/{id}/events`,
+Workout als `description` in nativer Syntax). Schlägt Schritt 5 fehl, steht der
+Fehlertext in `mobile/today.json` unter `zwift.detail`.
 
 ### Schritt 1 — Umgebung am PC herstellen (Blocker auflösen)
 ```powershell

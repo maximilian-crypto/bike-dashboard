@@ -111,3 +111,59 @@ def test_load_sources_survives_a_broken_database(monkeypatch):
         raise RuntimeError("DB weg")
     monkeypatch.setattr(build_today.dataprep, "prep_rides", _boom)
     assert build_today._load_sources() == {}
+
+
+# --- Zwift-Zustellung (über intervals.icu) ---------------------------------
+
+def test_today_json_reports_zwift_status_when_unconfigured(tmp_path, monkeypatch):
+    """Ohne API-Key: Feld da, Status „skipped" — und der Tagesplan läuft durch."""
+    monkeypatch.delenv("INTERVALS_API_KEY", raising=False)
+    today = dt.date(2026, 6, 15)
+    _seed(today)
+    payload = build_today.build(tmp_path / "today.json", today=today)
+    assert payload["zwift"]["status"] == "skipped"
+    assert payload["zwift"]["date"] == "2026-06-15"
+
+
+def test_today_json_pushes_workout_to_intervals(tmp_path, monkeypatch):
+    """Mit Key + FTP wird das Tagesworkout angelegt; Ergebnis in today.json und app_kv."""
+    from bikedash import zwift
+
+    class _Resp:
+        def __init__(self, data):
+            self.status_code, self._data, self.text = 200, data, "{}"
+
+        def json(self):
+            return self._data
+
+    calls: list[tuple[str, str]] = []
+
+    class _Session:
+        def get(self, url, **kw):
+            calls.append(("GET", url))
+            return _Resp([])
+
+        def post(self, url, **kw):
+            calls.append(("POST", url))
+            assert kw["json"]["external_id"] == "bikedash-2026-06-15"
+            assert kw["json"]["name"].startswith("Bikedash 15-06")
+            return _Resp({"id": 42})
+
+    monkeypatch.setattr(zwift.requests, "Session", _Session)
+    monkeypatch.setenv("ATHLETE_FTP", "170")
+    monkeypatch.setenv("INTERVALS_API_KEY", "k3y")
+    monkeypatch.setenv("INTERVALS_ATHLETE_ID", "i12345")
+
+    today = dt.date(2026, 6, 15)
+    _seed(today)
+    payload = build_today.build(tmp_path / "today.json", today=today)
+
+    if payload["recommendation"]["kind"] == "REST":
+        assert payload["zwift"]["status"] == "skipped"
+        return
+    assert payload["zwift"]["status"] == "sent"
+    assert payload["zwift"]["event_id"] == 42
+    assert [c[0] for c in calls] == ["GET", "POST"]
+    assert "athlete/i12345/" in calls[1][1]
+    last = zwift.last_result()
+    assert last is not None and last.status == "sent" and last.date == "2026-06-15"

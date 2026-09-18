@@ -58,3 +58,12 @@ def test_quoted_env_secrets_still_apply(monkeypatch):
 def test_blank_env_var_does_not_override(monkeypatch):
     monkeypatch.setenv("ATHLETE_FTP", "   ")
     assert config.ftp_from_config() is None
+
+
+def test_intervals_env_overlay(monkeypatch):
+    """Zwift-Zustellung: beide Werte müssen aus den Actions-Secrets ankommen."""
+    monkeypatch.setenv("INTERVALS_API_KEY", '"abc123"')
+    monkeypatch.setenv("INTERVALS_ATHLETE_ID", "i12345")
+    cfg: dict = {}
+    config._overlay_env(cfg)
+    assert cfg["intervals"] == {"api_key": "abc123", "athlete_id": "i12345"}

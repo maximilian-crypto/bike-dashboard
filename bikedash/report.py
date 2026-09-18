@@ -7,11 +7,12 @@ unter [report] ntfy_topic eintragen.
 
 from __future__ import annotations
 
+import datetime as dt
 from typing import Any
 
 import requests
 
-from . import config, dataprep, form, recommend, weather
+from . import config, dataprep, form, recommend, weather, zwift
 
 
 def build_text(cfg: dict[str, Any]) -> tuple[str, str]:
@@ -30,6 +31,10 @@ def build_text(cfg: dict[str, Any]) -> tuple[str, str]:
         )
         if rc.distance_km[1] > 0:
             parts.append(f"Ziel ~{rc.distance_km[0]:.0f}-{rc.distance_km[1]:.0f} km.")
+        # Liegt das heutige Workout schon in Zwift? (Sync 04:00 UTC, Report 04:30)
+        last = zwift.last_result()
+        if last is not None and last.ok and last.date == dt.date.today().isoformat():
+            parts.append(f"Zwift: „{last.name}“ liegt bereit (Workouts → Custom → Intervals.icu).")
     if rc.recovery_score is not None:
         parts.append(f"Recovery {rc.recovery_score:.0f} %.")
     parts.append(

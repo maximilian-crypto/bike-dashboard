@@ -56,3 +56,15 @@ model = "claude-opus-4-8"
 [report]
 # Selbst gewähltes ntfy-Thema; in der ntfy-App (Handy) dasselbe abonnieren.
 ntfy_topic = "DEIN_NTFY_THEMA"
+
+# --- Tagesworkout automatisch in die Zwift-Bibliothek (optional) ---
+# Läuft über intervals.icu (kostenlos): dort einmalig Zwift verbinden
+# (Settings → Zwift → Connect). Das Dashboard legt das Tagesworkout in den
+# intervals.icu-Kalender, intervals.icu schiebt es nach Zwift: Workouts →
+# Custom → Ordner „Intervals.icu". Wichtig: die FTP in Zwift muss der FTP
+# oben ([athlete] ftp) entsprechen — Zwift rechnet die Wattziele daraus.
+[intervals]
+# API-Key und Athleten-ID (Form i12345) aus intervals.icu → Settings →
+# Developer Settings.
+api_key = "DEIN_INTERVALS_ICU_KEY"
+athlete_id = "i12345"

@@ -98,6 +98,7 @@ Die Workflows liegen schon im Repo (`.github/workflows/`). Trage die Secrets ein
 | `ATHLETE_LTHR`, `ATHLETE_FTP` | Schwellen-HF (bpm) und FTP (Watt) aus dem Test |
 | `ATHLETE_SEASON_START` | Zieldatum des Saisonplans, z. B. `2027-03-01` |
 | `NTFY_TOPIC` | dein ntfy-Thema (für den Report) |
+| `INTERVALS_API_KEY`, `INTERVALS_ATHLETE_ID` | Tagesworkout automatisch nach Zwift (siehe Schritt 8) |
 
 > **Wichtig:** `ATHLETE_LTHR` und `ATHLETE_FTP` gehören **sowohl** in die
 > Streamlit-Secrets **als auch** in die Actions-Secrets. Fehlen sie hier, rechnen
@@ -117,6 +118,38 @@ alle 4 h automatisch, der Report morgens (04:30 UTC ≈ 06:30 DE-Sommerzeit).
 - **Dashboard**: in Safari `https://<name>.streamlit.app` öffnen → Teilen-Symbol
   → **„Zum Home-Bildschirm"**.
 - **Ride-PWA**: in Safari die `ride.html`-URL öffnen → **„Zum Home-Bildschirm"**.
+
+## Schritt 8 — Tagesworkout automatisch in der Zwift-Bibliothek
+
+Das Dashboard rechnet jeden Tag die passende Einheit aus. Damit sie **ohne
+Zutun** in Zwift liegt (Zwift öffnen → Workouts → Custom → Ordner
+„Intervals.icu" → antippen, ERG macht den Rest), läuft die Zustellung über
+**intervals.icu** — kostenlos, und mit offizieller Zwift-Anbindung, die auf alle
+Geräte inklusive iPhone synchronisiert. Einmalig einrichten:
+
+1. Konto auf https://intervals.icu anlegen (Login mit Strava geht).
+2. Dort **Settings → Zwift → Connect** klicken und den Zugriff in Zwift
+   bestätigen. Ab jetzt landen geplante Workouts aus dem intervals.icu-Kalender
+   automatisch in Zwift.
+3. **Settings → Developer Settings**: **API-Key** erzeugen. Daneben steht die
+   **Athleten-ID** (Form `i12345`).
+4. Beides als Actions-Secrets eintragen: `INTERVALS_API_KEY` und
+   `INTERVALS_ATHLETE_ID` (Tabelle oben). Optional auch in die Streamlit-Secrets,
+   dann zeigt das Dashboard den Status des letzten Laufs.
+5. **FTP in Zwift prüfen:** Zwift rechnet die Wattziele als Anteil *seiner*
+   FTP. Sie muss der `ATHLETE_FTP` entsprechen, sonst fährst du drinnen andere
+   Watt als geplant.
+
+Testen: **Actions → „Sync Strava + Whoop" → Run workflow**. Im Log des Schritts
+„Tagesplan für die PWA bauen" steht `Zwift-Workout: sent – Bikedash …`; dasselbe
+in `mobile/today.json` unter `zwift`. Danach in Zwift (am Handy) unter
+**Workouts → Custom → Intervals.icu** nachsehen. Der Eintrag heißt
+`Bikedash TT-MM <Einheit> <Minuten>min`, z. B. `Bikedash 18-09 Grundlage Z2 89min`.
+
+Verhalten danach: jeder Sync-Lauf (alle 4 h) aktualisiert das heutige Workout,
+wenn sich die Empfehlung geändert hat (z. B. nach der Whoop-Recovery am Morgen);
+unverändert wird nichts neu geschickt; ein Ruhetag entfernt den Eintrag. Pro Tag
+gibt es genau einen Eintrag (`external_id = bikedash-JJJJ-MM-TT`), nie Duplikate.
 
 ---
 
@@ -145,3 +178,8 @@ z. B. über Wahoo-Export. Siehe Projekt-Notizen.)*
 - **Whoop/Strava „nicht verbunden"** → Schritt 3 lief gegen die **falsche** DB.
   `DATABASE_URL` auf Neon setzen und `connect.py` erneut ausführen.
 - **Report kommt nicht** → `NTFY_TOPIC` gesetzt und in der ntfy-App abonniert?
+- **Zwift-Workout fehlt** → `mobile/today.json` unter `zwift` nachsehen:
+  `skipped` = Secrets fehlen oder Ruhetag, `error` = Fehlertext (meist falscher
+  API-Key / falsche Athleten-ID). Steht dort `sent`, aber Zwift zeigt nichts:
+  in intervals.icu prüfen, ob Zwift unter Settings noch verbunden ist, und die
+  Zwift-App einmal komplett schließen und neu öffnen.
