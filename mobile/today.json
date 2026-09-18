@@ -1,66 +1,41 @@
 {
-  "generated_at": "2026-09-18T12:00:56+00:00",
+  "generated_at": "2026-09-18T15:37:37+00:00",
   "date": "2026-09-18",
   "recommendation": {
-    "kind": "ENDURANCE",
-    "title": "Grundlagenausdauer (Z2)",
+    "kind": "REST",
+    "title": "Ruhetag",
     "readiness_band": "green",
     "recovery_score": 74.0,
-    "zone_number": 2,
-    "zone_label": "Z2 · Grundlage",
-    "hr_low": 145,
-    "hr_high": 158,
-    "cadence": "85–95",
-    "cadence_low": 85,
-    "cadence_high": 95,
-    "rpe": "3–4",
+    "zone_number": null,
+    "zone_label": null,
+    "hr_low": null,
+    "hr_high": null,
+    "cadence": "–",
+    "cadence_low": null,
+    "cadence_high": null,
+    "rpe": "–",
     "duration_min": [
-      76,
-      103
+      0,
+      0
     ],
     "distance_km": [
-      26.0,
-      31.8
+      0.0,
+      0.0
     ],
-    "target_distance_km": 28.9,
-    "week_hours": 0.6,
+    "target_distance_km": 0.0,
+    "week_hours": 1.3,
     "target_hours": 0.8,
-    "tsb": 3.1,
-    "power_low": 95,
-    "power_high": 128,
-    "power_summary": "10' ein · 71' @ 95–128 W · 8' aus",
-    "power_plan": [
-      {
-        "label": "Einfahren",
-        "minutes": 10,
-        "low_w": 76,
-        "high_w": 94,
-        "zone": 1,
-        "cadence": "85–95"
-      },
-      {
-        "label": "Hauptteil",
-        "minutes": 71,
-        "low_w": 95,
-        "high_w": 128,
-        "zone": 2,
-        "cadence": "85–95"
-      },
-      {
-        "label": "Ausfahren",
-        "minutes": 8,
-        "low_w": 76,
-        "high_w": 94,
-        "zone": 1,
-        "cadence": null
-      }
-    ],
+    "tsb": -0.3,
+    "power_low": null,
+    "power_high": null,
+    "power_summary": null,
+    "power_plan": [],
     "rationale": [
       "Whoop-Recovery heute: 74 %.",
-      "Diese Woche bisher 47 / Ziel 50 Last (94 %, ≈ 0.8 h).",
+      "Diese Woche bisher 70 / Ziel 50 Last (139 %, ≈ 0.8 h).",
       "Planwoche 1, Phase „Grundlage“ — noch 23 Wochen bis zum Saisonstart.",
-      "Form (TSB) aktuell +3.",
-      "Schon 1 harte Einheiten diese Woche — nach der 80/20-Regel bleibt der Rest locker (Z2)."
+      "Form (TSB) aktuell -0.",
+      "Du bist heute bereits gefahren — Fokus auf Regeneration."
     ]
   },
   "zones": {
@@ -68,38 +43,38 @@
     "rest_hr": 68,
     "lthr": null,
     "ftp": 170,
-    "target_zone": 2,
+    "target_zone": null,
     "method": "Karvonen/HRR",
     "load_sources": {
       "hr": 13,
-      "power": 1
+      "power": 2
     }
   },
   "weather": {
-    "temp_c": 17.3,
-    "wind_kmh": 17.7,
-    "wind_deg": 250,
+    "temp_c": 16.0,
+    "wind_kmh": 16.2,
+    "wind_deg": 249,
     "wind_dir": "W",
-    "gust_kmh": 40.7,
+    "gust_kmh": 38.5,
     "code": 3,
     "desc": "bedeckt"
   },
   "milestone": {
-    "total_km": 913.4,
+    "total_km": 921.1,
     "orden_earned": 20,
     "orden_total": 31,
     "next_name": "930 km",
     "next_icon": "🎯",
     "next_kind": "step",
-    "next_remaining_km": 16.6,
+    "next_remaining_km": 8.9,
     "next_km": 930.0
   },
   "zwift": {
-    "status": "unchanged",
+    "status": "deleted",
     "name": "Bikedash 18-09 Grundlage Z2 89min",
     "event_id": 136989140,
-    "detail": null,
+    "detail": "Ruhetag – Workout entfernt",
     "date": "2026-09-18",
-    "at": "2026-09-18T12:00:56+00:00"
+    "at": "2026-09-18T15:37:36+00:00"
   }
 }
