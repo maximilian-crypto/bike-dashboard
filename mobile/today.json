@@ -1,41 +1,66 @@
 {
-  "generated_at": "2026-09-17T22:35:48+00:00",
-  "date": "2026-09-17",
+  "generated_at": "2026-09-18T02:40:28+00:00",
+  "date": "2026-09-18",
   "recommendation": {
-    "kind": "REST",
-    "title": "Ruhetag",
-    "readiness_band": "green",
-    "recovery_score": 73.0,
-    "zone_number": null,
-    "zone_label": null,
-    "hr_low": null,
-    "hr_high": null,
-    "cadence": "–",
-    "cadence_low": null,
-    "cadence_high": null,
-    "rpe": "–",
+    "kind": "ENDURANCE",
+    "title": "Grundlagenausdauer (Z2)",
+    "readiness_band": "unknown",
+    "recovery_score": null,
+    "zone_number": 2,
+    "zone_label": "Z2 · Grundlage",
+    "hr_low": 145,
+    "hr_high": 158,
+    "cadence": "85–95",
+    "cadence_low": 85,
+    "cadence_high": 95,
+    "rpe": "3–4",
     "duration_min": [
-      0,
-      0
+      76,
+      103
     ],
     "distance_km": [
-      0.0,
-      0.0
+      26.0,
+      31.8
     ],
-    "target_distance_km": 0.0,
+    "target_distance_km": 28.9,
     "week_hours": 0.6,
     "target_hours": 0.8,
     "tsb": 3.1,
-    "power_low": null,
-    "power_high": null,
-    "power_summary": null,
-    "power_plan": [],
+    "power_low": 95,
+    "power_high": 128,
+    "power_summary": "10' ein · 71' @ 95–128 W · 8' aus",
+    "power_plan": [
+      {
+        "label": "Einfahren",
+        "minutes": 10,
+        "low_w": 76,
+        "high_w": 94,
+        "zone": 1,
+        "cadence": "85–95"
+      },
+      {
+        "label": "Hauptteil",
+        "minutes": 71,
+        "low_w": 95,
+        "high_w": 128,
+        "zone": 2,
+        "cadence": "85–95"
+      },
+      {
+        "label": "Ausfahren",
+        "minutes": 8,
+        "low_w": 76,
+        "high_w": 94,
+        "zone": 1,
+        "cadence": null
+      }
+    ],
     "rationale": [
-      "Whoop-Recovery heute: 73 %.",
+      "Keine aktuelle Whoop-Recovery — neutrale Annahme.",
       "Diese Woche bisher 47 / Ziel 50 Last (94 %, ≈ 0.8 h).",
       "Planwoche 1, Phase „Grundlage“ — noch 23 Wochen bis zum Saisonstart.",
       "Form (TSB) aktuell +3.",
-      "Du bist heute bereits gefahren — Fokus auf Regeneration."
+      "Ohne Erholungsdaten konservativ: ruhige Grundlage (Z2)."
     ]
   },
   "zones": {
@@ -43,21 +68,21 @@
     "rest_hr": 68,
     "lthr": null,
     "ftp": 170,
-    "target_zone": null,
+    "target_zone": 2,
     "method": "Karvonen/HRR",
     "load_sources": {
-      "hr": 14,
+      "hr": 13,
       "power": 1
     }
   },
   "weather": {
-    "temp_c": 14.4,
-    "wind_kmh": 14.8,
-    "wind_deg": 229,
+    "temp_c": 13.1,
+    "wind_kmh": 12.5,
+    "wind_deg": 224,
     "wind_dir": "SW",
-    "gust_kmh": 32.8,
-    "code": 3,
-    "desc": "bedeckt"
+    "gust_kmh": 25.2,
+    "code": 2,
+    "desc": "teils bewölkt"
   },
   "milestone": {
     "total_km": 913.4,
