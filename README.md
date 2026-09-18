@@ -17,7 +17,7 @@ Körper-/Erholungsdaten aus **Whoop** automatisch zusammenführt und auswertet:
 - **🔧 Verschleiß-Tracker** – km-Zähler pro Bauteil (Kette, Reifen, Kassette …) mit
   Wartungs-Ampel und „gewechselt"-Reset.
 - **🧠 KI-Coach** – Klartext-Beratung aus deinen Daten (Claude API) + Wochenrückblick.
-- **📱 Morgen-Report** – heutige Empfehlung + Wetter + Form früh aufs Handy (via ntfy).
+- **📱 Morgen-Report** – heutige Empfehlung aufs Handy (via ntfy), sobald die Whoop-Recovery da ist, spätestens 10:00.
 
 Außerdem: **Form-Kurve** (Fitness/Ermüdung/Form, CTL/ATL/TSB) und **1-Klick-Backup**.
 
@@ -116,7 +116,9 @@ ein Hinweis statt der Karte.
    z. B. `max-bike-7f3a` (wähle etwas Eindeutiges — wer das Thema kennt, sieht die Pushes).
 2. Dasselbe Thema im Tab **⚙️ Einrichtung → 4)** unter „ntfy-Thema" eintragen.
 3. Test: im **🧠 Coach**-Tab „Test-Report jetzt senden", oder `python send_report.py`.
-4. Täglich automatisch:
+4. Täglich automatisch — beim Hosting erledigt das der Sync-Workflow
+   (`python send_report.py --if-due`: sendet einmal pro Tag, sobald die heutige
+   Whoop-Recovery da ist, spätestens 10:00). Lokal per Windows-Aufgabe:
    ```powershell
    .\setup_report_task.ps1            # täglich 06:30 Uhr
    .\setup_report_task.ps1 -At "07:15"

@@ -1,10 +1,13 @@
 name: Sync Strava + Whoop
 
 # Holt regelmäßig neue Daten in die Neon-Datenbank – ersetzt den Windows-
-# Taskplaner, läuft auch wenn der PC aus ist.
+# Taskplaner, läuft auch wenn der PC aus ist. Morgens dichter, damit der
+# Morgen-Report rausgeht, sobald die Whoop-Recovery da ist (spätestens 10:00
+# deutscher Zeit; Frist und Entscheidung stehen in bikedash/report.py).
 on:
   schedule:
-    - cron: "0 */4 * * *"   # alle 4 Stunden (UTC)
+    - cron: "0 */4 * * *"      # alle 4 Stunden (UTC)
+    - cron: "*/30 5-9 * * *"   # Morgenfenster: 07:00–11:30 DE-Sommerzeit, 06:00–10:30 Winterzeit
   workflow_dispatch: {}      # zusätzlich manuell auslösbar
 
 concurrency:
@@ -54,6 +57,26 @@ jobs:
           INTERVALS_API_KEY: ${{ secrets.INTERVALS_API_KEY }}
           INTERVALS_ATHLETE_ID: ${{ secrets.INTERVALS_ATHLETE_ID }}
         run: python build_today.py
+
+      - name: Morgen-Report aufs Handy (nur wenn fällig)
+        # Sendet einmal pro Tag: sobald die heutige Whoop-Recovery da ist,
+        # spätestens zur Frist. Läuft NACH build_today, damit die Zwift-Zeile
+        # stimmt. Fehler hier dürfen den Sync nicht rot machen.
+        continue-on-error: true
+        env:
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+          STRAVA_CLIENT_ID: ${{ secrets.STRAVA_CLIENT_ID }}
+          STRAVA_CLIENT_SECRET: ${{ secrets.STRAVA_CLIENT_SECRET }}
+          WHOOP_CLIENT_ID: ${{ secrets.WHOOP_CLIENT_ID }}
+          WHOOP_CLIENT_SECRET: ${{ secrets.WHOOP_CLIENT_SECRET }}
+          ATHLETE_HOME_LAT: ${{ secrets.ATHLETE_HOME_LAT }}
+          ATHLETE_HOME_LON: ${{ secrets.ATHLETE_HOME_LON }}
+          ATHLETE_LTHR: ${{ secrets.ATHLETE_LTHR }}
+          ATHLETE_FTP: ${{ secrets.ATHLETE_FTP }}
+          ATHLETE_SEASON_START: ${{ secrets.ATHLETE_SEASON_START }}
+          NTFY_TOPIC: ${{ secrets.NTFY_TOPIC }}
+          DASHBOARD_URL: ${{ secrets.DASHBOARD_URL }}
+        run: python send_report.py --if-due
 
       - name: today.json committen (nur bei Änderung)
         run: |

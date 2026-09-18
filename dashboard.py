@@ -598,7 +598,10 @@ def render_setup() -> None:
             "**KI-Coach:** Klartext-Beratung aus deinen Daten. Braucht einen "
             "Anthropic-API-Key von [console.anthropic.com](https://console.anthropic.com).\n\n"
             "**Morgen-Report:** Push aufs Handy via **ntfy** (kostenlos). Wähle ein "
-            "geheimes Thema und abonniere es in der ntfy-App auf dem Handy."
+            "geheimes, langes Thema und abonniere es in der ntfy-App auf dem Handy. "
+            "Der Report kommt morgens, sobald die heutige Whoop-Recovery da ist, "
+            f"spätestens um {report.DEADLINE:%H:%M} Uhr (beim Hosting über den Sync-Workflow; "
+            "Secret `NTFY_TOPIC`)."
         )
         cch = raw.get("coach", {})
         rep = raw.get("report", {})
@@ -608,6 +611,9 @@ def render_setup() -> None:
                       key="cfg_coach_model")
         st.text_input("ntfy-Thema (für Handy-Push)", value=str(rep.get("ntfy_topic", "")),
                       key="cfg_ntfy_topic", help="z. B. max-bike-7f3a — in der ntfy-App abonnieren")
+        st.text_input("Dashboard-Adresse (Tipp auf den Push öffnet sie, optional)",
+                      value=str(rep.get("dashboard_url", "")), key="cfg_dashboard_url",
+                      placeholder="https://<name>.streamlit.app")
 
     with st.expander("5) Zwift — Tagesworkout automatisch in die Bibliothek (optional)",
                      icon=":material/directions_bike:", expanded=not zwift_ok):
@@ -662,6 +668,7 @@ def render_setup() -> None:
             },
             "report": {
                 "ntfy_topic": st.session_state.get("cfg_ntfy_topic", "").strip(),
+                "dashboard_url": st.session_state.get("cfg_dashboard_url", "").strip(),
             },
             "intervals": {
                 "api_key": st.session_state.get("cfg_intervals_key", "").strip(),
@@ -1477,6 +1484,10 @@ with tab_coach:
     )
     try:
         cfg_c = config.load_config_raw()
+        # Beim Hosting kommen ntfy-Thema, Dashboard-URL und Coach-Modell aus den
+        # Secrets — ohne Overlay hiesse es hier faelschlich „nicht gesetzt" und
+        # der Test-Report ginge ins Leere.
+        config._overlay_env(cfg_c)
     except Exception:  # noqa: BLE001
         cfg_c = {}
     coach_ready = bool(str(cfg_c.get("coach", {}).get("api_key", "")).strip()
@@ -1529,6 +1540,14 @@ with tab_coach:
         st.caption(
             "Noch kein ntfy-Thema gesetzt. In der Einrichtung eintragen und "
             "die kostenlose ntfy-App auf dem Handy dasselbe Thema abonnieren lassen."
+        )
+    else:
+        _sent = report.last_sent()
+        st.caption(
+            f"Automatisch morgens, sobald die Whoop-Recovery da ist (spätestens "
+            f"{report.DEADLINE:%H:%M} Uhr). Zuletzt gesendet: "
+            + (f"**{_sent:%d.%m.%Y}**" if _sent else "noch nie")
+            + "."
         )
     if st.button("Test-Report jetzt senden", icon=":material/notifications:", width="stretch"):
         try:

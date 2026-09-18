@@ -55,7 +55,11 @@ model = "claude-opus-4-8"
 # --- Morgen-Report aufs Handy (optional) ---
 [report]
 # Selbst gewähltes ntfy-Thema; in der ntfy-App (Handy) dasselbe abonnieren.
+# Der Report geht morgens raus, sobald die heutige Whoop-Recovery da ist,
+# spätestens um 10:00 (bikedash/report.py, DEADLINE).
 ntfy_topic = "DEIN_NTFY_THEMA"
+# Optional: Adresse des Dashboards – ein Tipp auf die Nachricht öffnet es.
+dashboard_url = ""
 
 # --- Tagesworkout automatisch in die Zwift-Bibliothek (optional) ---
 # Läuft über intervals.icu (kostenlos): dort einmalig Zwift verbinden
