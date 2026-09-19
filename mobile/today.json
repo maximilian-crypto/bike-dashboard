@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-09-19T09:06:54+00:00",
+  "generated_at": "2026-09-19T13:16:21+00:00",
   "date": "2026-09-19",
   "recommendation": {
     "kind": "REST",
@@ -51,11 +51,11 @@
     }
   },
   "weather": {
-    "temp_c": 15.9,
-    "wind_kmh": 20.9,
-    "wind_deg": 212,
+    "temp_c": 17.3,
+    "wind_kmh": 22.3,
+    "wind_deg": 219,
     "wind_dir": "SW",
-    "gust_kmh": 42.1,
+    "gust_kmh": 45.7,
     "code": 3,
     "desc": "bedeckt"
   },
@@ -69,12 +69,42 @@
     "next_remaining_km": 8.9,
     "next_km": 930.0
   },
+  "fitness": {
+    "score": 63.1,
+    "tier": "Im Aufbau",
+    "delta_30": -10.0,
+    "delta_90": null,
+    "best": 75.0,
+    "subscores": {
+      "eff": {
+        "label": "Effizienz",
+        "score": 82.0,
+        "n": 3
+      },
+      "cap": {
+        "label": "Kapazität",
+        "score": 35.3,
+        "n": 17
+      },
+      "reg": {
+        "label": "Regeneration",
+        "score": 64.7,
+        "n": 37
+      },
+      "kon": {
+        "label": "Konsistenz",
+        "score": 73.1,
+        "n": 35
+      }
+    },
+    "highlight": "⚡ Bei gleichem Puls bringst du heute **27,6 % mehr Leistung** aufs Pedal als zu Beginn deiner Aufzeichnung."
+  },
   "zwift": {
     "status": "skipped",
     "name": null,
     "event_id": null,
     "detail": "Ruhetag",
     "date": "2026-09-19",
-    "at": "2026-09-19T09:06:54+00:00"
+    "at": "2026-09-19T13:16:20+00:00"
   }
 }
