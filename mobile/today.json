@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-09-19T08:27:12+00:00",
+  "generated_at": "2026-09-19T09:06:54+00:00",
   "date": "2026-09-19",
   "recommendation": {
     "kind": "REST",
@@ -51,13 +51,13 @@
     }
   },
   "weather": {
-    "temp_c": 14.9,
-    "wind_kmh": 19.6,
+    "temp_c": 15.9,
+    "wind_kmh": 20.9,
     "wind_deg": 212,
     "wind_dir": "SW",
-    "gust_kmh": 41.8,
-    "code": 61,
-    "desc": "leichter Regen"
+    "gust_kmh": 42.1,
+    "code": 3,
+    "desc": "bedeckt"
   },
   "milestone": {
     "total_km": 921.1,
@@ -70,11 +70,11 @@
     "next_km": 930.0
   },
   "zwift": {
-    "status": "deleted",
-    "name": "Bikedash 19-09 Erholung Z1 31min",
-    "event_id": 137149847,
-    "detail": "Ruhetag – Workout entfernt",
+    "status": "skipped",
+    "name": null,
+    "event_id": null,
+    "detail": "Ruhetag",
     "date": "2026-09-19",
-    "at": "2026-09-19T08:27:11+00:00"
+    "at": "2026-09-19T09:06:54+00:00"
   }
 }
