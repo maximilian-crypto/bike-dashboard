@@ -51,6 +51,7 @@ jobs:
           # gerechnet werden, sonst weicht today.json davon ab.
           ATHLETE_LTHR: ${{ secrets.ATHLETE_LTHR }}
           ATHLETE_FTP: ${{ secrets.ATHLETE_FTP }}
+          ATHLETE_WEIGHT_KG: ${{ secrets.ATHLETE_WEIGHT_KG }}
           ATHLETE_SEASON_START: ${{ secrets.ATHLETE_SEASON_START }}
           # Tagesworkout automatisch nach Zwift (über intervals.icu). Fehlen die
           # beiden, wird der Schritt still übersprungen (today.json: zwift.status).
@@ -73,6 +74,7 @@ jobs:
           ATHLETE_HOME_LON: ${{ secrets.ATHLETE_HOME_LON }}
           ATHLETE_LTHR: ${{ secrets.ATHLETE_LTHR }}
           ATHLETE_FTP: ${{ secrets.ATHLETE_FTP }}
+          ATHLETE_WEIGHT_KG: ${{ secrets.ATHLETE_WEIGHT_KG }}
           ATHLETE_SEASON_START: ${{ secrets.ATHLETE_SEASON_START }}
           NTFY_TOPIC: ${{ secrets.NTFY_TOPIC }}
           DASHBOARD_URL: ${{ secrets.DASHBOARD_URL }}

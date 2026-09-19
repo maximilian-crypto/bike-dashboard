@@ -8,6 +8,7 @@ from __future__ import annotations
 
 import datetime as dt
 import os
+import re
 
 import numpy as np
 import pandas as pd
@@ -28,9 +29,9 @@ except Exception:
     pass
 
 from bikedash import (
-    backup, coach, config, dataprep, form, maintenance, milestones, recommend,
-    report, routing, season, store, strava, weather, webauth, whoop, windlab,
-    zones, zwift,
+    backup, coach, config, dataprep, fitness, form, maintenance, milestones,
+    recommend, report, routing, season, store, strava, weather, webauth, whoop,
+    windlab, zones, zwift,
 )
 
 st.set_page_config(page_title="RIDE · Fahrrad-Dashboard", page_icon="🚴", layout="wide")
@@ -327,9 +328,30 @@ def load_wind_fit():
     return windlab.analyze()
 
 
+@st.cache_data(ttl=120)
+def load_fitness():
+    """Fitness-Index inkl. Verlauf. Schreibt den Anker beim ersten Aufruf fest —
+    das ist gewollt: hier sieht der Nutzer, worauf sich alles bezieht."""
+    return fitness.compute()
+
+
+@st.cache_data(ttl=120)
+def load_ef_points() -> pd.DataFrame:
+    return fitness.ef_series(dataprep.prep_rides())
+
+
 def de_num(x: float, unit: str = "", dec: int = 0) -> str:
     s = f"{x:,.{dec}f}".replace(",", "X").replace(".", ",").replace("X", ".")
     return f"{s}{(' ' + unit) if unit else ''}"
+
+
+def md_bold(text: str) -> str:
+    """``**fett**`` -> ``<strong>fett</strong>`` für rohe HTML-Blöcke.
+
+    Streamlit rendert in einem ``unsafe_allow_html``-Block kein Markdown mehr;
+    ohne diese Umsetzung stünden die Sternchen wörtlich auf der Karte.
+    """
+    return re.sub(r"\*\*(.+?)\*\*", r"<strong>\1</strong>", text)
 
 
 def km_label(x: float) -> str:
@@ -573,12 +595,23 @@ def render_setup() -> None:
                  "Einheiten mit echten Wattdaten (Rolle, Powermeter) werden damit "
                  "leistungsbasiert bewertet statt über die Herzfrequenz.",
         )
+        st.number_input(
+            "Körpergewicht in kg (0 = Vorgabewert)",
+            value=float(a.get("weight_kg", 0) or 0), min_value=0.0, max_value=200.0,
+            step=0.5, key="cfg_weight",
+            help="Nur für den Fitness-Index: draußen ohne Powermeter wird die "
+                 "Leistung aus Tempo, Steigung und Masse geschätzt — und die "
+                 "Steigleistung hängt direkt am Gewicht. Ein grober Wert genügt, "
+                 "verglichen wird ohnehin mit dir selbst. Das Rad kommt pauschal "
+                 "mit 10 kg dazu.",
+        )
 
         # Beim Hosting kommen diese Werte aus den Secrets und haben Vorrang vor
         # config.toml. Die Felder oben lesen NUR die Datei — ohne diesen Hinweis
         # stünde dort eine 0, obwohl längst der Secret-Wert wirkt, und man würde
         # an der falschen Stelle suchen.
         _env_labels = [("ATHLETE_LTHR", "LTHR"), ("ATHLETE_FTP", "FTP"),
+                       ("ATHLETE_WEIGHT_KG", "Gewicht"),
                        ("ATHLETE_SEASON_START", "Saisonstart")]
         _active = [(lbl, config._clean_env_value(os.environ[name]))
                    for name, lbl in _env_labels if os.environ.get(name, "").strip()]
@@ -660,6 +693,7 @@ def render_setup() -> None:
                 "season_start": st.session_state.cfg_season_start.strip(),
                 "lthr": int(st.session_state.cfg_lthr),
                 "ftp": int(st.session_state.cfg_ftp),
+                "weight_kg": float(st.session_state.cfg_weight),
             },
             "coach": {
                 "api_key": st.session_state.get("cfg_coach_key", "").strip(),
@@ -790,9 +824,10 @@ if not rec.empty and rec["recovery_score"].notna().any():
 else:
     c5.metric(":material/speed: Ø Tempo", f"{r['avg_speed_kmh'].mean():.1f} km/h")
 
-(tab_today, tab1, tab2, tab3, tab_wind, tab_orden, tab_maint, tab_coach,
+(tab_today, tab_fit, tab1, tab2, tab3, tab_wind, tab_orden, tab_maint, tab_coach,
  tab_setup) = st.tabs(
-    [":material/bolt: Heute", ":material/trending_up: Leistung & Fortschritt",
+    [":material/bolt: Heute", ":material/rocket_launch: Fitness-Index",
+     ":material/trending_up: Leistung & Fortschritt",
      ":material/fitness_center: Trainingsbelastung", ":material/bedtime: Erholung",
      ":material/air: Wind-Labor (Beta)", ":material/military_tech: Orden",
      ":material/build: Wartung", ":material/psychology: Coach",
@@ -991,6 +1026,326 @@ with tab_today:
                 for z in zones.zones(mhr, rhr, lthr)
             ])
             st.dataframe(zdf, width="stretch", hide_index=True)
+
+
+# ===========================================================================
+# Tab: Fitness-Index (Fortschritt, der auf Physiologie beruht)
+# ===========================================================================
+with tab_fit:
+    st.subheader(":material/rocket_launch: Fitness-Index", anchor=False)
+    st.caption(
+        "Ein Wert für die Frage „bin ich besser geworden?“ — nicht für „habe ich "
+        "trainiert?“. Er steigt, wenn du bei gleichem Puls mehr Leistung bringst, "
+        "mehr Last verträgst, in der zweiten Fahrthälfte nicht mehr wegdriftest, "
+        "erholter aufwachst und regelmäßig fährst. **50 Punkte ist dein eigenes "
+        "Ausgangsniveau**, alles darüber ist echter Fortschritt."
+    )
+
+    fi = load_fitness()
+
+    if not fi.available:
+        st.info(fi.reason, icon=":material/hourglass_top:")
+    else:
+        # -- Kopf: die Zahl selbst. Bewusst als grosse Ziffer und nicht als Tacho —
+        #    ein Tacho bräuchte Skalenenden, die es hier gar nicht gibt.
+        d30 = fi.delta_30 or 0.0
+        arrow = "▲" if d30 > 0.05 else ("▼" if d30 < -0.05 else "▬")
+        dcol = C_IN if d30 > 0.05 else (C_ABOVE if d30 < -0.05 else MUTED)
+        is_best = fi.best is not None and fi.score >= fi.best - 0.01
+        # Zahlen vorab deutsch formatieren: ein .replace() über einen aus mehreren
+        # Literalen zusammengesetzten f-String würde auch die Punkte in CSS und
+        # Datumsangaben treffen.
+        score_txt = de_num(fi.score, dec=1)
+        delta_txt = (("+" if fi.delta_30 > 0 else "") + de_num(fi.delta_30, dec=1)
+                     if fi.delta_30 is not None else "–")
+        if is_best:
+            best_line = (f'<div style="width:100%;margin-top:10px;color:{C_IN};'
+                         f'font-weight:600">🏆 Bestwert — so hoch stand der Index '
+                         f'noch nie.</div>')
+        elif fi.best is not None:
+            best_line = (f'<div style="width:100%;margin-top:10px;color:{MUTED};'
+                         f'font-size:13px">Bestwert {de_num(fi.best, dec=1)} am '
+                         f'{fi.best_date:%d.%m.%Y} — {de_num(fi.best - fi.score, dec=1)} '
+                         f'Punkte entfernt.</div>')
+        else:
+            best_line = ""
+        st.markdown(
+            f'<div style="background:linear-gradient(158deg,{PANEL_A},{PANEL_B});'
+            f'border:1px solid {BORDER};border-left:3px solid {ACCENT};border-radius:16px;'
+            f'padding:18px 22px;display:flex;align-items:baseline;gap:22px;flex-wrap:wrap">'
+            f'<div style="font-size:64px;font-weight:700;line-height:1;color:{TEXT}">'
+            f'{score_txt}</div>'
+            f'<div><div style="font-size:17px;font-weight:600;color:{ACCENT}">{fi.tier}</div>'
+            f'<div style="color:{MUTED};font-size:13px;margin-top:2px">Fitness-Index</div></div>'
+            f'<div style="margin-left:auto;text-align:right">'
+            f'<div style="font-size:20px;font-weight:600;color:{dcol}">{arrow} {delta_txt}</div>'
+            f'<div style="color:{MUTED};font-size:12px">in 30 Tagen</div></div>'
+            f'{best_line}</div>',
+            unsafe_allow_html=True,
+        )
+
+        kf1, kf2, kf3 = st.columns(3)
+        kf1.metric(":material/calendar_month: 90 Tage",
+                   (("+" if fi.delta_90 > 0 else "") + de_num(fi.delta_90, dec=1))
+                   if fi.delta_90 is not None else "–",
+                   help="Veränderung gegenüber dem Stand vor drei Monaten.")
+        kf2.metric(":material/flag: Ausgangsniveau", "50,0",
+                   help=f"Festgelegt aus {fi.anchor['from']} bis {fi.anchor['to']} — "
+                        "der Bezugspunkt, gegen den alles gerechnet wird.")
+        kf3.metric(":material/trophy: Bestwert",
+                   de_num(fi.best, dec=1) if fi.best is not None else "–")
+
+        # -- Das kannst du jetzt besser ------------------------------------
+        if fi.highlights:
+            st.markdown("#### Das kannst du jetzt besser")
+            for h in fi.highlights:
+                # Die Sätze kommen als Markdown aus bikedash/fitness.py. In einem
+                # rohen HTML-Block rendert Streamlit kein Markdown mehr — die
+                # Sternchen stünden wörtlich da. Also selbst umsetzen.
+                st.markdown(
+                    f'<div style="background:{PANEL_B};border:1px solid {BORDER};'
+                    f'border-radius:12px;padding:10px 14px;margin-bottom:8px;'
+                    f'font-size:14px;line-height:1.5">{md_bold(h)}</div>',
+                    unsafe_allow_html=True,
+                )
+
+        # -- Verlauf --------------------------------------------------------
+        st.markdown("#### Verlauf")
+        if len(fi.history) >= 2:
+            figf = go.Figure()
+            figf.add_hline(y=50, line_dash="dot", line_color=FAINT,
+                           annotation_text="Ausgangsniveau", annotation_position="bottom right",
+                           annotation_font_color=MUTED)
+            figf.add_trace(go.Scatter(
+                x=fi.history["day"], y=fi.history["score"], mode="lines",
+                line=dict(color=ACCENT, width=2), name="Fitness-Index",
+                hovertemplate="%{x|%d.%m.%Y}<br>%{y:.1f} Punkte<extra></extra>",
+                fill="tozeroy", fillcolor="rgba(255,90,54,0.10)",
+            ))
+            # Nur der letzte Punkt wird beschriftet — eine Zahl an jedem Punkt
+            # waere Laerm, und der aktuelle Stand ist der, der zaehlt.
+            last = fi.history.iloc[-1]
+            figf.add_trace(go.Scatter(
+                x=[last["day"]], y=[last["score"]], mode="markers+text",
+                marker=dict(color=ACCENT, size=10),
+                text=[de_num(last["score"], dec=1)], textposition="middle right",
+                textfont=dict(color=TEXT), showlegend=False, hoverinfo="skip",
+            ))
+            figf.update_layout(
+                title="Fitness-Index über die Zeit", showlegend=False,
+                yaxis_title="Punkte", xaxis_title=None, hovermode="x unified",
+                yaxis=dict(range=[max(0, fi.history["score"].min() - 8),
+                                  min(100, fi.history["score"].max() + 8)]),
+            )
+            st.plotly_chart(figf, width="stretch")
+        else:
+            st.caption("Der Verlauf braucht ein paar Wochen jenseits des Ankerfensters.")
+
+        # -- Teilwerte -------------------------------------------------------
+        st.markdown("#### Woraus er sich zusammensetzt")
+        subs = [s for s in fi.subscores]
+        usable = [s for s in subs if s.score is not None]
+        if usable:
+            total_w = sum(s.weight for s in usable)
+            order = list(reversed(usable))     # Plotly zeichnet von unten nach oben
+            figs = go.Figure()
+            figs.add_trace(go.Bar(
+                x=[s.score for s in order], y=[s.label for s in order],
+                orientation="h",
+                marker=dict(color=[C_IN if s.score >= 50 else C_ABOVE for s in order],
+                            line=dict(width=0)),
+                text=[f"{s.score:.0f}" for s in order], textposition="outside",
+                textfont=dict(color=TEXT),
+                customdata=[[s.weight / total_w * 100, s.confidence, s.n] for s in order],
+                hovertemplate="%{y}: %{x:.1f} Punkte<br>Gewicht %{customdata[0]:.0f} %"
+                              "<br>Datenlage %{customdata[1]} (n=%{customdata[2]})<extra></extra>",
+                showlegend=False,
+            ))
+            figs.add_vline(x=50, line_dash="dot", line_color=FAINT)
+            figs.update_layout(
+                title="Teilwerte — 50 = dein Ausgangsniveau",
+                xaxis=dict(range=[0, 108], title="Punkte"), yaxis_title=None,
+                height=60 + 46 * len(order), bargap=0.45, margin=dict(t=48, r=20),
+            )
+            st.plotly_chart(figs, width="stretch")
+
+        for s in subs:
+            head = f"**{s.label}**"
+            if s.score is None:
+                st.markdown(
+                    f'<div style="color:{FAINT};font-size:13px;margin-bottom:6px">'
+                    f'{s.label} — keine Daten, zählt deshalb nicht gegen dich '
+                    f'(die Gewichte werden auf die vorhandenen Teilwerte verteilt).</div>',
+                    unsafe_allow_html=True)
+                continue
+            bits = []
+            if s.value is not None:
+                bits.append(f"aktuell {de_num(s.value, s.unit, 2 if abs(s.value) < 10 else 0)}")
+            if s.baseline is not None:
+                bits.append(f"Ausgang {de_num(s.baseline, s.unit, 2 if abs(s.baseline) < 10 else 0)}")
+            if s.rel is not None:
+                vorz = "+" if s.rel > 0 else ""
+                bits.append(f"**{vorz}{de_num(s.rel * 100, '%', 1)}**")
+            bits.append(f"Gewicht {s.weight:.0f} %")
+            bits.append(f"Datenlage {s.confidence}")
+            st.markdown(f"{head} · {s.score:.0f} Punkte — " + " · ".join(bits)
+                        + f"  \n<span style='color:{MUTED};font-size:13px'>{s.note}</span>",
+                        unsafe_allow_html=True)
+
+        st.divider()
+
+        # -- Effizienzkurve: der Kern der Sache ------------------------------
+        st.markdown("#### Leistung je Herzschlag")
+        st.caption(
+            "Jeder Punkt ist eine auswertbare Fahrt: geschätzte (bzw. gemessene) "
+            "Leistung geteilt durch den Puls über dem Ruhepuls. Steigt die Linie, "
+            "holst du bei gleichem Herzschlag mehr Vortrieb heraus — das ist "
+            "aerobe Anpassung in einer einzigen Zahl."
+        )
+        efp = load_ef_points()
+        if len(efp) >= 5:
+            src = st.radio(
+                "Quelle", options=sorted(efp["kind"].unique()),
+                format_func=lambda k: {"power": "Gemessene Watt (Rolle/Powermeter)",
+                                       "estimate": "Geschätzte Watt (draußen)"}.get(k, k),
+                horizontal=True, key="ef_kind",
+            )
+            d = efp[efp["kind"] == src].sort_values("day")
+            if len(d) >= 5:
+                # Gleitender Median über 5 Fahrten: robust gegen einen einzelnen
+                # Traumtag oder eine Fahrt im Sturm.
+                d = d.assign(roll=d["ef"].rolling(5, min_periods=3, center=True).median())
+                fige = go.Figure()
+                fige.add_trace(go.Scatter(
+                    x=d["day"], y=d["ef"], mode="markers",
+                    marker=dict(color=FAINT, size=8), name="Einzelfahrt",
+                    hovertemplate="%{x|%d.%m.%Y}<br>%{y:.2f} W/Schlag"
+                                  "<br>%{customdata[0]:.0f} W bei %{customdata[1]:.0f} bpm<extra></extra>",
+                    customdata=d[["power", "hr"]].to_numpy(),
+                ))
+                fige.add_trace(go.Scatter(
+                    x=d["day"], y=d["roll"], mode="lines",
+                    line=dict(color=ACCENT, width=2), name="Gleitender Median (5 Fahrten)",
+                    hovertemplate="%{x|%d.%m.%Y}<br>Median %{y:.2f} W/Schlag<extra></extra>",
+                ))
+                fige.update_layout(
+                    title="Effizienz über die Zeit", yaxis_title="Watt je Herzschlag",
+                    xaxis_title=None, hovermode="x unified",
+                    # t=84: die waagerechte Legende braucht eine eigene Zeile unter
+                    # dem Titel, sonst liegen beide uebereinander.
+                    margin=dict(t=84),
+                    legend=dict(orientation="h", yanchor="bottom", y=1.0, x=0),
+                )
+                st.plotly_chart(fige, width="stretch")
+            else:
+                st.info("Für diese Quelle liegen noch zu wenige Fahrten vor.",
+                        icon=":material/info:")
+        else:
+            st.info(
+                f"Noch zu wenige auswertbare Fahrten. Gezählt werden Fahrten ab "
+                f"{fitness.MIN_MINUTES} Minuten, die im aeroben Bereich lagen — "
+                "Sprints und kurze Ausfahrten sagen über Grundlagenausdauer nichts.",
+                icon=":material/info:",
+            )
+
+        st.divider()
+
+    # -- Ermüdungsresistenz nachrechnen (braucht Strava-Streams) -------------
+    st.markdown("#### Ermüdungsresistenz aus den Fahrtverläufen")
+    st.caption(
+        "„Halte ich mein Tempo, ohne dass der Puls davonläuft?“ — dafür braucht es "
+        "den Verlauf einer Fahrt, nicht nur ihre Zusammenfassung. Die Verläufe "
+        "kommen einzeln von Strava und sind kontingentiert, deshalb portionsweise."
+    )
+    dm = fitness.ride_metrics()
+    offen = fitness.streams_pending()
+    cda, cdb = st.columns([1, 1])
+    cda.metric(":material/monitor_heart: Ausgewertete Fahrten", f"{len(dm)}",
+               help=f"Noch offen: {offen}")
+    if cdb.button("Mehr Fahrten auswerten", icon=":material/add:", width="stretch",
+                  key="fit_streams", disabled=offen == 0):
+        try:
+            cfgf = config.load_config()
+        except Exception:  # noqa: BLE001
+            cfgf = config.load_config_raw()
+            cfgf.setdefault("server", {}).setdefault("port", 8721)
+        progf = st.progress(0.0, text="Starte …")
+
+        def _fcb(i: int, t: int, name: str) -> None:
+            progf.progress((i + 1) / max(t, 1), text=f"{i + 1}/{t}: {name}")
+
+        try:
+            resf = fitness.analyze_rides(cfgf, limit=10, progress_cb=_fcb)
+            st.cache_data.clear()
+            st.success(
+                f"{resf['processed']} Fahrten abgefragt, {resf['stored']} auswertbar "
+                f"({resf['todo']} offen).", icon=":material/check_circle:")
+        except Exception as e:  # noqa: BLE001
+            st.error(f"Auswertung fehlgeschlagen: {e}", icon=":material/error:")
+        finally:
+            progf.empty()
+
+    if not dm.empty:
+        dmv = dm.sort_values("day")
+        figd = go.Figure()
+        figd.add_hline(y=5, line_dash="dot", line_color=C_IN,
+                       annotation_text="5 % — gut aerob konditioniert",
+                       annotation_position="top left", annotation_font_color=C_IN)
+        figd.add_trace(go.Scatter(
+            x=dmv["day"], y=dmv["decoupling"], mode="markers",
+            marker=dict(color=FAINT, size=8), name="Einzelfahrt",
+            hovertemplate="%{x|%d.%m.%Y}<br>%{y:.1f} % Drift<extra></extra>",
+        ))
+        if len(dmv) >= 3:
+            figd.add_trace(go.Scatter(
+                x=dmv["day"],
+                y=dmv["decoupling"].rolling(5, min_periods=3, center=True).median(),
+                mode="lines", line=dict(color=ACCENT, width=2),
+                name="Gleitender Median", hovertemplate="%{y:.1f} %<extra></extra>",
+            ))
+        figd.update_layout(title="Pulsdrift in der zweiten Fahrthälfte",
+                           yaxis_title="Decoupling (%)", xaxis_title=None,
+                           hovermode="x unified", margin=dict(t=84),
+                           legend=dict(orientation="h", yanchor="bottom", y=1.0, x=0))
+        st.plotly_chart(figd, width="stretch")
+        st.caption(
+            "Niedriger ist besser: unter 5 % hältst du dein Tempo, ohne dass der "
+            "Puls nach oben wandert. Der Hebel dafür sind ruhige lange Einheiten, "
+            "nicht härtere Intervalle."
+        )
+
+    # -- Wie wird gerechnet? -------------------------------------------------
+    with st.expander("Wie wird das gerechnet?", icon=":material/functions:"):
+        st.markdown(
+            "**Das Ausgangsniveau ist fest.** Jeder Teilwert wird gegen ein einmal "
+            "festgehaltenes Startniveau gerechnet (die ersten acht Wochen deiner "
+            "Aufzeichnung). Ein mitwandernder Bezug hätte den Effekt, dass jede "
+            "Verbesserung sofort zur neuen Normalität wird — der Index klebte für "
+            "immer bei 50.\n\n"
+            "**Eine einzelne Fahrt bewegt fast nichts.** Jeder Teilwert ist der "
+            "Median eines Sechs-Wochen-Fensters. Eine abgebrochene Einheit kostet "
+            "dich keinen Punkt; erst eine abgebrochene *Woche* wird sichtbar. Genau "
+            "darin unterscheidet sich der Index von einem Zähler.\n\n"
+            "**Die Skala sättigt.** 50 Punkte ist dein Startniveau, 90 eine volle "
+            "Skalenstufe darüber (z. B. +40 % Leistung je Herzschlag). Nach oben "
+            "wird es bewusst zäh — ein Index, der nach einem Jahr am Anschlag steht, "
+            "kann im zweiten Jahr keinen Fortschritt mehr zeigen.\n\n"
+            "**Fehlende Signale kosten nichts.** Ohne Whoop oder ohne ausgewertete "
+            "Fahrtverläufe wird der Index aus den übrigen Teilwerten gebildet; die "
+            "Gewichte verteilen sich auf das, was da ist."
+        )
+        if fi.anchor:
+            st.caption(
+                f"Ausgangsniveau verankert am **{fi.anchor['created']}** aus dem "
+                f"Zeitraum {fi.anchor['from']} bis {fi.anchor['to']}. "
+                "Neu setzen, wenn eine lange Pause oder ein Materialwechsel den "
+                "Vergleich sinnlos gemacht hat — der Index startet dann wieder bei 50."
+            )
+            if st.button(":material/restart_alt: Ausgangsniveau neu setzen",
+                         key="fit_anchor_reset"):
+                fitness.reset_anchor()
+                st.cache_data.clear()
+                st.rerun()
 
 
 # ===========================================================================

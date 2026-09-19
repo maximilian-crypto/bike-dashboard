@@ -33,7 +33,7 @@ from zoneinfo import ZoneInfo
 
 import requests
 
-from . import config, dataprep, form, recommend, store, weather, zwift
+from . import config, dataprep, fitness, form, recommend, store, weather, zwift
 
 TZ = ZoneInfo("Europe/Berlin")
 EARLIEST = dt.time(6, 0)    # vorher nie – auch wenn Whoop nachts etwas liefert
@@ -165,7 +165,32 @@ def build_text(cfg: dict[str, Any], today: dt.date | None = None,
         status, _ = form.interpret(cur["tsb"])
         parts.append(f"Form (TSB) {cur['tsb']:+.0f} — {status}.")
 
+    line = fitness_line(today)
+    if line:
+        parts.append(line)
+
     return title, "\n".join(parts)
+
+
+def fitness_line(today: dt.date | None = None) -> str:
+    """Eine Zeile Fortschritt für den Push — der tägliche „number go high"-Blick.
+
+    Bewusst am Ende der Nachricht: die Trainingsentscheidung steht vorn, das
+    hier ist Motivation. ``persist=False``, damit ein Cron-Lauf nie das
+    Ausgangsniveau festschreibt (siehe `bikedash/fitness.py`).
+    """
+    try:
+        fi = fitness.compute(today, persist=False)
+    except Exception:  # noqa: BLE001 – eine Motivationszeile kippt keinen Report
+        return ""
+    if not fi.available:
+        return ""
+    txt = f"Fitness-Index {fi.score:.1f} ({fi.tier})"
+    if fi.delta_30 is not None and abs(fi.delta_30) >= 0.1:
+        txt += f", {fi.delta_30:+.1f} in 30 Tagen"
+    if fi.best is not None and fi.score >= fi.best - 0.01:
+        return txt + " — neuer Bestwert! 🏆"
+    return txt + "."
 
 
 # ---------------------------------------------------------------------------

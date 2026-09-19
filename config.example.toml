@@ -45,6 +45,12 @@ lthr = 0
 # Herzfrequenz — genauer, und indoor nicht durch Hitze verfälscht.
 # Aus demselben 20-Minuten-Test: FTP = 95 % der Durchschnittsleistung.
 ftp = 0
+# Körpergewicht in kg. 0 = unbekannt (dann rechnet das Dashboard mit einem
+# Vorgabewert). Gebraucht vom Fitness-Index: draußen ohne Powermeter wird die
+# Leistung aus Tempo, Steigung und Masse geschätzt — und Steigleistung hängt
+# direkt am Gewicht. Für den Vergleich mit dir selbst reicht ein grober Wert;
+# das Rad wird pauschal mit 10 kg dazugerechnet.
+weight_kg = 0
 
 # --- KI-Coach (optional) ---
 [coach]

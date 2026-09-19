@@ -53,6 +53,7 @@ bike-dashboard/
 │  ├─ routing.py          # windkluge Rundkurse via ORS
 │  ├─ weather.py          # Open-Meteo
 │  ├─ windlab.py          # Wind-Performance-Analyse
+│  ├─ fitness.py          # NEU: Fitness-Index (Fortschritt aus Physiologie)
 │  ├─ milestones.py       # NEU: Distanz-Meilensteine & Orden
 │  ├─ maintenance.py      # NEU: Verschleiss-/Wartungs-Tracker
 │  ├─ zwift.py            # NEU: Tagesworkout → intervals.icu-Kalender → Zwift-Bibliothek
@@ -128,6 +129,34 @@ Dauer, Watt, Zwift bereit), Wetter nur an Fahrtagen. Kanal ntfy (Secret
 `NTFY_TOPIC`), optional `DASHBOARD_URL` als Klick-Ziel. Nutzerentscheid
 (Sept 2026): ntfy, morgens, spätestens 10:00.
 
+**Fitness-Index — Fortschritt statt Fleiß (seit 2026-09-19):** `bikedash/fitness.py`
+beantwortet die Frage, die CTL offen lässt. CTL misst, **wie viel** trainiert wird,
+und steigt auch bei jahrelangem Plateau; der Index misst, **ob der Athlet besser
+wird**. Fünf Teilwerte, Gewichte in Klammern: Effizienz (30) = Leistung je
+Herzschlag (Friels Efficiency Factor, draußen mit aus Tempo/Steigung/Masse
+geschätzter Leistung), Kapazität (25) = mittlere Tageslast, Ermüdungsresistenz
+(20) = Aerobic Decoupling aus den Strava-Streams, Regeneration (15) = HRV- und
+Ruhepuls-Basislinie aus Whoop, Konsistenz (10) = Trainingswochen von zwölf.
+
+Drei Konstruktionsentscheidungen tragen das Ganze:
+1. **Fester Anker statt gleitendem Bezug** (`app_kv: fitness_anchor`, aus den
+   ersten acht Wochen). Ein mitwandernder Median macht jede Verbesserung sofort
+   zur neuen Normalität — der Index klebte für immer bei 50. Gleiche Überlegung
+   wie beim Plananker in `season.py`.
+2. **42-Tage-Median je Teilwert.** Eine einzelne Fahrt bewegt den Index um
+   Bruchteile eines Punkts. Das ist der ganze Unterschied zu einem Zähler und
+   war die ausdrückliche Anforderung (nicht „+1 pro Workout").
+3. **Kapazität über die mittlere Tageslast, nicht über CTL.** CTL hat 42 Tage
+   Zeitkonstante und steht nach dem Ankerfenster erst bei ~74 % seines Endwerts.
+   Gegen diesen Anker gemessen zeigte der Index einem Fahrer, der ein Jahr lang
+   *exakt gleich* trainiert, „+47 % Kapazität". Beide Seiten nutzen jetzt
+   denselben rampenfreien Schätzer.
+
+Skalen (`FULL_EFF` & Co.) sind so gespannt, dass eine sehr gute Saison bei ~85
+landet, nicht bei 99 — ein Index am Anschlag kann im zweiten Jahr nichts mehr
+zeigen. Fehlende Signale (kein Whoop, keine ausgewerteten Streams) kosten keine
+Punkte: die Gewichte werden auf die vorhandenen Teilwerte normiert.
+
 **Wichtige Konventionen:**
 - Design-Tokens (`C_IN`, `C_ABOVE`, `PANEL_A`, `MUTED`, `ACCENT` …) stehen oben
   in `dashboard.py` und spiegeln 1:1 die CSS-Variablen in `mobile/ride.html`.
@@ -163,10 +192,13 @@ Live-Ride-PWA mit BLE-Puls/-Kadenz und Karte.
 |---|---|---|---|
 | 7 | **Zwift-Zustellung via intervals.icu** — Tagesworkout landet ohne Zutun unter Zwift → Workouts → Custom → „Intervals.icu“ | `bikedash/zwift.py`, `build_today.py`, Einrichtung „5) Zwift“, Statuszeile unter dem Wattplan | Code fertig, Tests grün, Dashboard im Browser geprüft. **Offen: einmalige Einrichtung durch den Nutzer + Sichtprüfung am Handy** (Abschnitt 6, Schritt 0) |
 
+| 9 | **Fitness-Index** — ein Fortschrittswert aus fünf physiologischen Signalen, Verlaufskurve, Teilwert-Aufschlüsselung und Klartext-Sätzen (bei 139 bpm fährst du inzwischen 28,0 km/h statt 24,7) | `bikedash/fitness.py`, Tab „Fitness-Index", `today.json` (`fitness`), Zeile im Morgen-Report | Code fertig, 29 Tests grün, Tab mit synthetischer Jahreshistorie im Browser geprüft. **Offen: Sichtprüfung mit echten Daten + einmal „Mehr Fahrten auswerten" drücken** (Abschnitt 6, Schritt 0b) |
+| 10 | **Dunkles Streamlit-Theme** (`.streamlit/config.toml`) — die Diagramme waren app-weit hell in einer dunklen App | `.gitignore`, `.streamlit/config.toml` | fertig, im Browser geprüft |
+
 | 8 | **Morgen-Report ereignisgesteuert** — Push, sobald die heutige Whoop-Recovery da ist, spätestens 10:00; erste Zeile = Entscheidung | `bikedash/report.py`, `send_report.py --if-due`, `sync.yml` | Code fertig, Tests grün. **Offen: `NTFY_TOPIC` als Actions-Secret + ntfy-App abonnieren** |
 
-**Tests:** 139 grün (`python -m pytest -q`), inkl. Suites
-`tests/test_milestones.py`, `tests/test_maintenance.py`, `tests/test_dataprep.py`, `tests/test_season.py`, `tests/test_power.py`, `tests/test_zwift.py` und `tests/test_report.py`.
+**Tests:** 168 grün (`python -m pytest -q`), inkl. Suites
+`tests/test_milestones.py`, `tests/test_maintenance.py`, `tests/test_dataprep.py`, `tests/test_season.py`, `tests/test_power.py`, `tests/test_zwift.py`, `tests/test_report.py` und `tests/test_fitness.py`.
 
 **Zwift-Zustellung verifiziert (2026-09-18, Lauf #346):** `today.json` meldet
 `zwift.status = sent`, Event-ID 136989140 im intervals.icu-Kalender.
@@ -208,6 +240,18 @@ Live-Ride-PWA mit BLE-Puls/-Kadenz und Karte.
 
 8. **Steigung kalibrierbar statt absolut.** Der Handyhalter sitzt nie gleich —
    deshalb Tare-Button (Offset in `localStorage`) statt fixer Annahme.
+
+9. **Fitness-Index misst Fortschritt, nicht Fleiß.** Ausdrücklicher Wunsch des
+   Nutzers: ein Wert, der auf etwas beruht und nicht „+1 pro Workout" zählt.
+   Deshalb fester Anker, 42-Tage-Fenster und sättigende Skala — Begründung und
+   Fallstricke stehen ausführlich oben in Abschnitt 2 und im Modulkopf von
+   `bikedash/fitness.py`.
+
+10. **`.gitignore` hatte `config.toml` ohne Anker** und schluckte damit auch
+   `.streamlit/config.toml`. Folge: Streamlit lief mit seinem hellen Vorgabe-Theme
+   und überschrieb das sorgfältig gebaute Plotly-Template `bikedash` — HELLE
+   Diagramme in einer dunklen App, quer durch alle Tabs. Muster ist jetzt
+   `/config.toml`; das Theme liegt eingecheckt in `.streamlit/config.toml`.
 
 ---
 
@@ -296,6 +340,21 @@ Zwift. Die API-Semantik stammt aus der OpenAPI-Spezifikation von intervals.icu
 (Basic-Auth `API_KEY:<key>`, `POST/PUT /api/v1/athlete/{id}/events`,
 Workout als `description` in nativer Syntax). Schlägt Schritt 5 fehl, steht der
 Fehlertext in `mobile/today.json` unter `zwift.detail`.
+
+### Schritt 0b — Fitness-Index mit echten Daten scharf schalten (einmalig)
+1. Dashboard öffnen → Tab **„Fitness-Index"**. Beim ersten Aufruf wird das
+   **Ausgangsniveau** aus den ersten acht Wochen deiner Historie festgeschrieben
+   (steht im Aufklapper „Wie wird das gerechnet?"). Sieht der Zeitraum unpassend
+   aus — lange Pause, Materialwechsel — dort einmal **„Ausgangsniveau neu setzen"**.
+2. Gewicht eintragen: Einrichtung → **Körpergewicht in kg**. Ohne den Wert
+   schätzt der Index die Außenleistung mit 88 kg Systemmasse. Fürs Hosting
+   zusätzlich als Secret `ATHLETE_WEIGHT_KG` (Streamlit **und** Actions).
+3. Unten im Tab mehrfach **„Mehr Fahrten auswerten"** drücken — das holt die
+   Fahrtverläufe von Strava und schaltet die **Ermüdungsresistenz** frei
+   (10 Fahrten pro Klick, Stravas Kontingent). Ohne diesen Schritt fehlt einer
+   von fünf Teilwerten; der Index rechnet dann ohne ihn weiter.
+4. Gegenprobe: Stimmt die Effizienzkurve mit deinem Gefühl überein? Fährst du
+   bei gleichem Puls wirklich schneller als vor einem Jahr?
 
 ### Schritt 1 — Umgebung am PC herstellen (Blocker auflösen)
 ```powershell
