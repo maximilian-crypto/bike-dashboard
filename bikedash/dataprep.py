@@ -37,6 +37,21 @@ def is_indoor(type_: str | None, sport_type: str | None,
     return False
 
 
+def has_power_meter(raw_json: str | None) -> bool:
+    """Echte Wattdaten? Stravas ``device_watts`` unterscheidet Powermeter
+    (bzw. Smart-Trainer) von Stravas Schätzung aus Tempo und Höhenprofil.
+
+    Modulweit, weil ausser der Lastberechnung auch der Fitness-Index wissen
+    muss, ob die Wattzahlen einer Fahrt gemessen oder geraten sind.
+    """
+    if not raw_json:
+        return False
+    try:
+        return bool(json.loads(raw_json).get("device_watts"))
+    except (ValueError, TypeError):
+        return False
+
+
 def prep_rides() -> pd.DataFrame:
     df = store.read_table("strava_activities")
     if df.empty:
@@ -81,18 +96,8 @@ def prep_rides() -> pd.DataFrame:
     hr_factor = (df["average_heartrate"].fillna(120) / 120).clip(0.6, 2.0)
     estimate = df["moving_h"] * 50 * hr_factor
 
-    def _has_power_meter(raw: str | None) -> bool:
-        """Echte Wattdaten? Stravas ``device_watts`` unterscheidet Powermeter
-        (bzw. Smart-Trainer) von Stravas Schätzung aus Tempo und Höhenprofil."""
-        if not raw:
-            return False
-        try:
-            return bool(json.loads(raw).get("device_watts"))
-        except (ValueError, TypeError):
-            return False
-
     def _row_load(row) -> tuple[float, str]:
-        if _has_power_meter(row.get("raw_json")):
+        if has_power_meter(row.get("raw_json")):
             tss = load_mod.power_tss(
                 row["moving_time_s"], row.get("weighted_average_watts"), ftp
             )

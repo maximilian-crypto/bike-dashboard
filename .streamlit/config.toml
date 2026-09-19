@@ -1,0 +1,15 @@
+# Farbschema der App. Muss hier stehen und nicht nur im CSS: Streamlit gibt sein
+# Theme an die Plotly-Diagramme weiter und ueberschreibt damit das Template
+# `bikedash` aus dashboard.py. Ohne diese Datei standen deshalb HELLE Diagramme
+# in einer dunklen App — die Design-Tokens unten spiegeln 1:1 die Konstanten in
+# dashboard.py und die CSS-Variablen in mobile/ride.html.
+[theme]
+base = "dark"
+primaryColor = "#ff5a36"            # ACCENT
+backgroundColor = "#0a0c10"         # BG
+secondaryBackgroundColor = "#161a23" # PANEL_A
+textColor = "#eef1f6"               # TEXT
+font = "sans serif"
+
+[browser]
+gatherUsageStats = false

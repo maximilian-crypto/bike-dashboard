@@ -96,6 +96,19 @@ CREATE TABLE IF NOT EXISTS app_kv (
     value  TEXT
 );
 
+CREATE TABLE IF NOT EXISTS ride_metrics (
+    ride_id      {INT} PRIMARY KEY,
+    ride_day     TEXT,
+    decoupling   REAL,
+    ef_first     REAL,
+    ef_second    REAL,
+    hr_drift     REAL,
+    hrr60        REAL,
+    basis        TEXT,
+    n_points     {INT},
+    computed_at  TEXT
+);
+
 CREATE TABLE IF NOT EXISTS wind_segments (
     ride_id        {INT},
     t_idx          {INT},
@@ -184,6 +197,11 @@ def upsert_whoop_recovery(rows: list[dict[str, Any]]) -> int:
 
 def upsert_whoop_cycles(rows: list[dict[str, Any]]) -> int:
     return _upsert("whoop_cycles", rows, "id")
+
+
+def upsert_ride_metrics(rows: list[dict[str, Any]]) -> int:
+    """Aus Streams gewonnene Fahrtkennzahlen (Decoupling, HF-Erholung)."""
+    return _upsert("ride_metrics", rows, "ride_id")
 
 
 def replace_wind_segments(ride_id: int, rows: list[dict[str, Any]]) -> int:

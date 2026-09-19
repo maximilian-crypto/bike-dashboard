@@ -96,6 +96,7 @@ Die Workflows liegen schon im Repo (`.github/workflows/`). Trage die Secrets ein
 | `WHOOP_CLIENT_ID`, `WHOOP_CLIENT_SECRET` | aus Whoop |
 | `ORS_API_KEY`, `ATHLETE_HOME_LAT`, `ATHLETE_HOME_LON` | Routen/Wetter |
 | `ATHLETE_LTHR`, `ATHLETE_FTP` | Schwellen-HF (bpm) und FTP (Watt) aus dem Test |
+| `ATHLETE_WEIGHT_KG` | Körpergewicht in kg — der Fitness-Index schätzt daraus die Außenleistung |
 | `ATHLETE_SEASON_START` | Zieldatum des Saisonplans, z. B. `2027-03-01` |
 | `NTFY_TOPIC` | dein ntfy-Thema (für den Morgen-Report) |
 | `DASHBOARD_URL` | optional: `https://<name>.streamlit.app` — Tipp auf den Push öffnet das Dashboard |

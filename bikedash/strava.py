@@ -157,11 +157,15 @@ def sync(cfg: dict[str, Any], *, full: bool = False) -> int:
     return n
 
 
-STREAM_KEYS = "latlng,velocity_smooth,time,grade_smooth,heartrate"
+# ``watts`` kommt für den Fitness-Index dazu: wo ein Powermeter mitgelaufen
+# ist, wird die Pulsdrift gegen die Leistung gerechnet statt gegen das Tempo
+# (Tempo haengt an Wind und Profil, Leistung nicht). Strava liefert
+# unbekannte Streams einfach nicht mit — ein Mehrbedarf entsteht nicht.
+STREAM_KEYS = "latlng,velocity_smooth,time,grade_smooth,heartrate,watts"
 
 
 def fetch_streams(cfg: dict[str, Any], ride_id: int) -> dict[str, Any]:
-    """Holt die Zeitreihen (GPS, Tempo, Zeit, Steigung, HF) einer Fahrt."""
+    """Holt die Zeitreihen (GPS, Tempo, Zeit, Steigung, HF, Watt) einer Fahrt."""
     token = _valid_access_token(cfg)
     resp = requests.get(
         f"{API_BASE}/activities/{ride_id}/streams",

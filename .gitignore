@@ -1,5 +1,9 @@
 # Secrets & local data — never commit these
-config.toml
+# Anker (/) wichtig: ohne ihn greift das Muster auf JEDE config.toml, also auch
+# auf .streamlit/config.toml — dadurch liess sich das Farbschema der App nie
+# einchecken, und Streamlit lieferte seine helle Vorgabe aus. Gemeint war immer
+# nur die Zugangsdaten-Datei im Wurzelverzeichnis.
+/config.toml
 tokens.json
 data/
 *.db
