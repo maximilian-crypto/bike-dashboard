@@ -1,41 +1,66 @@
 {
-  "generated_at": "2026-09-19T22:02:06+00:00",
-  "date": "2026-09-19",
+  "generated_at": "2026-09-20T02:51:37+00:00",
+  "date": "2026-09-20",
   "recommendation": {
-    "kind": "REST",
-    "title": "Ruhetag",
-    "readiness_band": "yellow",
-    "recovery_score": 44.0,
-    "zone_number": null,
-    "zone_label": null,
-    "hr_low": null,
-    "hr_high": null,
-    "cadence": "–",
-    "cadence_low": null,
-    "cadence_high": null,
-    "rpe": "–",
+    "kind": "RECOVERY",
+    "title": "Lockerer Erholungs-Spin",
+    "readiness_band": "unknown",
+    "recovery_score": null,
+    "zone_number": 1,
+    "zone_label": "Z1 · Erholung",
+    "hr_low": 120,
+    "hr_high": 145,
+    "cadence": "85–95",
+    "cadence_low": 85,
+    "cadence_high": 95,
+    "rpe": "2–3",
     "duration_min": [
-      0,
-      0
+      27,
+      36
     ],
     "distance_km": [
-      0.0,
-      0.0
+      8.2,
+      10.1
     ],
-    "target_distance_km": 0.0,
+    "target_distance_km": 9.1,
     "week_hours": 1.3,
     "target_hours": 0.8,
     "tsb": -0.3,
-    "power_low": null,
-    "power_high": null,
-    "power_summary": null,
-    "power_plan": [],
+    "power_low": 76,
+    "power_high": 94,
+    "power_summary": "5' ein · 21' @ 76–94 W · 5' aus",
+    "power_plan": [
+      {
+        "label": "Einfahren",
+        "minutes": 5,
+        "low_w": 76,
+        "high_w": 94,
+        "zone": 1,
+        "cadence": "85–95"
+      },
+      {
+        "label": "Hauptteil",
+        "minutes": 21,
+        "low_w": 76,
+        "high_w": 94,
+        "zone": 1,
+        "cadence": "85–95"
+      },
+      {
+        "label": "Ausfahren",
+        "minutes": 5,
+        "low_w": 76,
+        "high_w": 94,
+        "zone": 1,
+        "cadence": null
+      }
+    ],
     "rationale": [
-      "Whoop-Recovery heute: 44 %.",
+      "Keine aktuelle Whoop-Recovery — neutrale Annahme.",
       "Diese Woche bisher 70 / Ziel 50 Last (139 %, ≈ 0.8 h).",
       "Planwoche 1, Phase „Grundlage“ — noch 23 Wochen bis zum Saisonstart.",
       "Form (TSB) aktuell -0.",
-      "Erholung mittel: aerob bleiben (Z2), Volumen schon ok."
+      "Ohne Erholungsdaten konservativ: ruhige Grundlage (Z2)."
     ]
   },
   "zones": {
@@ -43,7 +68,7 @@
     "rest_hr": 68,
     "lthr": null,
     "ftp": 170,
-    "target_zone": null,
+    "target_zone": 1,
     "method": "Karvonen/HRR",
     "load_sources": {
       "hr": 13,
@@ -51,11 +76,11 @@
     }
   },
   "weather": {
-    "temp_c": 17.9,
-    "wind_kmh": 18.9,
-    "wind_deg": 231,
+    "temp_c": 15.9,
+    "wind_kmh": 10.6,
+    "wind_deg": 235,
     "wind_dir": "SW",
-    "gust_kmh": 37.8,
+    "gust_kmh": 26.6,
     "code": 3,
     "desc": "bedeckt"
   },
@@ -100,11 +125,11 @@
     "highlight": "⚡ Bei gleichem Puls bringst du heute **27,6 % mehr Leistung** aufs Pedal als zu Beginn deiner Aufzeichnung."
   },
   "zwift": {
-    "status": "skipped",
-    "name": null,
-    "event_id": null,
-    "detail": "Ruhetag",
-    "date": "2026-09-19",
-    "at": "2026-09-19T22:02:06+00:00"
+    "status": "sent",
+    "name": "Bikedash 20-09 Erholung Z1 31min",
+    "event_id": 137332998,
+    "detail": null,
+    "date": "2026-09-20",
+    "at": "2026-09-20T02:51:35+00:00"
   }
 }
