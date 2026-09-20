@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-09-20T08:59:05+00:00",
+  "generated_at": "2026-09-20T09:33:34+00:00",
   "date": "2026-09-20",
   "recommendation": {
     "kind": "ENDURANCE",
@@ -76,11 +76,11 @@
     }
   },
   "weather": {
-    "temp_c": 16.9,
-    "wind_kmh": 22.6,
-    "wind_deg": 253,
+    "temp_c": 17.5,
+    "wind_kmh": 24.5,
+    "wind_deg": 260,
     "wind_dir": "W",
-    "gust_kmh": 47.5,
+    "gust_kmh": 51.1,
     "code": 2,
     "desc": "teils bewölkt"
   },
@@ -125,11 +125,11 @@
     "highlight": "⚡ Bei gleichem Puls bringst du heute **27,6 % mehr Leistung** aufs Pedal als zu Beginn deiner Aufzeichnung."
   },
   "zwift": {
-    "status": "updated",
+    "status": "unchanged",
     "name": "Bikedash 20-09 Grundlage Z2 71min",
     "event_id": 137332998,
     "detail": null,
     "date": "2026-09-20",
-    "at": "2026-09-20T08:59:03+00:00"
+    "at": "2026-09-20T09:33:32+00:00"
   }
 }
