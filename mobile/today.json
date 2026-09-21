@@ -1,11 +1,11 @@
 {
-  "generated_at": "2026-09-21T02:48:52+00:00",
+  "generated_at": "2026-09-21T09:30:25+00:00",
   "date": "2026-09-21",
   "recommendation": {
     "kind": "ENDURANCE",
     "title": "Grundlagenausdauer (Z2)",
-    "readiness_band": "unknown",
-    "recovery_score": null,
+    "readiness_band": "yellow",
+    "recovery_score": 66.0,
     "zone_number": 2,
     "zone_label": "Z2 · Grundlage",
     "hr_low": 145,
@@ -56,11 +56,11 @@
       }
     ],
     "rationale": [
-      "Keine aktuelle Whoop-Recovery — neutrale Annahme.",
+      "Whoop-Recovery heute: 66 %.",
       "Diese Woche bisher 0 / Ziel 56 Last (0 %, ≈ 0.9 h).",
       "Planwoche 2, Phase „Grundlage“ — noch 23 Wochen bis zum Saisonstart.",
       "Form (TSB) aktuell -0.",
-      "Ohne Erholungsdaten konservativ: ruhige Grundlage (Z2)."
+      "Erholung mittel & Woche noch dünn: ruhige Grundlage (Z2)."
     ]
   },
   "zones": {
@@ -76,13 +76,13 @@
     }
   },
   "weather": {
-    "temp_c": 13.0,
-    "wind_kmh": 15.1,
-    "wind_deg": 270,
-    "wind_dir": "W",
-    "gust_kmh": 33.5,
-    "code": 0,
-    "desc": "klar"
+    "temp_c": 15.8,
+    "wind_kmh": 18.5,
+    "wind_deg": 303,
+    "wind_dir": "NW",
+    "gust_kmh": 35.6,
+    "code": 3,
+    "desc": "bedeckt"
   },
   "milestone": {
     "total_km": 921.1,
@@ -95,9 +95,9 @@
     "next_km": 930.0
   },
   "fitness": {
-    "score": 62.2,
+    "score": 62.1,
     "tier": "Im Aufbau",
-    "delta_30": -10.9,
+    "delta_30": -11.0,
     "delta_90": null,
     "best": 75.0,
     "subscores": {
@@ -113,8 +113,8 @@
       },
       "reg": {
         "label": "Regeneration",
-        "score": 65.0,
-        "n": 38
+        "score": 64.7,
+        "n": 39
       },
       "kon": {
         "label": "Konsistenz",
@@ -125,11 +125,11 @@
     "highlight": "⚡ Bei gleichem Puls bringst du heute **27,6 % mehr Leistung** aufs Pedal als zu Beginn deiner Aufzeichnung."
   },
   "zwift": {
-    "status": "sent",
+    "status": "unchanged",
     "name": "Bikedash 21-09 Grundlage Z2 107min",
     "event_id": 137620410,
     "detail": null,
     "date": "2026-09-21",
-    "at": "2026-09-21T02:48:51+00:00"
+    "at": "2026-09-21T09:30:25+00:00"
   }
 }
