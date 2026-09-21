@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-09-21T17:38:55+00:00",
+  "generated_at": "2026-09-21T22:58:10+00:00",
   "date": "2026-09-21",
   "recommendation": {
     "kind": "ENDURANCE",
@@ -76,11 +76,11 @@
     }
   },
   "weather": {
-    "temp_c": 13.8,
-    "wind_kmh": 11.6,
-    "wind_deg": 306,
+    "temp_c": 11.7,
+    "wind_kmh": 4.8,
+    "wind_deg": 312,
     "wind_dir": "NW",
-    "gust_kmh": 27.4,
+    "gust_kmh": 13.0,
     "code": 2,
     "desc": "teils bewölkt"
   },
@@ -130,6 +130,6 @@
     "event_id": 137620410,
     "detail": null,
     "date": "2026-09-21",
-    "at": "2026-09-21T17:38:54+00:00"
+    "at": "2026-09-21T22:58:09+00:00"
   }
 }
