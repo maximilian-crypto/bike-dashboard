@@ -1,11 +1,11 @@
 {
-  "generated_at": "2026-09-21T09:30:25+00:00",
+  "generated_at": "2026-09-21T10:20:37+00:00",
   "date": "2026-09-21",
   "recommendation": {
     "kind": "ENDURANCE",
     "title": "Grundlagenausdauer (Z2)",
-    "readiness_band": "yellow",
-    "recovery_score": 66.0,
+    "readiness_band": "green",
+    "recovery_score": 67.0,
     "zone_number": 2,
     "zone_label": "Z2 · Grundlage",
     "hr_low": 145,
@@ -56,11 +56,11 @@
       }
     ],
     "rationale": [
-      "Whoop-Recovery heute: 66 %.",
+      "Whoop-Recovery heute: 67 %.",
       "Diese Woche bisher 0 / Ziel 56 Last (0 %, ≈ 0.9 h).",
       "Planwoche 2, Phase „Grundlage“ — noch 23 Wochen bis zum Saisonstart.",
       "Form (TSB) aktuell -0.",
-      "Erholung mittel & Woche noch dünn: ruhige Grundlage (Z2)."
+      "Gut erholt: solide Grundlage (Z2) baut die aerobe Basis."
     ]
   },
   "zones": {
@@ -76,11 +76,11 @@
     }
   },
   "weather": {
-    "temp_c": 15.8,
-    "wind_kmh": 18.5,
-    "wind_deg": 303,
+    "temp_c": 16.2,
+    "wind_kmh": 21.8,
+    "wind_deg": 309,
     "wind_dir": "NW",
-    "gust_kmh": 35.6,
+    "gust_kmh": 44.3,
     "code": 3,
     "desc": "bedeckt"
   },
@@ -130,6 +130,6 @@
     "event_id": 137620410,
     "detail": null,
     "date": "2026-09-21",
-    "at": "2026-09-21T09:30:25+00:00"
+    "at": "2026-09-21T10:20:36+00:00"
   }
 }
