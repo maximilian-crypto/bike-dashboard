@@ -1,11 +1,11 @@
 {
-  "generated_at": "2026-09-21T22:58:10+00:00",
-  "date": "2026-09-21",
+  "generated_at": "2026-09-22T02:49:39+00:00",
+  "date": "2026-09-22",
   "recommendation": {
     "kind": "ENDURANCE",
     "title": "Grundlagenausdauer (Z2)",
-    "readiness_band": "green",
-    "recovery_score": 67.0,
+    "readiness_band": "unknown",
+    "recovery_score": null,
     "zone_number": 2,
     "zone_label": "Z2 · Grundlage",
     "hr_low": 145,
@@ -56,11 +56,11 @@
       }
     ],
     "rationale": [
-      "Whoop-Recovery heute: 67 %.",
+      "Keine aktuelle Whoop-Recovery — neutrale Annahme.",
       "Diese Woche bisher 0 / Ziel 56 Last (0 %, ≈ 0.9 h).",
-      "Planwoche 2, Phase „Grundlage“ — noch 23 Wochen bis zum Saisonstart.",
+      "Planwoche 2, Phase „Grundlage“ — noch 22 Wochen bis zum Saisonstart.",
       "Form (TSB) aktuell -0.",
-      "Gut erholt: solide Grundlage (Z2) baut die aerobe Basis."
+      "Ohne Erholungsdaten konservativ: ruhige Grundlage (Z2)."
     ]
   },
   "zones": {
@@ -76,11 +76,11 @@
     }
   },
   "weather": {
-    "temp_c": 11.7,
-    "wind_kmh": 4.8,
-    "wind_deg": 312,
+    "temp_c": 11.0,
+    "wind_kmh": 3.5,
+    "wind_deg": 336,
     "wind_dir": "NW",
-    "gust_kmh": 13.0,
+    "gust_kmh": 7.6,
     "code": 2,
     "desc": "teils bewölkt"
   },
@@ -95,9 +95,9 @@
     "next_km": 930.0
   },
   "fitness": {
-    "score": 62.1,
+    "score": 62.0,
     "tier": "Im Aufbau",
-    "delta_30": -11.0,
+    "delta_30": -11.1,
     "delta_90": null,
     "best": 75.0,
     "subscores": {
@@ -109,7 +109,7 @@
       "cap": {
         "label": "Kapazität",
         "score": 35.3,
-        "n": 17
+        "n": 16
       },
       "reg": {
         "label": "Regeneration",
@@ -118,18 +118,18 @@
       },
       "kon": {
         "label": "Konsistenz",
-        "score": 65.8,
+        "score": 64.9,
         "n": 35
       }
     },
     "highlight": "⚡ Bei gleichem Puls bringst du heute **27,6 % mehr Leistung** aufs Pedal als zu Beginn deiner Aufzeichnung."
   },
   "zwift": {
-    "status": "unchanged",
-    "name": "Bikedash 21-09 Grundlage Z2 107min",
-    "event_id": 137620410,
+    "status": "sent",
+    "name": "Bikedash 22-09 Grundlage Z2 107min",
+    "event_id": 137934018,
     "detail": null,
-    "date": "2026-09-21",
-    "at": "2026-09-21T22:58:09+00:00"
+    "date": "2026-09-22",
+    "at": "2026-09-22T02:49:37+00:00"
   }
 }
