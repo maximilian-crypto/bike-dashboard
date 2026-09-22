@@ -1,114 +1,41 @@
 {
-  "generated_at": "2026-09-22T16:05:27+00:00",
+  "generated_at": "2026-09-22T22:37:49+00:00",
   "date": "2026-09-22",
   "recommendation": {
-    "kind": "TEMPO",
-    "title": "Tempo-Einheit (Z3)",
+    "kind": "REST",
+    "title": "Ruhetag",
     "readiness_band": "green",
     "recovery_score": 96.0,
-    "zone_number": 3,
-    "zone_label": "Z3 · Tempo",
-    "hr_low": 158,
-    "hr_high": 171,
-    "cadence": "85–100",
-    "cadence_low": 85,
-    "cadence_high": 100,
-    "rpe": "5–6",
+    "zone_number": null,
+    "zone_label": null,
+    "hr_low": null,
+    "hr_high": null,
+    "cadence": "–",
+    "cadence_low": null,
+    "cadence_high": null,
+    "rpe": "–",
     "duration_min": [
-      76,
-      103
+      0,
+      0
     ],
     "distance_km": [
-      29.7,
-      36.2
+      0.0,
+      0.0
     ],
-    "target_distance_km": 33.0,
-    "week_hours": 0.0,
+    "target_distance_km": 0.0,
+    "week_hours": 0.6,
     "target_hours": 0.9,
-    "tsb": -0.3,
-    "power_low": 129,
-    "power_high": 153,
-    "power_summary": "12' ein · 4×12' @ 129–153 W · 10' aus",
-    "power_plan": [
-      {
-        "label": "Einfahren",
-        "minutes": 12,
-        "low_w": 76,
-        "high_w": 94,
-        "zone": 1,
-        "cadence": "85–100"
-      },
-      {
-        "label": "Intervall 1/4",
-        "minutes": 12,
-        "low_w": 129,
-        "high_w": 153,
-        "zone": 3,
-        "cadence": "85–100"
-      },
-      {
-        "label": "Pause",
-        "minutes": 5,
-        "low_w": 76,
-        "high_w": 94,
-        "zone": 1,
-        "cadence": null
-      },
-      {
-        "label": "Intervall 2/4",
-        "minutes": 12,
-        "low_w": 129,
-        "high_w": 153,
-        "zone": 3,
-        "cadence": "85–100"
-      },
-      {
-        "label": "Pause",
-        "minutes": 5,
-        "low_w": 76,
-        "high_w": 94,
-        "zone": 1,
-        "cadence": null
-      },
-      {
-        "label": "Intervall 3/4",
-        "minutes": 12,
-        "low_w": 129,
-        "high_w": 153,
-        "zone": 3,
-        "cadence": "85–100"
-      },
-      {
-        "label": "Pause",
-        "minutes": 5,
-        "low_w": 76,
-        "high_w": 94,
-        "zone": 1,
-        "cadence": null
-      },
-      {
-        "label": "Intervall 4/4",
-        "minutes": 12,
-        "low_w": 129,
-        "high_w": 153,
-        "zone": 3,
-        "cadence": "85–100"
-      },
-      {
-        "label": "Ausfahren",
-        "minutes": 10,
-        "low_w": 76,
-        "high_w": 94,
-        "zone": 1,
-        "cadence": null
-      }
-    ],
+    "tsb": 1.4,
+    "power_low": null,
+    "power_high": null,
+    "power_summary": null,
+    "power_plan": [],
     "rationale": [
       "Whoop-Recovery heute: 96 %.",
-      "Diese Woche bisher 0 / Ziel 56 Last (0 %, ≈ 0.9 h).",
+      "Diese Woche bisher 32 / Ziel 56 Last (58 %, ≈ 0.9 h).",
       "Planwoche 2, Phase „Grundlage“ — noch 22 Wochen bis zum Saisonstart.",
-      "Form (TSB) aktuell -0.",
-      "Grünes Licht, Form solide aber nicht topfrisch (TSB -0) — dosierter Tempo-Reiz (Z3) statt Vollgas. Für dein Wochenvolumen ist etwas Z3 ein produktiver Mittelweg (pyramidal), kein zu meidendes Niemandsland."
+      "Form (TSB) aktuell +1.",
+      "Du bist heute bereits gefahren — Fokus auf Regeneration."
     ]
   },
   "zones": {
@@ -116,36 +43,36 @@
     "rest_hr": 68,
     "lthr": null,
     "ftp": 170,
-    "target_zone": 3,
+    "target_zone": null,
     "method": "Karvonen/HRR",
     "load_sources": {
       "hr": 13,
-      "power": 2
+      "power": 3
     }
   },
   "weather": {
-    "temp_c": 16.2,
-    "wind_kmh": 8.7,
-    "wind_deg": 318,
-    "wind_dir": "NW",
-    "gust_kmh": 15.5,
-    "code": 1,
-    "desc": "überwiegend klar"
+    "temp_c": 10.2,
+    "wind_kmh": 1.1,
+    "wind_deg": 252,
+    "wind_dir": "W",
+    "gust_kmh": 3.2,
+    "code": 0,
+    "desc": "klar"
   },
   "milestone": {
-    "total_km": 921.1,
+    "total_km": 939.9,
     "orden_earned": 20,
     "orden_total": 31,
-    "next_name": "930 km",
+    "next_name": "965 km",
     "next_icon": "🎯",
     "next_kind": "step",
-    "next_remaining_km": 8.9,
-    "next_km": 930.0
+    "next_remaining_km": 25.1,
+    "next_km": 965.0
   },
   "fitness": {
-    "score": 62.1,
+    "score": 63.8,
     "tier": "Im Aufbau",
-    "delta_30": -11.0,
+    "delta_30": -9.3,
     "delta_90": null,
     "best": 75.0,
     "subscores": {
@@ -156,8 +83,8 @@
       },
       "cap": {
         "label": "Kapazität",
-        "score": 35.3,
-        "n": 16
+        "score": 37.7,
+        "n": 17
       },
       "reg": {
         "label": "Regeneration",
@@ -166,18 +93,18 @@
       },
       "kon": {
         "label": "Konsistenz",
-        "score": 64.9,
-        "n": 35
+        "score": 72.8,
+        "n": 36
       }
     },
     "highlight": "⚡ Bei gleichem Puls bringst du heute **27,6 % mehr Leistung** aufs Pedal als zu Beginn deiner Aufzeichnung."
   },
   "zwift": {
-    "status": "unchanged",
+    "status": "deleted",
     "name": "Bikedash 22-09 Tempo Z3 85min",
     "event_id": 137934018,
-    "detail": null,
+    "detail": "Ruhetag – Workout entfernt",
     "date": "2026-09-22",
-    "at": "2026-09-22T16:05:26+00:00"
+    "at": "2026-09-22T22:37:48+00:00"
   }
 }
