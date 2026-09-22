@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-09-22T09:35:06+00:00",
+  "generated_at": "2026-09-22T16:05:27+00:00",
   "date": "2026-09-22",
   "recommendation": {
     "kind": "TEMPO",
@@ -124,11 +124,11 @@
     }
   },
   "weather": {
-    "temp_c": 14.3,
-    "wind_kmh": 6.7,
-    "wind_deg": 324,
+    "temp_c": 16.2,
+    "wind_kmh": 8.7,
+    "wind_deg": 318,
     "wind_dir": "NW",
-    "gust_kmh": 15.1,
+    "gust_kmh": 15.5,
     "code": 1,
     "desc": "überwiegend klar"
   },
@@ -178,6 +178,6 @@
     "event_id": 137934018,
     "detail": null,
     "date": "2026-09-22",
-    "at": "2026-09-22T09:35:05+00:00"
+    "at": "2026-09-22T16:05:26+00:00"
   }
 }
