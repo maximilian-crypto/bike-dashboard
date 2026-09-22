@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-09-22T08:57:59+00:00",
+  "generated_at": "2026-09-22T09:35:06+00:00",
   "date": "2026-09-22",
   "recommendation": {
     "kind": "TEMPO",
@@ -124,13 +124,13 @@
     }
   },
   "weather": {
-    "temp_c": 13.4,
-    "wind_kmh": 5.4,
-    "wind_deg": 318,
+    "temp_c": 14.3,
+    "wind_kmh": 6.7,
+    "wind_deg": 324,
     "wind_dir": "NW",
-    "gust_kmh": 12.6,
-    "code": 0,
-    "desc": "klar"
+    "gust_kmh": 15.1,
+    "code": 1,
+    "desc": "überwiegend klar"
   },
   "milestone": {
     "total_km": 921.1,
@@ -173,11 +173,11 @@
     "highlight": "⚡ Bei gleichem Puls bringst du heute **27,6 % mehr Leistung** aufs Pedal als zu Beginn deiner Aufzeichnung."
   },
   "zwift": {
-    "status": "updated",
+    "status": "unchanged",
     "name": "Bikedash 22-09 Tempo Z3 85min",
     "event_id": 137934018,
     "detail": null,
     "date": "2026-09-22",
-    "at": "2026-09-22T08:57:58+00:00"
+    "at": "2026-09-22T09:35:05+00:00"
   }
 }
