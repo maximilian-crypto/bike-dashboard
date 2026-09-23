@@ -1,11 +1,11 @@
 {
-  "generated_at": "2026-09-23T02:49:54+00:00",
+  "generated_at": "2026-09-23T09:00:07+00:00",
   "date": "2026-09-23",
   "recommendation": {
     "kind": "ENDURANCE",
     "title": "Grundlagenausdauer (Z2)",
-    "readiness_band": "unknown",
-    "recovery_score": null,
+    "readiness_band": "green",
+    "recovery_score": 74.0,
     "zone_number": 2,
     "zone_label": "Z2 · Grundlage",
     "hr_low": 145,
@@ -56,11 +56,11 @@
       }
     ],
     "rationale": [
-      "Keine aktuelle Whoop-Recovery — neutrale Annahme.",
+      "Whoop-Recovery heute: 74 %.",
       "Diese Woche bisher 32 / Ziel 56 Last (58 %, ≈ 0.9 h).",
       "Planwoche 2, Phase „Grundlage“ — noch 22 Wochen bis zum Saisonstart.",
       "Form (TSB) aktuell +1.",
-      "Ohne Erholungsdaten konservativ: ruhige Grundlage (Z2)."
+      "Top erholt, aber zuletzt hart — heute Grundlage (Z2) zum Verarbeiten."
     ]
   },
   "zones": {
@@ -76,13 +76,13 @@
     }
   },
   "weather": {
-    "temp_c": 8.0,
-    "wind_kmh": 3.6,
-    "wind_deg": 225,
+    "temp_c": 12.9,
+    "wind_kmh": 6.5,
+    "wind_deg": 214,
     "wind_dir": "SW",
-    "gust_kmh": 7.2,
-    "code": 45,
-    "desc": "Nebel"
+    "gust_kmh": 14.8,
+    "code": 3,
+    "desc": "bedeckt"
   },
   "milestone": {
     "total_km": 939.9,
@@ -95,9 +95,9 @@
     "next_km": 965.0
   },
   "fitness": {
-    "score": 63.8,
+    "score": 63.9,
     "tier": "Im Aufbau",
-    "delta_30": -7.0,
+    "delta_30": -6.9,
     "delta_90": null,
     "best": 75.0,
     "subscores": {
@@ -113,8 +113,8 @@
       },
       "reg": {
         "label": "Regeneration",
-        "score": 65.0,
-        "n": 40
+        "score": 65.3,
+        "n": 41
       },
       "kon": {
         "label": "Konsistenz",
@@ -125,11 +125,11 @@
     "highlight": "⚡ Bei gleichem Puls bringst du heute **27,6 % mehr Leistung** aufs Pedal als zu Beginn deiner Aufzeichnung."
   },
   "zwift": {
-    "status": "sent",
+    "status": "unchanged",
     "name": "Bikedash 23-09 Grundlage Z2 107min",
     "event_id": 138184309,
     "detail": null,
     "date": "2026-09-23",
-    "at": "2026-09-23T02:49:53+00:00"
+    "at": "2026-09-23T09:00:06+00:00"
   }
 }
