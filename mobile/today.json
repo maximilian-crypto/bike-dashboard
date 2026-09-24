@@ -1,38 +1,38 @@
 {
-  "generated_at": "2026-09-24T02:39:40+00:00",
+  "generated_at": "2026-09-24T08:56:03+00:00",
   "date": "2026-09-24",
   "recommendation": {
-    "kind": "RECOVERY",
-    "title": "Lockerer Erholungs-Spin",
-    "readiness_band": "red",
-    "recovery_score": 23.0,
-    "zone_number": 1,
-    "zone_label": "Z1 · Erholung",
-    "hr_low": 120,
-    "hr_high": 145,
+    "kind": "ENDURANCE",
+    "title": "Grundlagenausdauer (Z2)",
+    "readiness_band": "green",
+    "recovery_score": 95.0,
+    "zone_number": 2,
+    "zone_label": "Z2 · Grundlage",
+    "hr_low": 145,
+    "hr_high": 158,
     "cadence": "85–95",
     "cadence_low": 85,
     "cadence_high": 95,
-    "rpe": "2–3",
+    "rpe": "3–4",
     "duration_min": [
-      40,
-      55
+      91,
+      124
     ],
     "distance_km": [
-      12.4,
-      15.1
+      31.2,
+      38.2
     ],
-    "target_distance_km": 13.8,
+    "target_distance_km": 34.7,
     "week_hours": 0.6,
     "target_hours": 0.9,
     "tsb": 1.4,
-    "power_low": 76,
-    "power_high": 94,
-    "power_summary": "5' ein · 37' @ 76–94 W · 5' aus",
+    "power_low": 95,
+    "power_high": 128,
+    "power_summary": "10' ein · 89' @ 95–128 W · 8' aus",
     "power_plan": [
       {
         "label": "Einfahren",
-        "minutes": 5,
+        "minutes": 10,
         "low_w": 76,
         "high_w": 94,
         "zone": 1,
@@ -40,15 +40,15 @@
       },
       {
         "label": "Hauptteil",
-        "minutes": 37,
-        "low_w": 76,
-        "high_w": 94,
-        "zone": 1,
+        "minutes": 89,
+        "low_w": 95,
+        "high_w": 128,
+        "zone": 2,
         "cadence": "85–95"
       },
       {
         "label": "Ausfahren",
-        "minutes": 5,
+        "minutes": 8,
         "low_w": 76,
         "high_w": 94,
         "zone": 1,
@@ -56,11 +56,11 @@
       }
     ],
     "rationale": [
-      "Whoop-Recovery heute: 23 %.",
+      "Whoop-Recovery heute: 95 %.",
       "Diese Woche bisher 32 / Ziel 56 Last (58 %, ≈ 0.9 h).",
       "Planwoche 2, Phase „Grundlage“ — noch 22 Wochen bis zum Saisonstart.",
       "Form (TSB) aktuell +1.",
-      "Erholung niedrig (rot): heute nur locker (Z1) oder Pause."
+      "Top erholt, aber zuletzt hart — heute Grundlage (Z2) zum Verarbeiten."
     ]
   },
   "zones": {
@@ -68,7 +68,7 @@
     "rest_hr": 68,
     "lthr": null,
     "ftp": 170,
-    "target_zone": 1,
+    "target_zone": 2,
     "method": "Karvonen/HRR",
     "load_sources": {
       "hr": 12,
@@ -76,13 +76,13 @@
     }
   },
   "weather": {
-    "temp_c": 13.1,
-    "wind_kmh": 16.4,
-    "wind_deg": 299,
+    "temp_c": 14.0,
+    "wind_kmh": 17.7,
+    "wind_deg": 303,
     "wind_dir": "NW",
-    "gust_kmh": 33.8,
-    "code": 80,
-    "desc": "Regenschauer"
+    "gust_kmh": 34.2,
+    "code": 3,
+    "desc": "bedeckt"
   },
   "milestone": {
     "total_km": 939.9,
@@ -95,9 +95,9 @@
     "next_km": 965.0
   },
   "fitness": {
-    "score": 63.8,
+    "score": 63.9,
     "tier": "Im Aufbau",
-    "delta_30": -7.0,
+    "delta_30": -6.9,
     "delta_90": null,
     "best": 75.0,
     "subscores": {
@@ -113,7 +113,7 @@
       },
       "reg": {
         "label": "Regeneration",
-        "score": 65.0,
+        "score": 65.4,
         "n": 42
       },
       "kon": {
@@ -125,11 +125,11 @@
     "highlight": "⚡ Bei gleichem Puls bringst du heute **27,6 % mehr Leistung** aufs Pedal als zu Beginn deiner Aufzeichnung."
   },
   "zwift": {
-    "status": "sent",
-    "name": "Bikedash 24-09 Erholung Z1 47min",
+    "status": "updated",
+    "name": "Bikedash 24-09 Grundlage Z2 107min",
     "event_id": 138414218,
     "detail": null,
     "date": "2026-09-24",
-    "at": "2026-09-24T02:39:39+00:00"
+    "at": "2026-09-24T08:56:01+00:00"
   }
 }
