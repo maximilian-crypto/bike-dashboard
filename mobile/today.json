@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-09-24T08:56:03+00:00",
+  "generated_at": "2026-09-24T09:40:00+00:00",
   "date": "2026-09-24",
   "recommendation": {
     "kind": "ENDURANCE",
@@ -76,11 +76,11 @@
     }
   },
   "weather": {
-    "temp_c": 14.0,
-    "wind_kmh": 17.7,
-    "wind_deg": 303,
+    "temp_c": 14.2,
+    "wind_kmh": 21.8,
+    "wind_deg": 309,
     "wind_dir": "NW",
-    "gust_kmh": 34.2,
+    "gust_kmh": 41.4,
     "code": 3,
     "desc": "bedeckt"
   },
@@ -125,11 +125,11 @@
     "highlight": "⚡ Bei gleichem Puls bringst du heute **27,6 % mehr Leistung** aufs Pedal als zu Beginn deiner Aufzeichnung."
   },
   "zwift": {
-    "status": "updated",
+    "status": "unchanged",
     "name": "Bikedash 24-09 Grundlage Z2 107min",
     "event_id": 138414218,
     "detail": null,
     "date": "2026-09-24",
-    "at": "2026-09-24T08:56:01+00:00"
+    "at": "2026-09-24T09:39:59+00:00"
   }
 }
