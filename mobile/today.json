@@ -1,11 +1,11 @@
 {
-  "generated_at": "2026-09-24T22:55:38+00:00",
-  "date": "2026-09-24",
+  "generated_at": "2026-09-25T02:57:03+00:00",
+  "date": "2026-09-25",
   "recommendation": {
     "kind": "ENDURANCE",
     "title": "Grundlagenausdauer (Z2)",
-    "readiness_band": "green",
-    "recovery_score": 95.0,
+    "readiness_band": "unknown",
+    "recovery_score": null,
     "zone_number": 2,
     "zone_label": "Z2 · Grundlage",
     "hr_low": 145,
@@ -56,11 +56,11 @@
       }
     ],
     "rationale": [
-      "Whoop-Recovery heute: 95 %.",
+      "Keine aktuelle Whoop-Recovery — neutrale Annahme.",
       "Diese Woche bisher 32 / Ziel 56 Last (58 %, ≈ 0.9 h).",
       "Planwoche 2, Phase „Grundlage“ — noch 22 Wochen bis zum Saisonstart.",
       "Form (TSB) aktuell +1.",
-      "Top erholt, aber zuletzt hart — heute Grundlage (Z2) zum Verarbeiten."
+      "Ohne Erholungsdaten konservativ: ruhige Grundlage (Z2)."
     ]
   },
   "zones": {
@@ -76,13 +76,13 @@
     }
   },
   "weather": {
-    "temp_c": 11.8,
-    "wind_kmh": 8.6,
-    "wind_deg": 272,
-    "wind_dir": "W",
-    "gust_kmh": 16.6,
-    "code": 3,
-    "desc": "bedeckt"
+    "temp_c": 10.6,
+    "wind_kmh": 6.6,
+    "wind_deg": 241,
+    "wind_dir": "SW",
+    "gust_kmh": 15.1,
+    "code": 2,
+    "desc": "teils bewölkt"
   },
   "milestone": {
     "total_km": 939.9,
@@ -114,22 +114,22 @@
       "reg": {
         "label": "Regeneration",
         "score": 65.4,
-        "n": 42
+        "n": 40
       },
       "kon": {
         "label": "Konsistenz",
         "score": 72.8,
-        "n": 36
+        "n": 35
       }
     },
     "highlight": "⚡ Bei gleichem Puls bringst du heute **27,6 % mehr Leistung** aufs Pedal als zu Beginn deiner Aufzeichnung."
   },
   "zwift": {
-    "status": "unchanged",
-    "name": "Bikedash 24-09 Grundlage Z2 107min",
-    "event_id": 138414218,
+    "status": "sent",
+    "name": "Bikedash 25-09 Grundlage Z2 107min",
+    "event_id": 138627244,
     "detail": null,
-    "date": "2026-09-24",
-    "at": "2026-09-24T22:55:37+00:00"
+    "date": "2026-09-25",
+    "at": "2026-09-25T02:57:01+00:00"
   }
 }
