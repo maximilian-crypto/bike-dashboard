@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-09-25T09:16:44+00:00",
+  "generated_at": "2026-09-25T09:57:10+00:00",
   "date": "2026-09-25",
   "recommendation": {
     "kind": "ENDURANCE",
@@ -76,11 +76,11 @@
     }
   },
   "weather": {
-    "temp_c": 13.6,
-    "wind_kmh": 10.8,
-    "wind_deg": 233,
+    "temp_c": 14.3,
+    "wind_kmh": 11.4,
+    "wind_deg": 242,
     "wind_dir": "SW",
-    "gust_kmh": 22.7,
+    "gust_kmh": 24.1,
     "code": 1,
     "desc": "überwiegend klar"
   },
@@ -130,6 +130,6 @@
     "event_id": 138627244,
     "detail": null,
     "date": "2026-09-25",
-    "at": "2026-09-25T09:16:43+00:00"
+    "at": "2026-09-25T09:57:09+00:00"
   }
 }
