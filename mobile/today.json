@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-09-26T08:59:29+00:00",
+  "generated_at": "2026-09-26T09:33:00+00:00",
   "date": "2026-09-26",
   "recommendation": {
     "kind": "ENDURANCE",
@@ -76,11 +76,11 @@
     }
   },
   "weather": {
-    "temp_c": 12.7,
-    "wind_kmh": 4.9,
-    "wind_deg": 234,
-    "wind_dir": "SW",
-    "gust_kmh": 14.8,
+    "temp_c": 13.7,
+    "wind_kmh": 3.9,
+    "wind_deg": 248,
+    "wind_dir": "W",
+    "gust_kmh": 12.6,
     "code": 3,
     "desc": "bedeckt"
   },
@@ -124,12 +124,118 @@
     },
     "highlight": "⚡ Bei gleichem Puls bringst du heute **27,6 % mehr Leistung** aufs Pedal als zu Beginn deiner Aufzeichnung."
   },
+  "fuel": {
+    "kind": "ENDURANCE",
+    "duration_min": 107,
+    "kcal_extra": 551,
+    "kcal_range": [
+      440,
+      660
+    ],
+    "source": "power",
+    "weight_known": false,
+    "phases": [
+      {
+        "key": "before",
+        "title": "Vorher",
+        "kcal": 165,
+        "carbs_g": 44,
+        "hint": "30–90 min vor dem Start",
+        "portions": [
+          {
+            "key": "toast",
+            "icon": "🍞",
+            "count": 2.0,
+            "label": "2 Scheiben Toast mit Honig"
+          },
+          {
+            "key": "banana",
+            "icon": "🍌",
+            "count": 2.0,
+            "label": "2 Bananen"
+          }
+        ],
+        "text": "2 Scheiben Toast mit Honig oder 2 Bananen"
+      },
+      {
+        "key": "during",
+        "title": "Unterwegs",
+        "kcal": 275,
+        "carbs_g": 70,
+        "hint": "ab der ersten halben Stunde, in Schlucken bzw. Stücken",
+        "portions": [
+          {
+            "key": "cola",
+            "icon": "🥤",
+            "count": 2.0,
+            "label": "2 Dosen Cola"
+          },
+          {
+            "key": "maoam",
+            "icon": "🍬",
+            "count": 3.5,
+            "label": "3½ Maoam Bloxx"
+          }
+        ],
+        "text": "2 Dosen Cola oder 3½ Maoam Bloxx"
+      },
+      {
+        "key": "after",
+        "title": "Danach",
+        "kcal": 110,
+        "carbs_g": 33,
+        "hint": "innerhalb von 1–2 h, gern mit der nächsten Mahlzeit",
+        "portions": [
+          {
+            "key": "toast",
+            "icon": "🍞",
+            "count": 1.5,
+            "label": "1½ Scheiben Toast mit Honig"
+          },
+          {
+            "key": "cola",
+            "icon": "🥤",
+            "count": 1.0,
+            "label": "1 Dose Cola"
+          }
+        ],
+        "text": "1½ Scheiben Toast mit Honig oder 1 Dose Cola"
+      }
+    ],
+    "equivalents": [
+      {
+        "key": "cola",
+        "icon": "🥤",
+        "count": 4.0,
+        "label": "4 Dosen Cola"
+      },
+      {
+        "key": "maoam",
+        "icon": "🍬",
+        "count": 6.5,
+        "label": "6½ Maoam Bloxx"
+      },
+      {
+        "key": "toast",
+        "icon": "🍞",
+        "count": 5.5,
+        "label": "5½ Scheiben Toast mit Honig"
+      }
+    ],
+    "notes": [
+      "Die Werte kommen **oben drauf** auf deine normalen Mahlzeiten — sie ersetzen keine. Wer über den Tag zu wenig isst, fährt schon mit Defizit los.",
+      "Heute kaum gegessen und fühlst dich schwach? Erst die Vorher-Portion essen und 20–30 min warten. Wird's nicht besser: kürzere Variante oder Pause — Training auf leerem Tank baut dich ab statt auf.",
+      "Ohne hinterlegtes Gewicht mit 75 kg gerechnet (Einrichtung → Körpergewicht)."
+    ],
+    "done_today_kcal": null,
+    "short": "Extra essen: ≈ 551 kcal (4 Dosen Cola / 6½ Maoam Bloxx / 5½ Scheiben Toast mit Honig)"
+  },
   "zwift": {
     "status": "unchanged",
     "name": "Bikedash 26-09 Grundlage Z2 107min",
     "event_id": 138832887,
     "detail": null,
     "date": "2026-09-26",
-    "at": "2026-09-26T08:59:28+00:00"
+    "at": "2026-09-26T09:32:59+00:00"
   }
 }
