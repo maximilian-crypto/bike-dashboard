@@ -782,6 +782,13 @@ function showTodayBanner(d){
       ? `${ms.next_icon||'🎯'} noch ${rem} km bis zum nächsten Ziel (${ms.next_name})`
       : `${ms.next_icon||'🏅'} noch ${rem} km bis ${ms.next_name}`);
   }
+  // Energie fürs Workout (bikedash/fuel.py): was unterwegs rein soll.
+  const fu=d.fuel;
+  if(fu && fu.phases){
+    const dur=fu.phases.find(p=>p.key==='during');
+    if(dur && dur.portions && dur.portions.length) bits.push(`${dur.portions[0].icon} unterwegs: ${dur.text}`);
+    else if(fu.kcal_extra>0) bits.push(`🍽 extra ≈ ${fu.kcal_extra} kcal`);
+  }
   $('navMeta').textContent=bits.join(' · ');
 }
 

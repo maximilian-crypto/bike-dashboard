@@ -29,7 +29,7 @@ except Exception:
     pass
 
 from bikedash import (
-    backup, coach, config, dataprep, fitness, form, maintenance, milestones,
+    backup, coach, config, dataprep, fitness, form, fuel, maintenance, milestones,
     recommend, report, routing, season, store, strava, weather, webauth, whoop,
     windlab, zones, zwift,
 )
@@ -927,6 +927,30 @@ with tab_today:
                 "Zwift im freien Ritt starten und die Wattzahl über das virtuelle "
                 "Schalten halten."
             )
+
+    # --- Energie fürs Workout ---
+    # Übersetzt den Mehrbedarf der Einheit in Portionen (bikedash/fuel.py).
+    # Bewusst als „tanken", nie als „verdient": die Zahl kommt oben drauf.
+    fp = fuel.for_recommendation(rc)
+    st.subheader(":material/restaurant: Energie fürs Workout", anchor=False)
+    if fp.available:
+        cards = [("Extra essen", f"≈ {fp.kcal_extra} kcal",
+                  f"{fp.kcal_range[0]}–{fp.kcal_range[1]} kcal", ACCENT)]
+        for ph in fp.phases:
+            alt = (f"oder {ph.portions[1].label} · " if len(ph.portions) > 1 else "")
+            cards.append((f"{ph.title} · ≈ {ph.kcal} kcal",
+                          f"{ph.portions[0].icon} {ph.portions[0].label}",
+                          f"{alt}{ph.hint}", None))
+        reco_cards(cards)
+        st.markdown(
+            "Insgesamt entspricht das ≈ "
+            + " · ".join(f"{p.icon} {p.label}" for p in fp.equivalents)
+            + "."
+        )
+        for note in fp.notes:
+            st.caption(note)
+    else:
+        st.info(fp.notes[0] if fp.notes else fuel.REST_NOTE, icon=":material/restaurant:")
 
     with st.expander("Warum diese Empfehlung?", icon=":material/lightbulb:", expanded=True):
         for line in rc.rationale:

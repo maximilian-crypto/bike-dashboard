@@ -33,7 +33,7 @@ from zoneinfo import ZoneInfo
 
 import requests
 
-from . import config, dataprep, fitness, form, recommend, store, weather, zwift
+from . import config, dataprep, fitness, form, fuel, recommend, store, weather, zwift
 
 TZ = ZoneInfo("Europe/Berlin")
 EARLIEST = dt.time(6, 0)    # vorher nie – auch wenn Whoop nachts etwas liefert
@@ -138,6 +138,9 @@ def build_text(cfg: dict[str, Any], today: dt.date | None = None,
         last = zwift.last_result()
         if last is not None and last.ok and last.date == today.isoformat():
             parts.append("Zwift: Workout liegt bereit (Workouts → Custom → Intervals.icu).")
+    line = fuel_line(rc, today)
+    if line:
+        parts.append(line)
 
     why = rc.rationale[-1] if rc.rationale else ""
     rec = f"Recovery {rc.recovery_score:.0f} %" if rc.recovery_score is not None else "Keine Recovery"
@@ -170,6 +173,20 @@ def build_text(cfg: dict[str, Any], today: dt.date | None = None,
         parts.append(line)
 
     return title, "\n".join(parts)
+
+
+def fuel_line(rc: Any, today: dt.date | None = None) -> str:
+    """Eine Zeile „so viel extra essen" — direkt unter der Einheit, weil man
+    morgens noch einkaufen bzw. vorbereiten kann."""
+    try:
+        fp = fuel.for_recommendation(rc, today)
+    except Exception:  # noqa: BLE001 – eine Hinweiszeile kippt keinen Report
+        return ""
+    if not fp.available:
+        return "🍽 Ruhetag: kein Extra nötig — normale Mahlzeiten zählen trotzdem." \
+            if rc.kind == "REST" else ""
+    bits = [f"{p.title.lower()} {p.portions[0].label}" for p in fp.phases]
+    return f"🍽 Extra essen ≈ {fp.kcal_extra} kcal: " + " · ".join(bits) + "."
 
 
 def fitness_line(today: dt.date | None = None) -> str:

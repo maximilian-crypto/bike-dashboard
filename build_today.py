@@ -25,8 +25,8 @@ import sys
 from pathlib import Path
 from typing import Any
 
-from bikedash import (config, dataprep, fitness, milestones, recommend, weather,
-                      zones, zwift)
+from bikedash import (config, dataprep, fitness, fuel, milestones, recommend,
+                      weather, zones, zwift)
 
 ROOT = Path(__file__).resolve().parent
 DEFAULT_OUT = ROOT / "mobile" / "today.json"
@@ -112,6 +112,20 @@ def _fitness_payload() -> dict[str, Any] | None:
         return None
 
 
+def _fuel_payload(rc: Any, today: dt.date) -> dict[str, Any] | None:
+    """Wie viel extra essen fürs heutige Workout (bikedash/fuel.py).
+
+    Nur aggregierte kcal und Portionen — das Körpergewicht selbst steht nicht in
+    der öffentlichen Datei.
+    """
+    try:
+        d = fuel.for_recommendation(rc, today).to_dict()
+    except Exception:  # noqa: BLE001 – ein Hinweisfeld darf den Tagesplan nie kippen
+        return None
+    d.pop("weight_kg", None)
+    return d
+
+
 def _weather_payload(cfg: dict[str, Any]) -> dict[str, Any] | None:
     try:
         wx = weather.current(cfg)
@@ -148,6 +162,7 @@ def build(out_path: Path = DEFAULT_OUT, today: dt.date | None = None) -> dict[st
     milestone = _milestone_payload()
     load_sources = _load_sources()
     fit = _fitness_payload()
+    fuel_plan = _fuel_payload(rc, today)
 
     # Tagesworkout in die Zwift-Bibliothek (über intervals.icu). Wirft nie;
     # das Ergebnis steht in today.json und app_kv, damit man im Dashboard
@@ -204,6 +219,9 @@ def build(out_path: Path = DEFAULT_OUT, today: dt.date | None = None) -> dict[st
         # Fitness-Index: ein Fortschrittswert aus Effizienz, Kapazität,
         # Ermüdungsresistenz, Regeneration und Konsistenz (bikedash/fitness.py).
         "fitness": fit,
+        # Energie fürs Workout: Mehrbedarf in kcal, aufgeteilt auf vorher /
+        # unterwegs / danach und übersetzt in Cola, Maoam, Toast.
+        "fuel": fuel_plan,
         # Ist das heutige Workout in Zwift angekommen? (sent/updated/unchanged =
         # ja; skipped = nicht eingerichtet oder Ruhetag; error = Fehlertext)
         "zwift": push.to_dict(),

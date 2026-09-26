@@ -56,6 +56,7 @@ bike-dashboard/
 │  ├─ fitness.py          # NEU: Fitness-Index (Fortschritt aus Physiologie)
 │  ├─ milestones.py       # NEU: Distanz-Meilensteine & Orden
 │  ├─ maintenance.py      # NEU: Verschleiss-/Wartungs-Tracker
+│  ├─ fuel.py            # NEU: Extra-kcal fürs Workout in Cola/Maoam/Toast
 │  ├─ zwift.py            # NEU: Tagesworkout → intervals.icu-Kalender → Zwift-Bibliothek
 │  ├─ coach.py            # KI-Coach (Claude API)
 │  ├─ report.py           # Morgen-Report (ntfy-Push)
@@ -193,12 +194,13 @@ Live-Ride-PWA mit BLE-Puls/-Kadenz und Karte.
 | 7 | **Zwift-Zustellung via intervals.icu** — Tagesworkout landet ohne Zutun unter Zwift → Workouts → Custom → „Intervals.icu“ | `bikedash/zwift.py`, `build_today.py`, Einrichtung „5) Zwift“, Statuszeile unter dem Wattplan | Code fertig, Tests grün, Dashboard im Browser geprüft. **Offen: einmalige Einrichtung durch den Nutzer + Sichtprüfung am Handy** (Abschnitt 6, Schritt 0) |
 
 | 9 | **Fitness-Index** — ein Fortschrittswert aus fünf physiologischen Signalen, Verlaufskurve, Teilwert-Aufschlüsselung und Klartext-Sätzen (bei 139 bpm fährst du inzwischen 28,0 km/h statt 24,7) | `bikedash/fitness.py`, Tab „Fitness-Index", `today.json` (`fitness`), Zeile im Morgen-Report | Code fertig, 29 Tests grün, Tab mit synthetischer Jahreshistorie im Browser geprüft. **Offen: Sichtprüfung mit echten Daten + einmal „Mehr Fahrten auswerten" drücken** (Abschnitt 6, Schritt 0b) |
+| 11 | **Energie fürs Workout** — Mehrbedarf der Tagesempfehlung in kcal (Wattplan → kJ ≈ kcal, sonst MET × Gewicht, Ruheumsatz abgezogen), aufgeteilt auf vorher/unterwegs/danach und übersetzt in Cola, Maoam, Toast, Banane. Nach einer Fahrt: Stravas `kilojoules` → „danach". Bewusst „tanken", nie „verdient": nie weniger essen, Ruhetag-Hinweis auf normale Mahlzeiten | `bikedash/fuel.py`, Abschnitt im Tab „Heute", `today.json` (`fuel`), PWA-Banner, Zeile im Morgen-Report | Code fertig, 14 Tests grün, Dashboard + PWA im Browser geprüft |
 | 10 | **Dunkles Streamlit-Theme** (`.streamlit/config.toml`) — die Diagramme waren app-weit hell in einer dunklen App | `.gitignore`, `.streamlit/config.toml` | fertig, im Browser geprüft |
 
 | 8 | **Morgen-Report ereignisgesteuert** — Push, sobald die heutige Whoop-Recovery da ist, spätestens 10:00; erste Zeile = Entscheidung | `bikedash/report.py`, `send_report.py --if-due`, `sync.yml` | Code fertig, Tests grün. **Offen: `NTFY_TOPIC` als Actions-Secret + ntfy-App abonnieren** |
 
-**Tests:** 168 grün (`python -m pytest -q`), inkl. Suites
-`tests/test_milestones.py`, `tests/test_maintenance.py`, `tests/test_dataprep.py`, `tests/test_season.py`, `tests/test_power.py`, `tests/test_zwift.py`, `tests/test_report.py` und `tests/test_fitness.py`.
+**Tests:** 182 grün (`python -m pytest -q`), inkl. Suites
+`tests/test_milestones.py`, `tests/test_maintenance.py`, `tests/test_dataprep.py`, `tests/test_season.py`, `tests/test_power.py`, `tests/test_zwift.py`, `tests/test_report.py`, `tests/test_fitness.py` und `tests/test_fuel.py`.
 
 **Zwift-Zustellung verifiziert (2026-09-18, Lauf #346):** `today.json` meldet
 `zwift.status = sent`, Event-ID 136989140 im intervals.icu-Kalender.
