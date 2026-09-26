@@ -1,11 +1,11 @@
 {
-  "generated_at": "2026-09-25T23:00:35+00:00",
-  "date": "2026-09-25",
+  "generated_at": "2026-09-26T02:59:47+00:00",
+  "date": "2026-09-26",
   "recommendation": {
     "kind": "ENDURANCE",
     "title": "Grundlagenausdauer (Z2)",
-    "readiness_band": "green",
-    "recovery_score": 89.0,
+    "readiness_band": "unknown",
+    "recovery_score": null,
     "zone_number": 2,
     "zone_label": "Z2 · Grundlage",
     "hr_low": 145,
@@ -56,11 +56,11 @@
       }
     ],
     "rationale": [
-      "Whoop-Recovery heute: 89 %.",
+      "Keine aktuelle Whoop-Recovery — neutrale Annahme.",
       "Diese Woche bisher 32 / Ziel 56 Last (58 %, ≈ 0.9 h).",
       "Planwoche 2, Phase „Grundlage“ — noch 22 Wochen bis zum Saisonstart.",
       "Form (TSB) aktuell +1.",
-      "Schon 1 harte Einheiten diese Woche — nach der 80/20-Regel bleibt der Rest locker (Z2)."
+      "Ohne Erholungsdaten konservativ: ruhige Grundlage (Z2)."
     ]
   },
   "zones": {
@@ -76,11 +76,11 @@
     }
   },
   "weather": {
-    "temp_c": 9.4,
-    "wind_kmh": 8.0,
-    "wind_deg": 207,
+    "temp_c": 8.8,
+    "wind_kmh": 8.9,
+    "wind_deg": 212,
     "wind_dir": "SW",
-    "gust_kmh": 15.1,
+    "gust_kmh": 16.9,
     "code": 3,
     "desc": "bedeckt"
   },
@@ -95,9 +95,9 @@
     "next_km": 965.0
   },
   "fitness": {
-    "score": 63.9,
+    "score": 64.0,
     "tier": "Im Aufbau",
-    "delta_30": -6.9,
+    "delta_30": -6.8,
     "delta_90": null,
     "best": 75.0,
     "subscores": {
@@ -113,8 +113,8 @@
       },
       "reg": {
         "label": "Regeneration",
-        "score": 65.5,
-        "n": 41
+        "score": 65.8,
+        "n": 40
       },
       "kon": {
         "label": "Konsistenz",
@@ -125,11 +125,11 @@
     "highlight": "⚡ Bei gleichem Puls bringst du heute **27,6 % mehr Leistung** aufs Pedal als zu Beginn deiner Aufzeichnung."
   },
   "zwift": {
-    "status": "unchanged",
-    "name": "Bikedash 25-09 Grundlage Z2 107min",
-    "event_id": 138627244,
+    "status": "sent",
+    "name": "Bikedash 26-09 Grundlage Z2 107min",
+    "event_id": 138832887,
     "detail": null,
-    "date": "2026-09-25",
-    "at": "2026-09-25T23:00:34+00:00"
+    "date": "2026-09-26",
+    "at": "2026-09-26T02:59:46+00:00"
   }
 }
