@@ -1,11 +1,11 @@
 {
-  "generated_at": "2026-09-26T02:59:47+00:00",
+  "generated_at": "2026-09-26T08:59:29+00:00",
   "date": "2026-09-26",
   "recommendation": {
     "kind": "ENDURANCE",
     "title": "Grundlagenausdauer (Z2)",
-    "readiness_band": "unknown",
-    "recovery_score": null,
+    "readiness_band": "green",
+    "recovery_score": 93.0,
     "zone_number": 2,
     "zone_label": "Z2 · Grundlage",
     "hr_low": 145,
@@ -56,11 +56,11 @@
       }
     ],
     "rationale": [
-      "Keine aktuelle Whoop-Recovery — neutrale Annahme.",
+      "Whoop-Recovery heute: 93 %.",
       "Diese Woche bisher 32 / Ziel 56 Last (58 %, ≈ 0.9 h).",
       "Planwoche 2, Phase „Grundlage“ — noch 22 Wochen bis zum Saisonstart.",
       "Form (TSB) aktuell +1.",
-      "Ohne Erholungsdaten konservativ: ruhige Grundlage (Z2)."
+      "Schon 1 harte Einheiten diese Woche — nach der 80/20-Regel bleibt der Rest locker (Z2)."
     ]
   },
   "zones": {
@@ -76,11 +76,11 @@
     }
   },
   "weather": {
-    "temp_c": 8.8,
-    "wind_kmh": 8.9,
-    "wind_deg": 212,
+    "temp_c": 12.7,
+    "wind_kmh": 4.9,
+    "wind_deg": 234,
     "wind_dir": "SW",
-    "gust_kmh": 16.9,
+    "gust_kmh": 14.8,
     "code": 3,
     "desc": "bedeckt"
   },
@@ -113,8 +113,8 @@
       },
       "reg": {
         "label": "Regeneration",
-        "score": 65.8,
-        "n": 40
+        "score": 66.2,
+        "n": 41
       },
       "kon": {
         "label": "Konsistenz",
@@ -125,11 +125,11 @@
     "highlight": "⚡ Bei gleichem Puls bringst du heute **27,6 % mehr Leistung** aufs Pedal als zu Beginn deiner Aufzeichnung."
   },
   "zwift": {
-    "status": "sent",
+    "status": "unchanged",
     "name": "Bikedash 26-09 Grundlage Z2 107min",
     "event_id": 138832887,
     "detail": null,
     "date": "2026-09-26",
-    "at": "2026-09-26T02:59:46+00:00"
+    "at": "2026-09-26T08:59:28+00:00"
   }
 }
