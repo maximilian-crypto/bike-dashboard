@@ -120,7 +120,9 @@ Schritt 8.
 
 **Morgen-Report ereignisgesteuert (seit 2026-09-18):** kein eigener
 Zeitplan mehr (`report.yml` gelöscht). Der Sync-Workflow läuft morgens alle
-30 Minuten (`*/30 5-9 * * *` UTC) und ruft `send_report.py --if-due`;
+15 Minuten (`4,19,34,49 4-9 * * *` UTC — krumme Minuten, weil GitHub
+Läufe zur vollen/halben Stunde bei Last verwirft; mit `*/30` kam am 27.09.
+kein einziger Morgenlauf an) und ruft `send_report.py --if-due`;
 `report.due()` entscheidet: heute schon gesendet → nein; heutige Whoop-Recovery
 in der DB → senden; Frist 10:00 deutscher Zeit erreicht → senden mit Hinweis
 „Recovery fehlt noch"; nie vor 06:00. Marker `report_sent_date` in `app_kv`.

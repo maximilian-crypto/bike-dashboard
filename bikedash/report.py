@@ -15,7 +15,7 @@ Deshalb entscheidet ``due()`` bei jedem Sync-Lauf im Morgenfenster:
   dass die Recovery fehlt und die Empfehlung den Stand von gestern hat
 - sonst → warten
 
-Der Sync-Workflow läuft dafür morgens alle 30 Minuten (``sync.yml``). Der
+Der Sync-Workflow läuft dafür morgens alle 15 Minuten (``sync.yml``). Der
 Marker ``report_sent_date`` liegt in ``app_kv``, damit auch bei überlappenden
 Läufen nur ein Push pro Tag rausgeht.
 

@@ -6,8 +6,12 @@ name: Sync Strava + Whoop
 # deutscher Zeit; Frist und Entscheidung stehen in bikedash/report.py).
 on:
   schedule:
-    - cron: "0 */4 * * *"      # alle 4 Stunden (UTC)
-    - cron: "*/30 5-9 * * *"   # Morgenfenster: 07:00–11:30 DE-Sommerzeit, 06:00–10:30 Winterzeit
+    # Bewusst krumme Minuten: GitHub verwirft Zeitplan-Läufe zur vollen und
+    # halben Stunde bei Last reihenweise. Mit "*/30 5-9" kamen von zehn
+    # Morgen-Slots meist nur zwei an (erst ~10:55 DE), am 27.09. gar keiner —
+    # kein Lauf, kein Morgen-Report.
+    - cron: "13 */4 * * *"                # alle 4 Stunden (UTC)
+    - cron: "4,19,34,49 4-9 * * *"        # Morgenfenster: 06:04–11:49 DE-Sommerzeit, 05:04–10:49 Winterzeit
   workflow_dispatch: {}      # zusätzlich manuell auslösbar
 
 concurrency:
