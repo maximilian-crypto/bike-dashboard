@@ -73,6 +73,19 @@ def test_recovery_present_matches_today_only():
     assert report.recovery_present(today)
 
 
+def test_recovery_present_when_cycle_started_last_evening():
+    # Eingeschlafen 23:10 deutscher Zeit -> Zyklus (und Spalte date) von gestern,
+    # die Recovery wurde aber heute Morgen um 07:05 berechnet. Genau so sah es
+    # am 27.09. aus: Empfehlung mit 93 %, Report meldete „Recovery fehlt noch“.
+    today = dt.date(2026, 9, 18)
+    _seed(today, with_today_recovery=False)
+    row = recovery(2, today - dt.timedelta(days=1), 93.0)
+    row["raw_json"] = '{"created_at": "2026-09-18T05:05:00.000Z", "score_state": "SCORED"}'
+    store.upsert_whoop_recovery([row])
+    assert report.recovery_present(today)
+    assert not report.recovery_present(today + dt.timedelta(days=1))
+
+
 def test_mark_and_last_sent_roundtrip():
     assert report.last_sent() is None
     report.mark_sent(dt.date(2026, 9, 18))

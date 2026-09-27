@@ -28,9 +28,11 @@ Watt, und ob das Workout in Zwift liegt. Wetter nur, wenn Draußenfahren
 from __future__ import annotations
 
 import datetime as dt
+import json
 from typing import Any
 from zoneinfo import ZoneInfo
 
+import pandas as pd
 import requests
 
 from . import config, dataprep, fitness, form, fuel, recommend, store, weather, zwift
@@ -48,20 +50,41 @@ SHORT = {"RECOVERY": "Erholung Z1", "ENDURANCE": "Grundlage Z2",
 # Wann senden?
 # ---------------------------------------------------------------------------
 
-def recovery_present(today: dt.date) -> bool:
-    """Liegt die Whoop-Recovery für heute schon in der Datenbank?
+def _wake_date(row: Any) -> dt.date | None:
+    """Tag, an dem die Recovery entstanden ist (deutsche Zeit).
 
-    Das Recovery-Datum ist der Beginn des Whoop-Zyklus, also der Aufwach-Tag —
-    die Recovery von heute Morgen trägt damit das heutige Datum.
+    Die Spalte ``date`` ist der Beginn des Whoop-Zyklus — und der beginnt beim
+    Einschlafen. Wer vor 02:00 deutscher Zeit schläft, bekommt die Recovery von
+    heute Morgen unter dem *gestrigen* Datum. Deshalb zählt Whoops
+    ``created_at`` (Zeitpunkt der Berechnung = Aufwachen); nur wenn das fehlt,
+    das Zyklusdatum.
     """
+    try:
+        created = json.loads(row.get("raw_json") or "{}").get("created_at")
+    except (TypeError, ValueError):
+        created = None
+    if created:
+        try:
+            ts = dt.datetime.fromisoformat(str(created).replace("Z", "+00:00"))
+            if ts.tzinfo is None:
+                ts = ts.replace(tzinfo=dt.timezone.utc)
+            return ts.astimezone(TZ).date()
+        except ValueError:
+            pass
+    d = row.get("date")
+    return d.date() if pd.notna(d) else None
+
+
+def recovery_present(today: dt.date) -> bool:
+    """Liegt die Whoop-Recovery von heute Morgen schon in der Datenbank?"""
     try:
         rec = dataprep.prep_recovery()
     except Exception:  # noqa: BLE001
         return False
     if rec.empty:
         return False
-    today_rows = rec[rec["date"].dt.date == today]
-    return bool(today_rows["recovery_score"].notna().any())
+    scored = rec[rec["recovery_score"].notna()]
+    return any(_wake_date(r) == today for _, r in scored.iterrows())
 
 
 def last_sent() -> dt.date | None:
