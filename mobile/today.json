@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-09-27T03:04:26+00:00",
+  "generated_at": "2026-09-27T08:30:17+00:00",
   "date": "2026-09-27",
   "recommendation": {
     "kind": "ENDURANCE",
@@ -76,13 +76,13 @@
     }
   },
   "weather": {
-    "temp_c": 9.7,
-    "wind_kmh": 9.3,
-    "wind_deg": 77,
+    "temp_c": 13.6,
+    "wind_kmh": 15.4,
+    "wind_deg": 111,
     "wind_dir": "O",
-    "gust_kmh": 17.6,
-    "code": 0,
-    "desc": "klar"
+    "gust_kmh": 32.8,
+    "code": 2,
+    "desc": "teils bewölkt"
   },
   "milestone": {
     "total_km": 975.7,
@@ -113,8 +113,8 @@
       },
       "reg": {
         "label": "Regeneration",
-        "score": 65.8,
-        "n": 40
+        "score": 66.2,
+        "n": 41
       },
       "kon": {
         "label": "Konsistenz",
@@ -231,11 +231,11 @@
     "short": "Extra essen: ≈ 356 kcal (3 Dosen Cola / 4½ Maoam Bloxx / 3½ Scheiben Toast mit Honig)"
   },
   "zwift": {
-    "status": "sent",
+    "status": "unchanged",
     "name": "Bikedash 27-09 Grundlage Z2 71min",
     "event_id": 139104239,
     "detail": null,
     "date": "2026-09-27",
-    "at": "2026-09-27T03:04:25+00:00"
+    "at": "2026-09-27T08:30:16+00:00"
   }
 }
