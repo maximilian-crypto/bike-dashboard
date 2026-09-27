@@ -124,7 +124,9 @@ Zeitplan mehr (`report.yml` gelöscht). Der Sync-Workflow läuft morgens alle
 Läufe zur vollen/halben Stunde bei Last verwirft; mit `*/30` kam am 27.09.
 kein einziger Morgenlauf an) und ruft `send_report.py --if-due`;
 `report.due()` entscheidet: heute schon gesendet → nein; heutige Whoop-Recovery
-in der DB → senden; Frist 10:00 deutscher Zeit erreicht → senden mit Hinweis
+in der DB → senden („heutig" nach Whoops `created_at`, **nicht** nach der
+Spalte `date` — die ist der Zyklusbeginn = Einschlafen, also meist gestern);
+Frist 10:00 deutscher Zeit erreicht → senden mit Hinweis
 „Recovery fehlt noch"; nie vor 06:00. Marker `report_sent_date` in `app_kv`.
 Grund: die alte feste Uhrzeit 06:30 lag vor der Whoop-Recovery und hätte still
 mit dem Wert von gestern gerechnet. Erste Zeile trägt die Entscheidung (Einheit,
