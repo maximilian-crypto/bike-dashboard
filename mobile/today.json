@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-09-28T10:50:24+00:00",
+  "generated_at": "2026-09-28T16:44:40+00:00",
   "date": "2026-09-28",
   "recommendation": {
     "kind": "REST",
@@ -51,11 +51,11 @@
     }
   },
   "weather": {
-    "temp_c": 22.0,
-    "wind_kmh": 8.7,
-    "wind_deg": 210,
-    "wind_dir": "SW",
-    "gust_kmh": 18.7,
+    "temp_c": 21.0,
+    "wind_kmh": 7.6,
+    "wind_deg": 357,
+    "wind_dir": "N",
+    "gust_kmh": 14.4,
     "code": 3,
     "desc": "bedeckt"
   },
@@ -166,11 +166,11 @@
     "short": "Extra essen: ≈ 119 kcal (1 Dose Cola / 1½ Maoam Bloxx / 1½ Scheiben Toast mit Honig)"
   },
   "zwift": {
-    "status": "deleted",
-    "name": "Bikedash 28-09 Grundlage Z2 107min",
-    "event_id": 139495253,
-    "detail": "Ruhetag – Workout entfernt",
+    "status": "skipped",
+    "name": null,
+    "event_id": null,
+    "detail": "Ruhetag",
     "date": "2026-09-28",
-    "at": "2026-09-28T10:50:23+00:00"
+    "at": "2026-09-28T16:44:39+00:00"
   }
 }
