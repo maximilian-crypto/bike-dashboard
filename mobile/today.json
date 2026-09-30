@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-09-30T10:26:13+00:00",
+  "generated_at": "2026-09-30T14:54:36+00:00",
   "date": "2026-09-30",
   "recommendation": {
     "kind": "ENDURANCE",
@@ -76,13 +76,13 @@
     }
   },
   "weather": {
-    "temp_c": 18.6,
-    "wind_kmh": 17.4,
-    "wind_deg": 112,
-    "wind_dir": "O",
-    "gust_kmh": 34.6,
-    "code": 3,
-    "desc": "bedeckt"
+    "temp_c": 22.8,
+    "wind_kmh": 14.9,
+    "wind_deg": 122,
+    "wind_dir": "SO",
+    "gust_kmh": 31.3,
+    "code": 1,
+    "desc": "überwiegend klar"
   },
   "milestone": {
     "total_km": 1002.9,
@@ -241,6 +241,6 @@
     "event_id": 140127407,
     "detail": null,
     "date": "2026-09-30",
-    "at": "2026-09-30T10:26:12+00:00"
+    "at": "2026-09-30T14:54:34+00:00"
   }
 }
