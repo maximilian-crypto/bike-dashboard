@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-09-30T05:28:32+00:00",
+  "generated_at": "2026-09-30T10:26:13+00:00",
   "date": "2026-09-30",
   "recommendation": {
     "kind": "ENDURANCE",
@@ -76,13 +76,13 @@
     }
   },
   "weather": {
-    "temp_c": 13.1,
-    "wind_kmh": 13.9,
-    "wind_deg": 111,
+    "temp_c": 18.6,
+    "wind_kmh": 17.4,
+    "wind_deg": 112,
     "wind_dir": "O",
-    "gust_kmh": 27.0,
-    "code": 1,
-    "desc": "überwiegend klar"
+    "gust_kmh": 34.6,
+    "code": 3,
+    "desc": "bedeckt"
   },
   "milestone": {
     "total_km": 1002.9,
@@ -236,11 +236,11 @@
     "short": "Extra essen: ≈ 551 kcal (4 Dosen Cola / 6½ Maoam Bloxx / 5½ Scheiben Toast mit Honig)"
   },
   "zwift": {
-    "status": "sent",
+    "status": "unchanged",
     "name": "Bikedash 30-09 Grundlage Z2 107min",
     "event_id": 140127407,
     "detail": null,
     "date": "2026-09-30",
-    "at": "2026-09-30T05:28:31+00:00"
+    "at": "2026-09-30T10:26:12+00:00"
   }
 }
