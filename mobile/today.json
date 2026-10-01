@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-10-01T10:53:30+00:00",
+  "generated_at": "2026-10-01T15:26:25+00:00",
   "date": "2026-10-01",
   "recommendation": {
     "kind": "TEMPO",
@@ -124,13 +124,13 @@
     }
   },
   "weather": {
-    "temp_c": 19.5,
-    "wind_kmh": 9.2,
-    "wind_deg": 201,
+    "temp_c": 17.9,
+    "wind_kmh": 10.5,
+    "wind_deg": 176,
     "wind_dir": "S",
     "gust_kmh": 21.2,
-    "code": 61,
-    "desc": "leichter Regen"
+    "code": 63,
+    "desc": "Regen"
   },
   "milestone": {
     "total_km": 1002.9,
@@ -289,6 +289,6 @@
     "event_id": 140390871,
     "detail": null,
     "date": "2026-10-01",
-    "at": "2026-10-01T10:53:29+00:00"
+    "at": "2026-10-01T15:26:23+00:00"
   }
 }
