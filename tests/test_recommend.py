@@ -85,4 +85,5 @@ def test_no_recovery_is_conservative():
     _seed_rides(today)
     rc = recommend.build(today=today)
     assert rc.readiness_band == "unknown"
-    assert rc.kind in ("ENDURANCE", "RECOVERY")
+    # 12 Fahrtage am Stück → das Schutzgeländer (guard.py) verordnet Ruhe.
+    assert rc.kind in ("ENDURANCE", "RECOVERY", "REST")

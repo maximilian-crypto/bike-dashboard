@@ -12,7 +12,7 @@ from dataclasses import dataclass, field
 
 import pandas as pd
 
-from . import config, dataprep, form, power, season, zones
+from . import config, dataprep, form, guard, power, season, zones
 
 # Form-Schwellen (TSB = CTL − ATL). Praktiker-Heuristik (Allen/Coggan) — bewusst
 # als kalibrierbare Startwerte, NICHT als hart validierte Grenzen (siehe Doku).
@@ -71,6 +71,11 @@ class Recommendation:
     phase_label: str | None = None
     weeks_to_go: int | None = None
     is_deload: bool = False
+    # Schutzgeländer gegen Überlastung (siehe guard.py)
+    guard_level: str = "ok"         # ok | caution | stop
+    warnings: list[str] = field(default_factory=list)
+    acwr: float | None = None
+    streak_days: int = 0
 
     @property
     def target_distance_mid(self) -> float:
@@ -254,6 +259,15 @@ def build(today: dt.date | None = None) -> Recommendation:
         kind = "ENDURANCE" if progress < 1.1 else "RECOVERY"
         reasons.append("Ohne Erholungsdaten konservativ: ruhige Grundlage (Z2).")
 
+    # Schutzgeländer: deckelt die Einheit, wenn sich Last ungesund aufschaukelt
+    # (Lastsprung, zu viele Tage am Stück, gehäuft rote Recovery). Greift auch
+    # bei grüner Recovery — und hebt nie an.
+    g = guard.check(rides, rec, today)
+    capped = g.apply(kind)
+    if capped != kind:
+        reasons.append(f"Schutzgeländer: {TITLES[kind]} → {TITLES[capped]}.")
+        kind = capped
+
     tpl = TEMPLATES[kind]
 
     # Dauer nach Volumenstand anpassen.
@@ -318,6 +332,10 @@ def build(today: dt.date | None = None) -> Recommendation:
         target_hours=round(target_hours, 1),
         tsb=round(tsb, 1) if tsb is not None else None,
         rationale=reasons,
+        guard_level=g.level,
+        warnings=g.warnings,
+        acwr=g.acwr,
+        streak_days=g.streak_days,
         week_load=round(week_load, 1),
         target_load=round(target_load, 1),
         phase=plan.phase,

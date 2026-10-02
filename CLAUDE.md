@@ -48,6 +48,7 @@ bike-dashboard/
 │  ├─ form.py             # CTL/ATL/TSB (Fitness/Ermüdung/Form)
 │  ├─ zones.py            # HF-Zonen (LTHR > Karvonen/HRR > %max)
 │  ├─ recommend.py        # Tagesempfehlung (Kern-Heuristik)
+│  ├─ guard.py           # NEU: Schutzgeländer gegen Überlastung (deckelt die Empfehlung)
 │  ├─ season.py           # Saisonplan: Wochenlast-Sollkurve aufs Zieldatum
 │  ├─ power.py            # Leistungszonen (%FTP) + abfahrbare Einheiten-Struktur
 │  ├─ routing.py          # windkluge Rundkurse via ORS
@@ -162,6 +163,18 @@ landet, nicht bei 99 — ein Index am Anschlag kann im zweiten Jahr nichts mehr
 zeigen. Fehlende Signale (kein Whoop, keine ausgewerteten Streams) kosten keine
 Punkte: die Gewichte werden auf die vorhandenen Teilwerte normiert.
 
+**Schutzgeländer gegen Überlastung (seit 2026-10-02):** `bikedash/guard.py`
+legt eine Obergrenze über die Tagesempfehlung, die **nur bremst, nie antreibt**
+und auch bei grüner Recovery greift. Drei Signale: Lastsprung (ATL/CTL > 1,3 →
+nichts Hartes, > 1,5 → nur Z1; Gabbett 2016, EWMA nach Williams 2017; erst ab
+CTL 15 und 28 Tagen Historie), Tage am Stück (5 → nichts Hartes, 6 → Ruhetag;
+Tag zählt ab 20 TSS) und gehäuft rote Recovery (3 von 7 Tagen → Ruhetag).
+Anlass: Nutzerwunsch „der Spaß soll am Ende nicht ungesund sein" — vorher gab
+es bei grüner Recovery nie einen Ruhetag, egal wie weit über dem Wochenziel.
+Der Whoop-**Strain** fließt bewusst nicht ein (wird nur angezeigt); die Last
+läuft über TSS. Warnungen stehen im Tab „Heute", in `today.json`
+(`recommendation.warnings`) und im Morgen-Report.
+
 **Wichtige Konventionen:**
 - Design-Tokens (`C_IN`, `C_ABOVE`, `PANEL_A`, `MUTED`, `ACCENT` …) stehen oben
   in `dashboard.py` und spiegeln 1:1 die CSS-Variablen in `mobile/ride.html`.
@@ -201,10 +214,11 @@ Live-Ride-PWA mit BLE-Puls/-Kadenz und Karte.
 | 11 | **Energie fürs Workout** — Mehrbedarf der Tagesempfehlung in kcal (Wattplan → kJ ≈ kcal, sonst MET × Gewicht, Ruheumsatz abgezogen), aufgeteilt auf vorher/unterwegs/danach und übersetzt in Cola, Maoam, Toast, Banane. Nach einer Fahrt: Stravas `kilojoules` → „danach". Bewusst „tanken", nie „verdient": nie weniger essen, Ruhetag-Hinweis auf normale Mahlzeiten | `bikedash/fuel.py`, Abschnitt im Tab „Heute", `today.json` (`fuel`), PWA-Banner, Zeile im Morgen-Report | Code fertig, 14 Tests grün, Dashboard + PWA im Browser geprüft |
 | 10 | **Dunkles Streamlit-Theme** (`.streamlit/config.toml`) — die Diagramme waren app-weit hell in einer dunklen App | `.gitignore`, `.streamlit/config.toml` | fertig, im Browser geprüft |
 
+| 12 | **Schutzgeländer gegen Überlastung** — Lastsprung (ACWR), Tage am Stück, gehäuft rote Recovery deckeln die Empfehlung bis zum Ruhetag | `bikedash/guard.py`, Tab „Heute", `today.json`, Morgen-Report | Code fertig, 9 Tests grün, Tab „Heute" im Browser geprüft (Stopp- und Normalfall) |
 | 8 | **Morgen-Report ereignisgesteuert** — Push, sobald die heutige Whoop-Recovery da ist, spätestens 10:00; erste Zeile = Entscheidung | `bikedash/report.py`, `send_report.py --if-due`, `sync.yml` | Code fertig, Tests grün. **Offen: `NTFY_TOPIC` als Actions-Secret + ntfy-App abonnieren** |
 
-**Tests:** 182 grün (`python -m pytest -q`), inkl. Suites
-`tests/test_milestones.py`, `tests/test_maintenance.py`, `tests/test_dataprep.py`, `tests/test_season.py`, `tests/test_power.py`, `tests/test_zwift.py`, `tests/test_report.py`, `tests/test_fitness.py` und `tests/test_fuel.py`.
+**Tests:** 192 grün (`python -m pytest -q`), inkl. Suites
+`tests/test_milestones.py`, `tests/test_maintenance.py`, `tests/test_dataprep.py`, `tests/test_season.py`, `tests/test_power.py`, `tests/test_zwift.py`, `tests/test_report.py`, `tests/test_fitness.py`, `tests/test_fuel.py` und `tests/test_guard.py`.
 
 **Zwift-Zustellung verifiziert (2026-09-18, Lauf #346):** `today.json` meldet
 `zwift.status = sent`, Event-ID 136989140 im intervals.icu-Kalender.

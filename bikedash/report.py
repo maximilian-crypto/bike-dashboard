@@ -161,6 +161,8 @@ def build_text(cfg: dict[str, Any], today: dt.date | None = None,
         last = zwift.last_result()
         if last is not None and last.ok and last.date == today.isoformat():
             parts.append("Zwift: Workout liegt bereit (Workouts → Custom → Intervals.icu).")
+    for w in rc.warnings:
+        parts.append(f"⚠️ {w}")
     line = fuel_line(rc, today)
     if line:
         parts.append(line)

@@ -200,6 +200,11 @@ def build(out_path: Path = DEFAULT_OUT, today: dt.date | None = None) -> dict[st
             "power_summary": rc.power_summary,
             "power_plan": rc.power_plan,
             "rationale": rc.rationale,
+            # Schutzgeländer gegen Überlastung (bikedash/guard.py)
+            "guard_level": rc.guard_level,
+            "warnings": rc.warnings,
+            "acwr": rc.acwr,
+            "streak_days": rc.streak_days,
         },
         "zones": {
             "max_hr": max_hr,

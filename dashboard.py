@@ -863,6 +863,21 @@ with tab_today:
         unsafe_allow_html=True,
     )
 
+    # Schutzgeländer (bikedash/guard.py): bremst, wenn sich Last ungesund
+    # aufschaukelt. Auch im grünen Bereich sichtbar — damit klar ist, dass
+    # jemand aufpasst.
+    for w in rc.warnings:
+        if rc.guard_level == "stop":
+            st.error(w, icon=":material/health_and_safety:")
+        else:
+            st.warning(w, icon=":material/health_and_safety:")
+    if not rc.warnings:
+        _acwr = f" · Lastverhältnis {rc.acwr:.2f} (gesund bis 1,3)".replace(".", ",") if rc.acwr else ""
+        st.caption(
+            f":material/health_and_safety: Überlastungs-Check: alles im grünen Bereich"
+            f"{_acwr} · {rc.streak_days} Trainingstag{'e' if rc.streak_days != 1 else ''} am Stück"
+        )
+
     dauer = "Pause" if rc.kind == "REST" else f"{rc.duration_min[0]}–{rc.duration_min[1]} Min"
     hf_label = f"HF-Zone {rc.zone_number}" if rc.hr_low else "HF-Zone"
     hf_value = f"{rc.hr_low}–{rc.hr_high} bpm" if rc.hr_low else "–"
