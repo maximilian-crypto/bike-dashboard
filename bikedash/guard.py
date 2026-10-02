@@ -44,7 +44,7 @@ import pandas as pd
 from . import form
 
 # Intensitätsleiter: ein Deckel lässt alles bis einschließlich dieser Stufe zu.
-LADDER = ["REST", "RECOVERY", "ENDURANCE", "TEMPO", "THRESHOLD"]
+LADDER = ["REST", "RECOVERY", "ENDURANCE", "TEMPO", "THRESHOLD", "VO2MAX"]
 
 ACWR_CAUTION = 1.3       # Obergrenze des „sweet spot" (Gabbett 2016)
 ACWR_STOP = 1.5          # „danger zone" (Gabbett 2016)

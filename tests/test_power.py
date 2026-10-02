@@ -49,7 +49,7 @@ def test_endurance_session_is_continuous():
 def test_structure_respects_prescribed_duration():
     """Die Einheit darf das Wochenziel nicht sprengen."""
     for minutes in (40, 60, 75, 90, 120):
-        for kind in ("RECOVERY", "ENDURANCE", "TEMPO", "THRESHOLD"):
+        for kind in ("RECOVERY", "ENDURANCE", "TEMPO", "THRESHOLD", "VO2MAX"):
             total = power.total_minutes(power.structure(kind, minutes, FTP))
             assert total <= minutes, (kind, minutes, total)
 
@@ -78,3 +78,14 @@ def test_describe_is_phone_sized():
     assert "×8'" in txt and "W" in txt and "ein" in txt and "aus" in txt
     assert len(txt) < 60
     assert power.describe([]) == ""
+
+
+def test_vo2max_is_exactly_4x4():
+    """Helgerud-Protokoll: genau 4 × 4 min Z5 mit 3 min Pause — auch bei mehr Zeit."""
+    for minutes in (50, 52, 60, 75):
+        blocks = power.structure("VO2MAX", minutes, FTP, "90–105")
+        work = [b for b in blocks if b.label.startswith("Intervall")]
+        pauses = [b for b in blocks if b.label == "Pause"]
+        assert len(work) == 4 and all(b.minutes == 4 and b.zone == 5 for b in work)
+        assert len(pauses) == 3 and all(b.minutes == 3 for b in pauses)
+    assert "4×4'" in power.describe(power.structure("VO2MAX", 52, FTP))

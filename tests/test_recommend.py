@@ -46,7 +46,7 @@ def test_green_recovery_fresh_form_is_quality():
     rc = recommend.build(today=today)
     assert rc.readiness_band == "green"
     assert rc.tsb is not None and rc.tsb > recommend.TSB_HARD_FLOOR
-    assert rc.kind in ("TEMPO", "THRESHOLD")
+    assert rc.kind in ("TEMPO", "THRESHOLD", "VO2MAX")
     assert rc.hr_low is not None and rc.hr_high > rc.hr_low
 
 
@@ -66,18 +66,75 @@ def test_z3_tempo_at_moderate_freshness(monkeypatch):
     today = dt.date(2026, 6, 15)
     _seed_fresh(today)
     store.upsert_whoop_recovery([recovery(1, today, 90.0)])
-    monkeypatch.setattr(recommend, "_current_tsb", lambda rides, today: -5.0)
+    monkeypatch.setattr(recommend, "_current_tsb", lambda rides, today: -15.0)
     rc = recommend.build(today=today)
     assert rc.kind == "TEMPO" and rc.zone_number == 3
 
 
-def test_z4_threshold_at_high_freshness(monkeypatch):
+def test_first_hard_session_is_4x4(monkeypatch):
     today = dt.date(2026, 6, 15)
     _seed_fresh(today)
     store.upsert_whoop_recovery([recovery(1, today, 90.0)])
     monkeypatch.setattr(recommend, "_current_tsb", lambda rides, today: 12.0)
     rc = recommend.build(today=today)
+    assert rc.kind == "VO2MAX" and rc.zone_number == 5
+
+
+def test_second_hard_session_outside_basis_is_threshold(monkeypatch):
+    """Aufbauphase, schon eine harte Einheit diese Woche → Schwelle (Z4)."""
+    from bikedash import season
+    today = dt.date(2026, 6, 18)   # Donnerstag
+    _seed_fresh(today)
+    store.upsert_strava_activities([ride(400, dt.datetime.combine(
+        today - dt.timedelta(days=3), dt.time(9)), hr=170.0)])   # Montag, hart
+    store.upsert_whoop_recovery([recovery(1, today, 90.0)])
+    monkeypatch.setattr(recommend, "_current_tsb", lambda rides, today: 5.0)
+    monkeypatch.setattr(season, "hard_days_for", lambda phase: 2)
+    real_build = season.build
+
+    def _aufbau(*a, **kw):
+        p = real_build(*a, **kw)
+        p.phase = season.PHASE_AUFBAU
+        return p
+    monkeypatch.setattr(season, "build", _aufbau)
+    rc = recommend.build(today=today)
     assert rc.kind == "THRESHOLD" and rc.zone_number == 4
+
+
+def test_intervals_not_blocked_by_exceeded_week_target(monkeypatch):
+    """Über dem Wochenziel, aber grün & frisch → trotzdem die harte Einheit.
+    Vorher gab es hier nie Intervalle (Nutzerbefund Okt. 2026)."""
+    today = dt.date(2026, 6, 17)   # Mittwoch
+    _seed_fresh(today)
+    store.upsert_strava_activities([ride(500 + i, dt.datetime.combine(
+        today - dt.timedelta(days=i), dt.time(9)), dist_m=90000.0, hr=125.0)
+        for i in (1, 2)])
+    store.upsert_whoop_recovery([recovery(1, today, 85.0)])
+    monkeypatch.setattr(recommend, "_current_tsb", lambda rides, today: 0.0)
+    rc = recommend.build(today=today)
+    assert rc.week_load > 1.2 * rc.target_load
+    assert rc.kind == "VO2MAX"
+
+
+def test_yellow_after_long_gap_gets_tempo(monkeypatch):
+    today = dt.date(2026, 6, 15)
+    _seed_fresh(today)   # letzte Fahrten vor 10/14 Tagen, locker
+    store.upsert_whoop_recovery([recovery(1, today, 55.0)])
+    monkeypatch.setattr(recommend, "_current_tsb", lambda rides, today: 5.0)
+    rc = recommend.build(today=today)
+    assert rc.readiness_band == "yellow"
+    assert rc.kind == "TEMPO"
+
+
+def test_yellow_without_gap_stays_aerobic(monkeypatch):
+    today = dt.date(2026, 6, 15)
+    _seed_fresh(today)
+    store.upsert_strava_activities([ride(600, dt.datetime.combine(
+        today - dt.timedelta(days=5), dt.time(9)), hr=170.0)])   # hart vor 5 Tagen
+    store.upsert_whoop_recovery([recovery(1, today, 55.0)])
+    monkeypatch.setattr(recommend, "_current_tsb", lambda rides, today: 5.0)
+    rc = recommend.build(today=today)
+    assert rc.kind == "ENDURANCE"
 
 
 def test_no_recovery_is_conservative():
@@ -87,3 +144,20 @@ def test_no_recovery_is_conservative():
     assert rc.readiness_band == "unknown"
     # 12 Fahrtage am Stück → das Schutzgeländer (guard.py) verordnet Ruhe.
     assert rc.kind in ("ENDURANCE", "RECOVERY", "REST")
+
+
+def test_power_ride_counts_as_hard_by_intensity_factor(monkeypatch):
+    """Eine 4×4 auf der Rolle hat einen mäßigen Durchschnittspuls (Ein-/Ausfahren,
+    Pausen) — erkannt wird sie über NP/FTP. Sonst käme am Folgetag die nächste 4×4."""
+    from bikedash import config
+    monkeypatch.setattr(config, "ftp_from_config", lambda: 170)
+    today = dt.date(2026, 6, 15)
+    _seed_fresh(today)
+    r = ride(700, dt.datetime.combine(today - dt.timedelta(days=1), dt.time(18)),
+             dist_m=25000.0, hr=135.0)
+    r.update(weighted_average_watts=148.0, raw_json='{"device_watts": true}')
+    store.upsert_strava_activities([r])
+    store.upsert_whoop_recovery([recovery(1, today, 90.0)])
+    monkeypatch.setattr(recommend, "_current_tsb", lambda rides, today: 5.0)
+    rc = recommend.build(today=today)
+    assert rc.kind == "ENDURANCE"   # gestern hart → heute Grundlage

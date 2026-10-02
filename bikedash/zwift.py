@@ -64,6 +64,7 @@ SHORT_TITLES = {
     "ENDURANCE": "Grundlage Z2",
     "TEMPO": "Tempo Z3",
     "THRESHOLD": "Schwelle Z4",
+    "VO2MAX": "4x4 VO2max Z5",
 }
 
 

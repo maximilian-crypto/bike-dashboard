@@ -175,6 +175,19 @@ Der Whoop-**Strain** fließt bewusst nicht ein (wird nur angezeigt); die Last
 läuft über TSS. Warnungen stehen im Tab „Heute", in `today.json`
 (`recommendation.warnings`) und im Morgen-Report.
 
+**Intensität unabhängig vom Wochenziel, 4×4 als harte Einheit (seit 2026-10-02):**
+Vorher hingen Intervalle am Wochenziel (> 110 % → nie hart). Bei kleinem Ziel
+bekam der Nutzer dadurch faktisch **nie** Intervalle. Jetzt gilt bei grüner
+Recovery (≥ 70 %), TSB > −20, nichts Hartem in den letzten 2 Tagen und freiem
+Kontingent der Phase (Grundlage 1, sonst 2): erste harte Einheit der Woche =
+**VO2MAX** (4×4 min @ Z5, 3 min Pause — Helgerud et al. 2007, bestes Protokoll
+fürs Schlagvolumen; feste Struktur, ~50 min), zweite außerhalb der Grundlage =
+THRESHOLD. TSB −20…−10 → dosiertes TEMPO. Gelbe Recovery (≥ 50) nach
+≥ 10 Tagen ohne harten Reiz → TEMPO. „Hart" wird mit Wattdaten über NP/FTP
+≥ 0,80 erkannt (Durchschnittspuls verwässert Intervalle), sonst wie bisher.
+Nutzerentscheid (Okt. 2026): Gesundheit vor Leistung, aber Leistung soll
+kommen — „wenn kürzere Intervalle mehr bringen, yallah".
+
 **Wichtige Konventionen:**
 - Design-Tokens (`C_IN`, `C_ABOVE`, `PANEL_A`, `MUTED`, `ACCENT` …) stehen oben
   in `dashboard.py` und spiegeln 1:1 die CSS-Variablen in `mobile/ride.html`.
@@ -215,9 +228,10 @@ Live-Ride-PWA mit BLE-Puls/-Kadenz und Karte.
 | 10 | **Dunkles Streamlit-Theme** (`.streamlit/config.toml`) — die Diagramme waren app-weit hell in einer dunklen App | `.gitignore`, `.streamlit/config.toml` | fertig, im Browser geprüft |
 
 | 12 | **Schutzgeländer gegen Überlastung** — Lastsprung (ACWR), Tage am Stück, gehäuft rote Recovery deckeln die Empfehlung bis zum Ruhetag | `bikedash/guard.py`, Tab „Heute", `today.json`, Morgen-Report | Code fertig, 9 Tests grün, Tab „Heute" im Browser geprüft (Stopp- und Normalfall) |
+| 13 | **4×4-Intervalle & Intensität vom Wochenziel entkoppelt** — neuer Einheitentyp `VO2MAX`, Intensitätslücken-Regel, Wattdaten-basierte Erkennung harter Einheiten | `bikedash/recommend.py`, `bikedash/power.py`, `zwift.py`, `fuel.py`, `report.py` | Code fertig, Tests grün, Tab „Heute" + Zwift-Text geprüft |
 | 8 | **Morgen-Report ereignisgesteuert** — Push, sobald die heutige Whoop-Recovery da ist, spätestens 10:00; erste Zeile = Entscheidung | `bikedash/report.py`, `send_report.py --if-due`, `sync.yml` | Code fertig, Tests grün. **Offen: `NTFY_TOPIC` als Actions-Secret + ntfy-App abonnieren** |
 
-**Tests:** 192 grün (`python -m pytest -q`), inkl. Suites
+**Tests:** 198 grün (`python -m pytest -q`), inkl. Suites
 `tests/test_milestones.py`, `tests/test_maintenance.py`, `tests/test_dataprep.py`, `tests/test_season.py`, `tests/test_power.py`, `tests/test_zwift.py`, `tests/test_report.py`, `tests/test_fitness.py`, `tests/test_fuel.py` und `tests/test_guard.py`.
 
 **Zwift-Zustellung verifiziert (2026-09-18, Lauf #346):** `today.json` meldet

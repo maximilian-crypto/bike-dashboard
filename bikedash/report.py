@@ -43,7 +43,7 @@ DEADLINE = dt.time(10, 0)   # spätestens dann, notfalls ohne heutige Recovery
 KV_SENT = "report_sent_date"
 
 SHORT = {"RECOVERY": "Erholung Z1", "ENDURANCE": "Grundlage Z2",
-         "TEMPO": "Tempo Z3", "THRESHOLD": "Schwelle Z4", "REST": "Ruhetag"}
+         "TEMPO": "Tempo Z3", "THRESHOLD": "Schwelle Z4", "VO2MAX": "4×4 Z5", "REST": "Ruhetag"}
 
 
 # ---------------------------------------------------------------------------

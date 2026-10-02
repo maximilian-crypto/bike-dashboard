@@ -49,7 +49,7 @@ REST_MET = 1.0               # was der Körper in der Zeit sowieso verbraucht h�
 # Rad/Ergometer locker ≈ 4, moderat ≈ 6–7, zügig ≈ 8, Rennen 10+). Bewusst im
 # unteren Bereich der Spannen: „hart" heißt hier Schwelle des Athleten, nicht
 # Renntempo — die Wattrechnung mit FTP 170 landet in derselben Größenordnung.
-MET = {"RECOVERY": 4.0, "ENDURANCE": 6.0, "TEMPO": 7.5, "THRESHOLD": 8.5}
+MET = {"RECOVERY": 4.0, "ENDURANCE": 6.0, "TEMPO": 7.5, "THRESHOLD": 8.5, "VO2MAX": 8.5}
 MET_UNKNOWN = 7.0            # bereits gefahrene Einheit ohne kJ-Angabe
 
 # Kohlenhydrate unterwegs: ab ~60 min sinnvoll, 30–60 g/h ist die gängige

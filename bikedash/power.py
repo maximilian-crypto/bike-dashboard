@@ -38,11 +38,15 @@ INTERVALS: dict[str, tuple[int, int, int, int] | None] = {
     "ENDURANCE": None,
     "TEMPO": (12, 5, 3, 1),
     "THRESHOLD": (8, 4, 4, 1),
+    "VO2MAX": (4, 3, 5, 1),      # 4×4 nach Helgerud et al. (2007)
 }
 
+# Feste Wiederholungszahl, wo das Protokoll sie vorgibt.
+MAX_REPS = {"VO2MAX": 4}
+
 # Ein- und Ausfahren je Einheitentyp (Minuten).
-WARMUP_MIN = {"RECOVERY": 5, "ENDURANCE": 10, "TEMPO": 12, "THRESHOLD": 15}
-COOLDOWN_MIN = {"RECOVERY": 5, "ENDURANCE": 8, "TEMPO": 10, "THRESHOLD": 10}
+WARMUP_MIN = {"RECOVERY": 5, "ENDURANCE": 10, "TEMPO": 12, "THRESHOLD": 15, "VO2MAX": 15}
+COOLDOWN_MIN = {"RECOVERY": 5, "ENDURANCE": 8, "TEMPO": 10, "THRESHOLD": 10, "VO2MAX": 10}
 
 MIN_REPS = 2
 
@@ -112,6 +116,7 @@ def structure(kind: str, duration_min: int, ftp: float | None,
     if plan and main_min > 0:
         work_min, rest_min, work_zone, rest_zone = plan
         reps = int((main_min + rest_min) // (work_min + rest_min))
+        reps = min(reps, MAX_REPS.get(kind, reps))
         if reps >= MIN_REPS:
             wz = zone_for(work_zone, ftp)
             rz = zone_for(rest_zone, ftp)
@@ -126,7 +131,8 @@ def structure(kind: str, duration_min: int, ftp: float | None,
             plan = None   # zu wenig Zeit → Dauereinheit, siehe Docstring
 
     if not plan and main_min > 0:
-        zone_num = {"RECOVERY": 1, "ENDURANCE": 2, "TEMPO": 3, "THRESHOLD": 4}[kind]
+        zone_num = {"RECOVERY": 1, "ENDURANCE": 2, "TEMPO": 3, "THRESHOLD": 4,
+                    "VO2MAX": 5}[kind]
         mz = zone_for(zone_num, ftp)
         assert mz is not None
         blocks.append(Block("Hauptteil", main_min, mz.low_w, mz.high_w,
