@@ -1,102 +1,54 @@
 {
-  "generated_at": "2026-10-02T20:42:13+00:00",
-  "date": "2026-10-02",
+  "generated_at": "2026-10-03T05:13:52+00:00",
+  "date": "2026-10-03",
   "recommendation": {
-    "kind": "VO2MAX",
-    "title": "4×4-Intervalle (Z5)",
-    "readiness_band": "green",
-    "recovery_score": 81.0,
-    "zone_number": 5,
-    "zone_label": "Z5 · Maximal",
-    "hr_low": 184,
-    "hr_high": 197,
-    "cadence": "90–105",
-    "cadence_low": 90,
-    "cadence_high": 105,
-    "rpe": "8–9",
+    "kind": "RECOVERY",
+    "title": "Lockerer Erholungs-Spin",
+    "readiness_band": "unknown",
+    "recovery_score": null,
+    "zone_number": 1,
+    "zone_label": "Z1 · Erholung",
+    "hr_low": 120,
+    "hr_high": 145,
+    "cadence": "85–95",
+    "cadence_low": 85,
+    "cadence_high": 95,
+    "rpe": "2–3",
     "duration_min": [
-      50,
-      55
+      27,
+      36
     ],
     "distance_km": [
-      16.4,
-      20.0
+      8.3,
+      10.1
     ],
-    "target_distance_km": 18.2,
+    "target_distance_km": 9.2,
     "week_hours": 1.5,
     "target_hours": 1.0,
     "tsb": -3.1,
-    "power_low": 180,
-    "power_high": 204,
-    "power_summary": "15' ein · 4×4' @ 180–204 W · 10' aus",
+    "power_low": 76,
+    "power_high": 94,
+    "power_summary": "5' ein · 21' @ 76–94 W · 5' aus",
     "power_plan": [
       {
         "label": "Einfahren",
-        "minutes": 15,
+        "minutes": 5,
         "low_w": 76,
         "high_w": 94,
         "zone": 1,
-        "cadence": "90–105"
+        "cadence": "85–95"
       },
       {
-        "label": "Intervall 1/4",
-        "minutes": 4,
-        "low_w": 180,
-        "high_w": 204,
-        "zone": 5,
-        "cadence": "90–105"
-      },
-      {
-        "label": "Pause",
-        "minutes": 3,
+        "label": "Hauptteil",
+        "minutes": 21,
         "low_w": 76,
         "high_w": 94,
         "zone": 1,
-        "cadence": null
-      },
-      {
-        "label": "Intervall 2/4",
-        "minutes": 4,
-        "low_w": 180,
-        "high_w": 204,
-        "zone": 5,
-        "cadence": "90–105"
-      },
-      {
-        "label": "Pause",
-        "minutes": 3,
-        "low_w": 76,
-        "high_w": 94,
-        "zone": 1,
-        "cadence": null
-      },
-      {
-        "label": "Intervall 3/4",
-        "minutes": 4,
-        "low_w": 180,
-        "high_w": 204,
-        "zone": 5,
-        "cadence": "90–105"
-      },
-      {
-        "label": "Pause",
-        "minutes": 3,
-        "low_w": 76,
-        "high_w": 94,
-        "zone": 1,
-        "cadence": null
-      },
-      {
-        "label": "Intervall 4/4",
-        "minutes": 4,
-        "low_w": 180,
-        "high_w": 204,
-        "zone": 5,
-        "cadence": "90–105"
+        "cadence": "85–95"
       },
       {
         "label": "Ausfahren",
-        "minutes": 10,
+        "minutes": 5,
         "low_w": 76,
         "high_w": 94,
         "zone": 1,
@@ -104,24 +56,23 @@
       }
     ],
     "rationale": [
-      "Whoop-Recovery heute: 81 %.",
+      "Keine aktuelle Whoop-Recovery — neutrale Annahme.",
       "Diese Woche bisher 74 / Ziel 61 Last (120 %, ≈ 1.0 h).",
       "Planwoche 3, Phase „Grundlage“ — noch 21 Wochen bis zum Saisonstart.",
       "Form (TSB) aktuell -3.",
-      "Bestens erholt & harte Einheit frei: 4×4 min nahe Maximalpuls. Das Protokoll mit der besten Studienlage für Schlagvolumen und VO2max (Helgerud et al. 2007) — kurz, hart, wirksam.",
-      "Letzter harter Reiz vor 15 Tagen."
+      "Ohne Erholungsdaten konservativ: ruhige Grundlage (Z2)."
     ],
     "guard_level": "ok",
     "warnings": [],
     "acwr": null,
-    "streak_days": 1
+    "streak_days": 0
   },
   "zones": {
     "max_hr": 197,
     "rest_hr": 68,
     "lthr": null,
     "ftp": 170,
-    "target_zone": 5,
+    "target_zone": 1,
     "method": "Karvonen/HRR",
     "load_sources": {
       "hr": 7,
@@ -129,13 +80,13 @@
     }
   },
   "weather": {
-    "temp_c": 13.1,
-    "wind_kmh": 3.1,
-    "wind_deg": 111,
-    "wind_dir": "O",
-    "gust_kmh": 4.3,
-    "code": 1,
-    "desc": "überwiegend klar"
+    "temp_c": 9.7,
+    "wind_kmh": 2.9,
+    "wind_deg": 180,
+    "wind_dir": "S",
+    "gust_kmh": 6.8,
+    "code": 3,
+    "desc": "bedeckt"
   },
   "milestone": {
     "total_km": 1029.0,
@@ -148,9 +99,9 @@
     "next_km": 1030.0
   },
   "fitness": {
-    "score": 69.9,
+    "score": 69.8,
     "tier": "Im Aufbau",
-    "delta_30": -7.0,
+    "delta_30": -7.1,
     "delta_90": null,
     "best": 78.7,
     "subscores": {
@@ -171,8 +122,8 @@
       },
       "reg": {
         "label": "Regeneration",
-        "score": 66.2,
-        "n": 41
+        "score": 65.8,
+        "n": 40
       },
       "kon": {
         "label": "Konsistenz",
@@ -183,12 +134,12 @@
     "highlight": "⚡ Bei gleichem Puls bringst du heute **15,7 % mehr Leistung** aufs Pedal als zu Beginn deiner Aufzeichnung."
   },
   "fuel": {
-    "kind": "VO2MAX",
-    "duration_min": 52,
-    "kcal_extra": 291,
+    "kind": "RECOVERY",
+    "duration_min": 31,
+    "kcal_extra": 119,
     "kcal_range": [
-      230,
-      350
+      90,
+      140
     ],
     "source": "power",
     "weight_known": false,
@@ -196,9 +147,31 @@
       {
         "key": "before",
         "title": "Vorher",
-        "kcal": 87,
-        "carbs_g": 22,
+        "kcal": 36,
+        "carbs_g": 11,
         "hint": "30–90 min vor dem Start",
+        "portions": [
+          {
+            "key": "toast",
+            "icon": "🍞",
+            "count": 0.5,
+            "label": "½ Scheibe Toast mit Honig"
+          },
+          {
+            "key": "banana",
+            "icon": "🍌",
+            "count": 0.5,
+            "label": "½ Banane"
+          }
+        ],
+        "text": "½ Scheibe Toast mit Honig oder ½ Banane"
+      },
+      {
+        "key": "after",
+        "title": "Danach",
+        "kcal": 83,
+        "carbs_g": 22,
+        "hint": "innerhalb von 1–2 h, gern mit der nächsten Mahlzeit",
         "portions": [
           {
             "key": "toast",
@@ -207,55 +180,33 @@
             "label": "1 Scheibe Toast mit Honig"
           },
           {
-            "key": "banana",
-            "icon": "🍌",
-            "count": 1.0,
-            "label": "1 Banane"
-          }
-        ],
-        "text": "1 Scheibe Toast mit Honig oder 1 Banane"
-      },
-      {
-        "key": "after",
-        "title": "Danach",
-        "kcal": 204,
-        "carbs_g": 44,
-        "hint": "innerhalb von 1–2 h, gern mit der nächsten Mahlzeit",
-        "portions": [
-          {
-            "key": "toast",
-            "icon": "🍞",
-            "count": 2.0,
-            "label": "2 Scheiben Toast mit Honig"
-          },
-          {
             "key": "cola",
             "icon": "🥤",
-            "count": 1.5,
-            "label": "1½ Dosen Cola"
+            "count": 1.0,
+            "label": "1 Dose Cola"
           }
         ],
-        "text": "2 Scheiben Toast mit Honig oder 1½ Dosen Cola"
+        "text": "1 Scheibe Toast mit Honig oder 1 Dose Cola"
       }
     ],
     "equivalents": [
       {
         "key": "cola",
         "icon": "🥤",
-        "count": 2.5,
-        "label": "2½ Dosen Cola"
+        "count": 1.0,
+        "label": "1 Dose Cola"
       },
       {
         "key": "maoam",
         "icon": "🍬",
-        "count": 3.5,
-        "label": "3½ Maoam Bloxx"
+        "count": 1.5,
+        "label": "1½ Maoam Bloxx"
       },
       {
         "key": "toast",
         "icon": "🍞",
-        "count": 3.0,
-        "label": "3 Scheiben Toast mit Honig"
+        "count": 1.5,
+        "label": "1½ Scheiben Toast mit Honig"
       }
     ],
     "notes": [
@@ -265,14 +216,14 @@
       "Ohne hinterlegtes Gewicht mit 75 kg gerechnet (Einrichtung → Körpergewicht)."
     ],
     "done_today_kcal": null,
-    "short": "Extra essen: ≈ 291 kcal (2½ Dosen Cola / 3½ Maoam Bloxx / 3 Scheiben Toast mit Honig)"
+    "short": "Extra essen: ≈ 119 kcal (1 Dose Cola / 1½ Maoam Bloxx / 1½ Scheiben Toast mit Honig)"
   },
   "zwift": {
-    "status": "unchanged",
-    "name": "Bikedash 02-10 4x4 VO2max Z5 50min",
-    "event_id": 140656735,
+    "status": "sent",
+    "name": "Bikedash 03-10 Erholung Z1 31min",
+    "event_id": 140954889,
     "detail": null,
-    "date": "2026-10-02",
-    "at": "2026-10-02T20:42:12+00:00"
+    "date": "2026-10-03",
+    "at": "2026-10-03T05:13:50+00:00"
   }
 }
