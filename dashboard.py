@@ -28,6 +28,24 @@ try:
 except Exception:
     pass
 
+# Veraltete bikedash-Module verwerfen. Streamlit Cloud zieht bei einem Push den
+# neuen Code und führt dashboard.py neu aus, der Python-Prozess läuft aber weiter
+# — bereits importierte Pakete bleiben im Speicher. Folge am 03.10.2026:
+# dashboard.py las `rc.warnings`, das alte recommend.py kannte das Feld nicht
+# (AttributeError). Ist eine Quelldatei neuer als der Ladezeitpunkt des Pakets,
+# fliegt alles raus und wird unten frisch importiert. Reihenfolge der
+# Abhängigkeiten regelt der normale Import.
+import pathlib as _pathlib
+import sys as _sys
+
+_pkg = _sys.modules.get("bikedash")
+if _pkg is not None:
+    _loaded = getattr(_pkg, "_LOADED_AT", 0.0)
+    _src = _pathlib.Path(__file__).resolve().parent / "bikedash"
+    if any(_f.stat().st_mtime > _loaded for _f in _src.glob("*.py")):
+        for _name in [n for n in _sys.modules if n == "bikedash" or n.startswith("bikedash.")]:
+            del _sys.modules[_name]
+
 from bikedash import (
     backup, coach, config, dataprep, fitness, form, fuel, maintenance, milestones,
     recommend, report, routing, season, store, strava, weather, webauth, whoop,

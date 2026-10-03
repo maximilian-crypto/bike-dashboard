@@ -502,6 +502,12 @@ Weitere Fallen, die hier schon zugeschlagen haben:
   einer bewussten Änderung fehl: erst prüfen, welche der beiden Seiten recht hat.
 - **`pandas.resample("W-MON")` gruppiert rechtsseitig** und zerschneidet
   Trainingswochen. Für Montag-bis-Sonntag `closed="left", label="left"` setzen.
+- **Streamlit Cloud behält alte Module im Speicher.** Ein Push lädt die neue
+  `dashboard.py`, der Prozess hält aber das alte `bikedash` — neue Felder fehlen
+  dann (`AttributeError: rc.warnings`, 03.10.2026). Abgefangen durch den
+  Modul-Check vor dem `bikedash`-Import in `dashboard.py` (vergleicht
+  `bikedash._LOADED_AT` mit den Datei-Zeitstempeln). Nicht entfernen.
+  Notlösung, falls es trotzdem auftritt: Manage app → ⋮ → Reboot app.
 - **`pkill -f "streamlit run"`** killt die eigene Shell mit, weil die Kommandozeile
   den Suchstring selbst enthält. `pkill -f "[s]treamlit.run"` benutzen.
 - Bei Änderungen an `recommend.py`-Templates daran denken, dass die Werte über
