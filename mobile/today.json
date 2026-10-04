@@ -1,11 +1,11 @@
 {
-  "generated_at": "2026-10-03T22:53:00+00:00",
-  "date": "2026-10-03",
+  "generated_at": "2026-10-04T05:47:07+00:00",
+  "date": "2026-10-04",
   "recommendation": {
     "kind": "REST",
     "title": "Ruhetag",
-    "readiness_band": "green",
-    "recovery_score": 71.0,
+    "readiness_band": "yellow",
+    "recovery_score": 38.0,
     "zone_number": null,
     "zone_label": null,
     "hr_low": null,
@@ -31,16 +31,16 @@
     "power_summary": null,
     "power_plan": [],
     "rationale": [
-      "Whoop-Recovery heute: 71 %.",
+      "Whoop-Recovery heute: 38 %.",
       "Diese Woche bisher 127 / Ziel 61 Last (207 %, ≈ 1.0 h).",
       "Planwoche 3, Phase „Grundlage“ — noch 21 Wochen bis zum Saisonstart.",
       "Form (TSB) aktuell -5.",
-      "Du bist heute bereits gefahren — Fokus auf Regeneration."
+      "Erholung mittel: aerob bleiben (Z2), Volumen schon ok."
     ],
     "guard_level": "ok",
     "warnings": [],
     "acwr": null,
-    "streak_days": 0
+    "streak_days": 1
   },
   "zones": {
     "max_hr": 197,
@@ -55,13 +55,13 @@
     }
   },
   "weather": {
-    "temp_c": 10.4,
-    "wind_kmh": 5.4,
-    "wind_deg": 222,
-    "wind_dir": "SW",
-    "gust_kmh": 10.1,
-    "code": 3,
-    "desc": "bedeckt"
+    "temp_c": 11.4,
+    "wind_kmh": 1.9,
+    "wind_deg": 292,
+    "wind_dir": "W",
+    "gust_kmh": 7.9,
+    "code": 45,
+    "desc": "Nebel"
   },
   "milestone": {
     "total_km": 1050.0,
@@ -74,9 +74,9 @@
     "next_km": 1070.0
   },
   "fitness": {
-    "score": 71.0,
+    "score": 70.9,
     "tier": "Formstark",
-    "delta_30": -5.9,
+    "delta_30": -6.0,
     "delta_90": null,
     "best": 78.7,
     "subscores": {
@@ -97,13 +97,13 @@
       },
       "reg": {
         "label": "Regeneration",
-        "score": 66.2,
-        "n": 41
+        "score": 65.8,
+        "n": 42
       },
       "kon": {
         "label": "Konsistenz",
         "score": 74.9,
-        "n": 37
+        "n": 36
       }
     },
     "highlight": "⚡ Bei gleichem Puls bringst du heute **15,7 % mehr Leistung** aufs Pedal als zu Beginn deiner Aufzeichnung."
@@ -111,70 +111,27 @@
   "fuel": {
     "kind": "REST",
     "duration_min": 0,
-    "kcal_extra": 274,
+    "kcal_extra": 0,
     "kcal_range": [
-      220,
-      330
+      0,
+      0
     ],
-    "source": "ride",
+    "source": "none",
     "weight_known": false,
-    "phases": [
-      {
-        "key": "after",
-        "title": "Danach",
-        "kcal": 274,
-        "carbs_g": 55,
-        "hint": "innerhalb von 1–2 h, gern mit der nächsten Mahlzeit",
-        "portions": [
-          {
-            "key": "toast",
-            "icon": "🍞",
-            "count": 2.5,
-            "label": "2½ Scheiben Toast mit Honig"
-          },
-          {
-            "key": "cola",
-            "icon": "🥤",
-            "count": 2.0,
-            "label": "2 Dosen Cola"
-          }
-        ],
-        "text": "2½ Scheiben Toast mit Honig oder 2 Dosen Cola"
-      }
-    ],
-    "equivalents": [
-      {
-        "key": "cola",
-        "icon": "🥤",
-        "count": 2.0,
-        "label": "2 Dosen Cola"
-      },
-      {
-        "key": "maoam",
-        "icon": "🍬",
-        "count": 3.5,
-        "label": "3½ Maoam Bloxx"
-      },
-      {
-        "key": "toast",
-        "icon": "🍞",
-        "count": 2.5,
-        "label": "2½ Scheiben Toast mit Honig"
-      }
-    ],
+    "phases": [],
+    "equivalents": [],
     "notes": [
-      "Deine Fahrt heute hat rund 274 kcal zusätzlich gekostet — die gehören heute noch auf den Teller.",
-      "Die Werte kommen **oben drauf** auf deine normalen Mahlzeiten — sie ersetzen keine. Wer über den Tag zu wenig isst, fährt schon mit Defizit los."
+      "Ruhetag: kein Extra nötig — aber normale Mahlzeiten zählen heute genauso. Stärker wirst du in der Erholung, und die läuft nur mit Energie."
     ],
-    "done_today_kcal": 274,
-    "short": "Extra essen: ≈ 274 kcal (2 Dosen Cola / 3½ Maoam Bloxx / 2½ Scheiben Toast mit Honig)"
+    "done_today_kcal": null,
+    "short": ""
   },
   "zwift": {
     "status": "skipped",
     "name": null,
     "event_id": null,
     "detail": "Ruhetag",
-    "date": "2026-10-03",
-    "at": "2026-10-03T22:52:59+00:00"
+    "date": "2026-10-04",
+    "at": "2026-10-04T05:47:06+00:00"
   }
 }
