@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-10-04T10:32:33+00:00",
+  "generated_at": "2026-10-04T13:58:20+00:00",
   "date": "2026-10-04",
   "recommendation": {
     "kind": "TEMPO",
@@ -95,7 +95,15 @@
       "hr": 7
     }
   },
-  "weather": null,
+  "weather": {
+    "temp_c": 17.3,
+    "wind_kmh": 8.6,
+    "wind_deg": 255,
+    "wind_dir": "W",
+    "gust_kmh": 18.7,
+    "code": 2,
+    "desc": "teils bewölkt"
+  },
   "milestone": {
     "total_km": 1050.0,
     "orden_earned": 20,
@@ -248,11 +256,11 @@
     "short": "Extra essen: ≈ 264 kcal (2 Dosen Cola / 3½ Maoam Bloxx / 2½ Scheiben Toast mit Honig)"
   },
   "zwift": {
-    "status": "sent",
+    "status": "unchanged",
     "name": "Bikedash 04-10 Tempo Z3 51min",
     "event_id": 141292694,
     "detail": null,
     "date": "2026-10-04",
-    "at": "2026-10-04T10:32:32+00:00"
+    "at": "2026-10-04T13:58:19+00:00"
   }
 }
