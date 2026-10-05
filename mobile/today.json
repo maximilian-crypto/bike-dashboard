@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-10-05T05:32:43+00:00",
+  "generated_at": "2026-10-05T11:23:04+00:00",
   "date": "2026-10-05",
   "recommendation": {
     "kind": "TEMPO",
@@ -129,13 +129,13 @@
     }
   },
   "weather": {
-    "temp_c": 8.1,
-    "wind_kmh": 10.1,
-    "wind_deg": 215,
+    "temp_c": 18.3,
+    "wind_kmh": 17.1,
+    "wind_deg": 228,
     "wind_dir": "SW",
-    "gust_kmh": 19.8,
-    "code": 0,
-    "desc": "klar"
+    "gust_kmh": 35.6,
+    "code": 3,
+    "desc": "bedeckt"
   },
   "milestone": {
     "total_km": 1050.0,
@@ -289,11 +289,11 @@
     "short": "Extra essen: ≈ 481 kcal (3½ Dosen Cola / 6 Maoam Bloxx / 4½ Scheiben Toast mit Honig)"
   },
   "zwift": {
-    "status": "sent",
+    "status": "unchanged",
     "name": "Bikedash 05-10 Tempo Z3 85min",
     "event_id": 141602230,
     "detail": null,
     "date": "2026-10-05",
-    "at": "2026-10-05T05:32:42+00:00"
+    "at": "2026-10-05T11:23:03+00:00"
   }
 }
