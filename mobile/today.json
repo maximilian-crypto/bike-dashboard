@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-10-06T18:19:58+00:00",
+  "generated_at": "2026-10-06T23:47:11+00:00",
   "date": "2026-10-06",
   "recommendation": {
     "kind": "ENDURANCE",
@@ -81,13 +81,13 @@
     }
   },
   "weather": {
-    "temp_c": 16.7,
-    "wind_kmh": 3.5,
-    "wind_deg": 156,
-    "wind_dir": "SO",
-    "gust_kmh": 5.8,
-    "code": 3,
-    "desc": "bedeckt"
+    "temp_c": 14.3,
+    "wind_kmh": 4.8,
+    "wind_deg": 167,
+    "wind_dir": "S",
+    "gust_kmh": 10.1,
+    "code": 45,
+    "desc": "Nebel"
   },
   "milestone": {
     "total_km": 1050.0,
@@ -246,6 +246,6 @@
     "event_id": 141947893,
     "detail": null,
     "date": "2026-10-06",
-    "at": "2026-10-06T18:19:56+00:00"
+    "at": "2026-10-06T23:47:11+00:00"
   }
 }
