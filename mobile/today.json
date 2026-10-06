@@ -1,11 +1,11 @@
 {
-  "generated_at": "2026-10-06T01:17:59+00:00",
+  "generated_at": "2026-10-06T11:12:13+00:00",
   "date": "2026-10-06",
   "recommendation": {
     "kind": "ENDURANCE",
     "title": "Grundlagenausdauer (Z2)",
-    "readiness_band": "unknown",
-    "recovery_score": null,
+    "readiness_band": "yellow",
+    "recovery_score": 49.0,
     "zone_number": 2,
     "zone_label": "Z2 · Grundlage",
     "hr_low": 145,
@@ -56,12 +56,12 @@
       }
     ],
     "rationale": [
-      "Keine aktuelle Whoop-Recovery — neutrale Annahme.",
+      "Whoop-Recovery heute: 49 %.",
       "Diese Woche bisher 0 / Ziel 44 Last (0 %, ≈ 0.7 h).",
       "Planwoche 4, Phase „Grundlage“ — noch 20 Wochen bis zum Saisonstart.",
       "Entlastungswoche (jede 4.): Ziel auf 65% — Anpassung passiert in der Erholung.",
       "Form (TSB) aktuell -5.",
-      "Ohne Erholungsdaten konservativ: ruhige Grundlage (Z2)."
+      "Erholung mittel & Woche noch dünn: ruhige Grundlage (Z2)."
     ],
     "guard_level": "ok",
     "warnings": [],
@@ -81,11 +81,11 @@
     }
   },
   "weather": {
-    "temp_c": 13.6,
-    "wind_kmh": 10.0,
-    "wind_deg": 229,
+    "temp_c": 18.2,
+    "wind_kmh": 9.4,
+    "wind_deg": 227,
     "wind_dir": "SW",
-    "gust_kmh": 20.2,
+    "gust_kmh": 21.6,
     "code": 3,
     "desc": "bedeckt"
   },
@@ -100,9 +100,9 @@
     "next_km": 1070.0
   },
   "fitness": {
-    "score": 70.1,
+    "score": 70.2,
     "tier": "Formstark",
-    "delta_30": -6.8,
+    "delta_30": -6.7,
     "delta_90": null,
     "best": 78.7,
     "subscores": {
@@ -123,8 +123,8 @@
       },
       "reg": {
         "label": "Regeneration",
-        "score": 67.2,
-        "n": 40
+        "score": 67.6,
+        "n": 41
       },
       "kon": {
         "label": "Konsistenz",
@@ -241,11 +241,11 @@
     "short": "Extra essen: ≈ 551 kcal (4 Dosen Cola / 6½ Maoam Bloxx / 5½ Scheiben Toast mit Honig)"
   },
   "zwift": {
-    "status": "sent",
+    "status": "unchanged",
     "name": "Bikedash 06-10 Grundlage Z2 107min",
     "event_id": 141947893,
     "detail": null,
     "date": "2026-10-06",
-    "at": "2026-10-06T01:17:59+00:00"
+    "at": "2026-10-06T11:12:12+00:00"
   }
 }
