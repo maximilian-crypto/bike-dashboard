@@ -1,11 +1,11 @@
 {
-  "generated_at": "2026-10-07T21:17:04+00:00",
-  "date": "2026-10-07",
+  "generated_at": "2026-10-08T05:57:35+00:00",
+  "date": "2026-10-08",
   "recommendation": {
     "kind": "TEMPO",
     "title": "Tempo-Einheit (Z3)",
     "readiness_band": "yellow",
-    "recovery_score": 63.0,
+    "recovery_score": 61.0,
     "zone_number": 3,
     "zone_label": "Z3 · Tempo",
     "hr_low": 158,
@@ -104,12 +104,12 @@
       }
     ],
     "rationale": [
-      "Whoop-Recovery heute: 63 %.",
+      "Whoop-Recovery heute: 61 %.",
       "Diese Woche bisher 0 / Ziel 44 Last (0 %, ≈ 0.7 h).",
       "Planwoche 4, Phase „Grundlage“ — noch 20 Wochen bis zum Saisonstart.",
       "Entlastungswoche (jede 4.): Ziel auf 65% — Anpassung passiert in der Erholung.",
       "Form (TSB) aktuell -5.",
-      "Erholung mittel, aber seit 20 Tagen kein harter Reiz — dosiertes Tempo (Z3), damit die Intensität nicht ganz einschläft."
+      "Erholung mittel, aber seit 21 Tagen kein harter Reiz — dosiertes Tempo (Z3), damit die Intensität nicht ganz einschläft."
     ],
     "guard_level": "ok",
     "warnings": [],
@@ -118,7 +118,7 @@
   },
   "zones": {
     "max_hr": 197,
-    "rest_hr": 68,
+    "rest_hr": 67,
     "lthr": null,
     "ftp": 170,
     "target_zone": 3,
@@ -129,13 +129,13 @@
     }
   },
   "weather": {
-    "temp_c": 13.3,
-    "wind_kmh": 4.8,
-    "wind_deg": 103,
-    "wind_dir": "O",
-    "gust_kmh": 11.2,
-    "code": 3,
-    "desc": "bedeckt"
+    "temp_c": 13.9,
+    "wind_kmh": 9.4,
+    "wind_deg": 310,
+    "wind_dir": "NW",
+    "gust_kmh": 19.8,
+    "code": 61,
+    "desc": "leichter Regen"
   },
   "milestone": {
     "total_km": 1050.0,
@@ -148,20 +148,20 @@
     "next_km": 1070.0
   },
   "fitness": {
-    "score": 64.9,
+    "score": 64.6,
     "tier": "Im Aufbau",
-    "delta_30": -4.3,
+    "delta_30": -4.2,
     "delta_90": null,
     "best": 78.7,
     "subscores": {
       "eff": {
         "label": "Effizienz",
-        "score": 55.3,
+        "score": 53.7,
         "n": 1
       },
       "cap": {
         "label": "Kapazität",
-        "score": 49.6,
+        "score": 49.7,
         "n": 20
       },
       "dur": {
@@ -171,16 +171,16 @@
       },
       "reg": {
         "label": "Regeneration",
-        "score": 67.6,
+        "score": 68.4,
         "n": 41
       },
       "kon": {
         "label": "Konsistenz",
         "score": 65.0,
-        "n": 35
+        "n": 33
       }
     },
-    "highlight": "⚡ Bei gleichem Puls bringst du heute **3,8 % mehr Leistung** aufs Pedal als zu Beginn deiner Aufzeichnung."
+    "highlight": "⚡ Bei gleichem Puls bringst du heute **2,7 % mehr Leistung** aufs Pedal als zu Beginn deiner Aufzeichnung."
   },
   "fuel": {
     "kind": "TEMPO",
@@ -289,11 +289,11 @@
     "short": "Extra essen: ≈ 481 kcal (3½ Dosen Cola / 6 Maoam Bloxx / 4½ Scheiben Toast mit Honig)"
   },
   "zwift": {
-    "status": "unchanged",
-    "name": "Bikedash 07-10 Tempo Z3 85min",
-    "event_id": 142286572,
+    "status": "sent",
+    "name": "Bikedash 08-10 Tempo Z3 85min",
+    "event_id": 142549113,
     "detail": null,
-    "date": "2026-10-07",
-    "at": "2026-10-07T21:17:03+00:00"
+    "date": "2026-10-08",
+    "at": "2026-10-08T05:57:33+00:00"
   }
 }
