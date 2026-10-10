@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-10-10T10:33:22+00:00",
+  "generated_at": "2026-10-10T14:27:26+00:00",
   "date": "2026-10-10",
   "recommendation": {
     "kind": "VO2MAX",
@@ -130,13 +130,13 @@
     }
   },
   "weather": {
-    "temp_c": 14.1,
-    "wind_kmh": 21.3,
-    "wind_deg": 233,
+    "temp_c": 12.7,
+    "wind_kmh": 20.5,
+    "wind_deg": 231,
     "wind_dir": "SW",
-    "gust_kmh": 43.6,
-    "code": 3,
-    "desc": "bedeckt"
+    "gust_kmh": 45.0,
+    "code": 80,
+    "desc": "Regenschauer"
   },
   "milestone": {
     "total_km": 1050.0,
@@ -269,11 +269,11 @@
     "short": "Extra essen: ≈ 291 kcal (2½ Dosen Cola / 3½ Maoam Bloxx / 3 Scheiben Toast mit Honig)"
   },
   "zwift": {
-    "status": "updated",
+    "status": "unchanged",
     "name": "Bikedash 10-10 4x4 VO2max Z5 50min",
     "event_id": 143119502,
     "detail": null,
     "date": "2026-10-10",
-    "at": "2026-10-10T10:33:21+00:00"
+    "at": "2026-10-10T14:27:25+00:00"
   }
 }
