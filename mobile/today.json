@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-10-10T14:27:26+00:00",
+  "generated_at": "2026-10-10T20:03:15+00:00",
   "date": "2026-10-10",
   "recommendation": {
     "kind": "VO2MAX",
@@ -130,13 +130,13 @@
     }
   },
   "weather": {
-    "temp_c": 12.7,
-    "wind_kmh": 20.5,
-    "wind_deg": 231,
+    "temp_c": 9.5,
+    "wind_kmh": 19.2,
+    "wind_deg": 218,
     "wind_dir": "SW",
-    "gust_kmh": 45.0,
-    "code": 80,
-    "desc": "Regenschauer"
+    "gust_kmh": 38.9,
+    "code": 3,
+    "desc": "bedeckt"
   },
   "milestone": {
     "total_km": 1050.0,
@@ -274,6 +274,6 @@
     "event_id": 143119502,
     "detail": null,
     "date": "2026-10-10",
-    "at": "2026-10-10T14:27:25+00:00"
+    "at": "2026-10-10T20:03:15+00:00"
   }
 }
