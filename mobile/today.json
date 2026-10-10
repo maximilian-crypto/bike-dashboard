@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-10-10T20:03:15+00:00",
+  "generated_at": "2026-10-10T23:31:41+00:00",
   "date": "2026-10-10",
   "recommendation": {
     "kind": "VO2MAX",
@@ -130,11 +130,11 @@
     }
   },
   "weather": {
-    "temp_c": 9.5,
-    "wind_kmh": 19.2,
-    "wind_deg": 218,
+    "temp_c": 8.2,
+    "wind_kmh": 17.4,
+    "wind_deg": 232,
     "wind_dir": "SW",
-    "gust_kmh": 38.9,
+    "gust_kmh": 38.5,
     "code": 3,
     "desc": "bedeckt"
   },
@@ -274,6 +274,6 @@
     "event_id": 143119502,
     "detail": null,
     "date": "2026-10-10",
-    "at": "2026-10-10T20:03:15+00:00"
+    "at": "2026-10-10T23:31:40+00:00"
   }
 }
