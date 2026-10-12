@@ -1,11 +1,11 @@
 {
-  "generated_at": "2026-10-11T20:14:28+00:00",
-  "date": "2026-10-11",
+  "generated_at": "2026-10-12T05:51:21+00:00",
+  "date": "2026-10-12",
   "recommendation": {
     "kind": "ENDURANCE",
     "title": "Grundlagenausdauer (Z2)",
     "readiness_band": "yellow",
-    "recovery_score": 37.0,
+    "recovery_score": 46.0,
     "zone_number": 2,
     "zone_label": "Z2 · Grundlage",
     "hr_low": 145,
@@ -24,7 +24,7 @@
     ],
     "target_distance_km": 34.8,
     "week_hours": 0.0,
-    "target_hours": 0.7,
+    "target_hours": 1.1,
     "tsb": -5.3,
     "power_low": 95,
     "power_high": 128,
@@ -56,10 +56,9 @@
       }
     ],
     "rationale": [
-      "Whoop-Recovery heute: 37 %.",
-      "Diese Woche bisher 0 / Ziel 44 Last (0 %, ≈ 0.7 h).",
-      "Planwoche 4, Phase „Grundlage“ — noch 20 Wochen bis zum Saisonstart.",
-      "Entlastungswoche (jede 4.): Ziel auf 65% — Anpassung passiert in der Erholung.",
+      "Whoop-Recovery heute: 46 %.",
+      "Diese Woche bisher 0 / Ziel 67 Last (0 %, ≈ 1.1 h).",
+      "Planwoche 5, Phase „Grundlage“ — noch 20 Wochen bis zum Saisonstart.",
       "Form (TSB) aktuell -5.",
       "Erholung mittel & Woche noch dünn: ruhige Grundlage (Z2)."
     ],
@@ -70,7 +69,7 @@
   },
   "zones": {
     "max_hr": 197,
-    "rest_hr": 68,
+    "rest_hr": 66,
     "lthr": null,
     "ftp": 170,
     "target_zone": 2,
@@ -81,13 +80,13 @@
     }
   },
   "weather": {
-    "temp_c": 7.3,
-    "wind_kmh": 5.9,
-    "wind_deg": 284,
-    "wind_dir": "W",
-    "gust_kmh": 12.6,
-    "code": 0,
-    "desc": "klar"
+    "temp_c": 4.3,
+    "wind_kmh": 3.0,
+    "wind_deg": 194,
+    "wind_dir": "S",
+    "gust_kmh": 6.5,
+    "code": 2,
+    "desc": "teils bewölkt"
   },
   "milestone": {
     "total_km": 1050.0,
@@ -100,21 +99,16 @@
     "next_km": 1070.0
   },
   "fitness": {
-    "score": 65.4,
+    "score": 67.9,
     "tier": "Im Aufbau",
-    "delta_30": -3.8,
-    "delta_90": 14.6,
-    "best": 78.7,
+    "delta_30": -0.6,
+    "delta_90": 18.0,
+    "best": 78.6,
     "subscores": {
-      "eff": {
-        "label": "Effizienz",
-        "score": 55.3,
-        "n": 1
-      },
       "cap": {
         "label": "Kapazität",
-        "score": 49.6,
-        "n": 20
+        "score": 45.9,
+        "n": 19
       },
       "dur": {
         "label": "Ermüdungsresistenz",
@@ -128,11 +122,11 @@
       },
       "kon": {
         "label": "Konsistenz",
-        "score": 65.0,
-        "n": 33
+        "score": 61.0,
+        "n": 30
       }
     },
-    "highlight": "⚡ Bei gleichem Puls bringst du heute **3,8 % mehr Leistung** aufs Pedal als zu Beginn deiner Aufzeichnung."
+    "highlight": "🚴 Bei **152 bpm** fährst du inzwischen rund **22,8 km/h** — im Ausgangsfenster waren es 19,4 km/h (+3,4 km/h)."
   },
   "fuel": {
     "kind": "ENDURANCE",
@@ -241,11 +235,11 @@
     "short": "Extra essen: ≈ 551 kcal (4 Dosen Cola / 6½ Maoam Bloxx / 5½ Scheiben Toast mit Honig)"
   },
   "zwift": {
-    "status": "unchanged",
-    "name": "Bikedash 11-10 Grundlage Z2 107min",
-    "event_id": 143370805,
+    "status": "sent",
+    "name": "Bikedash 12-10 Grundlage Z2 107min",
+    "event_id": 143741418,
     "detail": null,
-    "date": "2026-10-11",
-    "at": "2026-10-11T20:14:27+00:00"
+    "date": "2026-10-12",
+    "at": "2026-10-12T05:51:19+00:00"
   }
 }
