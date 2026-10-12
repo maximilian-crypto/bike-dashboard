@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-10-12T05:51:21+00:00",
+  "generated_at": "2026-10-12T11:52:04+00:00",
   "date": "2026-10-12",
   "recommendation": {
     "kind": "ENDURANCE",
@@ -80,11 +80,11 @@
     }
   },
   "weather": {
-    "temp_c": 4.3,
-    "wind_kmh": 3.0,
-    "wind_deg": 194,
+    "temp_c": 12.9,
+    "wind_kmh": 5.1,
+    "wind_deg": 176,
     "wind_dir": "S",
-    "gust_kmh": 6.5,
+    "gust_kmh": 15.1,
     "code": 2,
     "desc": "teils bewölkt"
   },
@@ -235,11 +235,11 @@
     "short": "Extra essen: ≈ 551 kcal (4 Dosen Cola / 6½ Maoam Bloxx / 5½ Scheiben Toast mit Honig)"
   },
   "zwift": {
-    "status": "sent",
+    "status": "unchanged",
     "name": "Bikedash 12-10 Grundlage Z2 107min",
     "event_id": 143741418,
     "detail": null,
     "date": "2026-10-12",
-    "at": "2026-10-12T05:51:19+00:00"
+    "at": "2026-10-12T11:52:03+00:00"
   }
 }
