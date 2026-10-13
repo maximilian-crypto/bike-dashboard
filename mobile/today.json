@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-10-13T11:40:52+00:00",
+  "generated_at": "2026-10-13T11:43:47+00:00",
   "date": "2026-10-13",
   "recommendation": {
     "kind": "TEMPO",
@@ -282,11 +282,11 @@
     "short": "Extra essen: ≈ 481 kcal (3½ Dosen Cola / 6 Maoam Bloxx / 4½ Scheiben Toast mit Honig)"
   },
   "zwift": {
-    "status": "updated",
+    "status": "unchanged",
     "name": "Bikedash 13-10 Tempo Z3 85min",
     "event_id": 144096191,
     "detail": null,
     "date": "2026-10-13",
-    "at": "2026-10-13T11:40:50+00:00"
+    "at": "2026-10-13T11:43:46+00:00"
   }
 }
