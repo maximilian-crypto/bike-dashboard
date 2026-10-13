@@ -1,11 +1,11 @@
 {
-  "generated_at": "2026-10-12T17:50:48+00:00",
-  "date": "2026-10-12",
+  "generated_at": "2026-10-13T02:00:39+00:00",
+  "date": "2026-10-13",
   "recommendation": {
     "kind": "ENDURANCE",
     "title": "Grundlagenausdauer (Z2)",
-    "readiness_band": "yellow",
-    "recovery_score": 46.0,
+    "readiness_band": "unknown",
+    "recovery_score": null,
     "zone_number": 2,
     "zone_label": "Z2 · Grundlage",
     "hr_low": 145,
@@ -56,11 +56,11 @@
       }
     ],
     "rationale": [
-      "Whoop-Recovery heute: 46 %.",
+      "Keine aktuelle Whoop-Recovery — neutrale Annahme.",
       "Diese Woche bisher 0 / Ziel 67 Last (0 %, ≈ 1.1 h).",
-      "Planwoche 5, Phase „Grundlage“ — noch 20 Wochen bis zum Saisonstart.",
+      "Planwoche 5, Phase „Grundlage“ — noch 19 Wochen bis zum Saisonstart.",
       "Form (TSB) aktuell -5.",
-      "Erholung mittel & Woche noch dünn: ruhige Grundlage (Z2)."
+      "Ohne Erholungsdaten konservativ: ruhige Grundlage (Z2)."
     ],
     "guard_level": "ok",
     "warnings": [],
@@ -75,18 +75,17 @@
     "target_zone": 2,
     "method": "Karvonen/HRR",
     "load_sources": {
-      "power": 8,
-      "hr": 1
+      "power": 8
     }
   },
   "weather": {
-    "temp_c": 8.7,
-    "wind_kmh": 3.5,
-    "wind_deg": 156,
+    "temp_c": 4.7,
+    "wind_kmh": 8.6,
+    "wind_deg": 123,
     "wind_dir": "SO",
-    "gust_kmh": 7.6,
-    "code": 45,
-    "desc": "Nebel"
+    "gust_kmh": 16.9,
+    "code": 1,
+    "desc": "überwiegend klar"
   },
   "milestone": {
     "total_km": 1050.0,
@@ -99,16 +98,16 @@
     "next_km": 1070.0
   },
   "fitness": {
-    "score": 67.9,
+    "score": 66.9,
     "tier": "Im Aufbau",
-    "delta_30": -0.6,
-    "delta_90": 18.0,
+    "delta_30": -1.6,
+    "delta_90": 17.0,
     "best": 78.6,
     "subscores": {
       "cap": {
         "label": "Kapazität",
-        "score": 45.9,
-        "n": 19
+        "score": 44.5,
+        "n": 17
       },
       "dur": {
         "label": "Ermüdungsresistenz",
@@ -117,12 +116,12 @@
       },
       "reg": {
         "label": "Regeneration",
-        "score": 71.0,
-        "n": 41
+        "score": 70.6,
+        "n": 40
       },
       "kon": {
         "label": "Konsistenz",
-        "score": 61.0,
+        "score": 58.4,
         "n": 30
       }
     },
@@ -235,11 +234,11 @@
     "short": "Extra essen: ≈ 551 kcal (4 Dosen Cola / 6½ Maoam Bloxx / 5½ Scheiben Toast mit Honig)"
   },
   "zwift": {
-    "status": "unchanged",
-    "name": "Bikedash 12-10 Grundlage Z2 107min",
-    "event_id": 143741418,
+    "status": "sent",
+    "name": "Bikedash 13-10 Grundlage Z2 107min",
+    "event_id": 144096191,
     "detail": null,
-    "date": "2026-10-12",
-    "at": "2026-10-12T17:50:47+00:00"
+    "date": "2026-10-13",
+    "at": "2026-10-13T02:00:38+00:00"
   }
 }
