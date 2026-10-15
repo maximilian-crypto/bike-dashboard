@@ -1,11 +1,11 @@
 {
-  "generated_at": "2026-10-14T23:13:48+00:00",
-  "date": "2026-10-14",
+  "generated_at": "2026-10-15T04:32:20+00:00",
+  "date": "2026-10-15",
   "recommendation": {
     "kind": "ENDURANCE",
     "title": "Grundlagenausdauer (Z2)",
-    "readiness_band": "yellow",
-    "recovery_score": 36.0,
+    "readiness_band": "unknown",
+    "recovery_score": null,
     "zone_number": 2,
     "zone_label": "Z2 · Grundlage",
     "hr_low": 144,
@@ -56,11 +56,11 @@
       }
     ],
     "rationale": [
-      "Whoop-Recovery heute: 36 %.",
+      "Keine aktuelle Whoop-Recovery — neutrale Annahme.",
       "Diese Woche bisher 0 / Ziel 67 Last (0 %, ≈ 1.1 h).",
       "Planwoche 5, Phase „Grundlage“ — noch 19 Wochen bis zum Saisonstart.",
       "Form (TSB) aktuell -5.",
-      "Erholung mittel & Woche noch dünn: ruhige Grundlage (Z2)."
+      "Ohne Erholungsdaten konservativ: ruhige Grundlage (Z2)."
     ],
     "guard_level": "ok",
     "warnings": [],
@@ -79,11 +79,11 @@
     }
   },
   "weather": {
-    "temp_c": 7.6,
-    "wind_kmh": 7.4,
-    "wind_deg": 203,
-    "wind_dir": "SW",
-    "gust_kmh": 15.5,
+    "temp_c": 8.1,
+    "wind_kmh": 11.2,
+    "wind_deg": 180,
+    "wind_dir": "S",
+    "gust_kmh": 21.2,
     "code": 3,
     "desc": "bedeckt"
   },
@@ -98,10 +98,10 @@
     "next_km": 1070.0
   },
   "fitness": {
-    "score": 66.6,
+    "score": 67.3,
     "tier": "Im Aufbau",
-    "delta_30": -2.0,
-    "delta_90": 17.1,
+    "delta_30": -1.3,
+    "delta_90": 17.8,
     "best": 78.5,
     "subscores": {
       "cap": {
@@ -116,13 +116,13 @@
       },
       "reg": {
         "label": "Regeneration",
-        "score": 71.0,
-        "n": 41
+        "score": 74.1,
+        "n": 40
       },
       "kon": {
         "label": "Konsistenz",
         "score": 58.5,
-        "n": 29
+        "n": 28
       }
     },
     "highlight": "🚴 Bei **150 bpm** fährst du inzwischen rund **23,0 km/h** — im Ausgangsfenster waren es 19,5 km/h (+3,5 km/h)."
@@ -234,11 +234,11 @@
     "short": "Extra essen: ≈ 551 kcal (4 Dosen Cola / 6½ Maoam Bloxx / 5½ Scheiben Toast mit Honig)"
   },
   "zwift": {
-    "status": "unchanged",
-    "name": "Bikedash 14-10 Grundlage Z2 107min",
-    "event_id": 144476020,
+    "status": "sent",
+    "name": "Bikedash 15-10 Grundlage Z2 107min",
+    "event_id": 144748396,
     "detail": null,
-    "date": "2026-10-14",
-    "at": "2026-10-14T23:13:48+00:00"
+    "date": "2026-10-15",
+    "at": "2026-10-15T04:32:19+00:00"
   }
 }
