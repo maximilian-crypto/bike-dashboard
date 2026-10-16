@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-10-16T04:26:06+00:00",
+  "generated_at": "2026-10-16T08:58:01+00:00",
   "date": "2026-10-16",
   "recommendation": {
     "kind": "TEMPO",
@@ -127,13 +127,13 @@
     }
   },
   "weather": {
-    "temp_c": 13.5,
-    "wind_kmh": 11.4,
-    "wind_deg": 191,
+    "temp_c": 15.5,
+    "wind_kmh": 14.1,
+    "wind_deg": 183,
     "wind_dir": "S",
-    "gust_kmh": 22.7,
-    "code": 3,
-    "desc": "bedeckt"
+    "gust_kmh": 30.6,
+    "code": 2,
+    "desc": "teils bewölkt"
   },
   "milestone": {
     "total_km": 1050.0,
@@ -282,11 +282,11 @@
     "short": "Extra essen: ≈ 481 kcal (3½ Dosen Cola / 6 Maoam Bloxx / 4½ Scheiben Toast mit Honig)"
   },
   "zwift": {
-    "status": "error",
-    "name": null,
-    "event_id": null,
-    "detail": "Kalender lesen: HTTP 503 Maintenance until 2026-10-16T04:30:00Z",
+    "status": "sent",
+    "name": "Bikedash 16-10 Tempo Z3 85min",
+    "event_id": 145139841,
+    "detail": null,
     "date": "2026-10-16",
-    "at": "2026-10-16T04:26:05+00:00"
+    "at": "2026-10-16T08:57:59+00:00"
   }
 }
