@@ -1,54 +1,102 @@
 {
-  "generated_at": "2026-10-15T23:03:46+00:00",
-  "date": "2026-10-15",
+  "generated_at": "2026-10-16T04:26:06+00:00",
+  "date": "2026-10-16",
   "recommendation": {
-    "kind": "ENDURANCE",
-    "title": "Grundlagenausdauer (Z2)",
+    "kind": "TEMPO",
+    "title": "Tempo-Einheit (Z3)",
     "readiness_band": "yellow",
-    "recovery_score": 34.0,
-    "zone_number": 2,
-    "zone_label": "Z2 · Grundlage",
-    "hr_low": 145,
-    "hr_high": 158,
-    "cadence": "85–95",
+    "recovery_score": 60.0,
+    "zone_number": 3,
+    "zone_label": "Z3 · Tempo",
+    "hr_low": 157,
+    "hr_high": 171,
+    "cadence": "85–100",
     "cadence_low": 85,
-    "cadence_high": 95,
-    "rpe": "3–4",
+    "cadence_high": 100,
+    "rpe": "5–6",
     "duration_min": [
-      91,
-      124
+      76,
+      103
     ],
     "distance_km": [
-      31.3,
-      38.3
+      29.8,
+      36.4
     ],
-    "target_distance_km": 34.8,
+    "target_distance_km": 33.1,
     "week_hours": 0.0,
     "target_hours": 1.1,
-    "tsb": -5.3,
-    "power_low": 95,
-    "power_high": 128,
-    "power_summary": "10' ein · 89' @ 95–128 W · 8' aus",
+    "tsb": -5.2,
+    "power_low": 129,
+    "power_high": 153,
+    "power_summary": "12' ein · 4×12' @ 129–153 W · 10' aus",
     "power_plan": [
       {
         "label": "Einfahren",
-        "minutes": 10,
+        "minutes": 12,
         "low_w": 76,
         "high_w": 94,
         "zone": 1,
-        "cadence": "85–95"
+        "cadence": "85–100"
       },
       {
-        "label": "Hauptteil",
-        "minutes": 89,
-        "low_w": 95,
-        "high_w": 128,
-        "zone": 2,
-        "cadence": "85–95"
+        "label": "Intervall 1/4",
+        "minutes": 12,
+        "low_w": 129,
+        "high_w": 153,
+        "zone": 3,
+        "cadence": "85–100"
+      },
+      {
+        "label": "Pause",
+        "minutes": 5,
+        "low_w": 76,
+        "high_w": 94,
+        "zone": 1,
+        "cadence": null
+      },
+      {
+        "label": "Intervall 2/4",
+        "minutes": 12,
+        "low_w": 129,
+        "high_w": 153,
+        "zone": 3,
+        "cadence": "85–100"
+      },
+      {
+        "label": "Pause",
+        "minutes": 5,
+        "low_w": 76,
+        "high_w": 94,
+        "zone": 1,
+        "cadence": null
+      },
+      {
+        "label": "Intervall 3/4",
+        "minutes": 12,
+        "low_w": 129,
+        "high_w": 153,
+        "zone": 3,
+        "cadence": "85–100"
+      },
+      {
+        "label": "Pause",
+        "minutes": 5,
+        "low_w": 76,
+        "high_w": 94,
+        "zone": 1,
+        "cadence": null
+      },
+      {
+        "label": "Intervall 4/4",
+        "minutes": 12,
+        "low_w": 129,
+        "high_w": 153,
+        "zone": 3,
+        "cadence": "85–100"
       },
       {
         "label": "Ausfahren",
-        "minutes": 8,
+        "minutes": 10,
         "low_w": 76,
         "high_w": 94,
         "zone": 1,
@@ -56,11 +104,11 @@
       }
     ],
     "rationale": [
-      "Whoop-Recovery heute: 34 %.",
+      "Whoop-Recovery heute: 60 %.",
       "Diese Woche bisher 0 / Ziel 67 Last (0 %, ≈ 1.1 h).",
       "Planwoche 5, Phase „Grundlage“ — noch 19 Wochen bis zum Saisonstart.",
       "Form (TSB) aktuell -5.",
-      "Erholung mittel & Woche noch dünn: ruhige Grundlage (Z2)."
+      "Erholung mittel, aber seit 29 Tagen kein harter Reiz — dosiertes Tempo (Z3), damit die Intensität nicht ganz einschläft."
     ],
     "guard_level": "ok",
     "warnings": [],
@@ -69,19 +117,19 @@
   },
   "zones": {
     "max_hr": 197,
-    "rest_hr": 66,
+    "rest_hr": 65,
     "lthr": null,
     "ftp": 170,
-    "target_zone": 2,
+    "target_zone": 3,
     "method": "Karvonen/HRR",
     "load_sources": {
-      "power": 8
+      "power": 7
     }
   },
   "weather": {
-    "temp_c": 13.7,
-    "wind_kmh": 10.5,
-    "wind_deg": 196,
+    "temp_c": 13.5,
+    "wind_kmh": 11.4,
+    "wind_deg": 191,
     "wind_dir": "S",
     "gust_kmh": 22.7,
     "code": 3,
@@ -98,15 +146,15 @@
     "next_km": 1070.0
   },
   "fitness": {
-    "score": 66.6,
+    "score": 67.4,
     "tier": "Im Aufbau",
-    "delta_30": -2.4,
-    "delta_90": 16.7,
-    "best": 78.6,
+    "delta_30": -1.2,
+    "delta_90": 17.9,
+    "best": 78.5,
     "subscores": {
       "cap": {
         "label": "Kapazität",
-        "score": 43.3,
+        "score": 43.4,
         "n": 15
       },
       "dur": {
@@ -116,24 +164,24 @@
       },
       "reg": {
         "label": "Regeneration",
-        "score": 71.0,
+        "score": 74.7,
         "n": 41
       },
       "kon": {
         "label": "Konsistenz",
-        "score": 58.4,
+        "score": 58.5,
         "n": 28
       }
     },
-    "highlight": "🚴 Bei **152 bpm** fährst du inzwischen rund **22,9 km/h** — im Ausgangsfenster waren es 19,4 km/h (+3,5 km/h)."
+    "highlight": "🚴 Bei **150 bpm** fährst du inzwischen rund **23,0 km/h** — im Ausgangsfenster waren es 19,5 km/h (+3,5 km/h)."
   },
   "fuel": {
-    "kind": "ENDURANCE",
-    "duration_min": 107,
-    "kcal_extra": 551,
+    "kind": "TEMPO",
+    "duration_min": 89,
+    "kcal_extra": 481,
     "kcal_range": [
-      440,
-      660
+      380,
+      580
     ],
     "source": "power",
     "weight_known": false,
@@ -141,29 +189,29 @@
       {
         "key": "before",
         "title": "Vorher",
-        "kcal": 165,
-        "carbs_g": 44,
+        "kcal": 144,
+        "carbs_g": 33,
         "hint": "30–90 min vor dem Start",
         "portions": [
           {
             "key": "toast",
             "icon": "🍞",
-            "count": 2.0,
-            "label": "2 Scheiben Toast mit Honig"
+            "count": 1.5,
+            "label": "1½ Scheiben Toast mit Honig"
           },
           {
             "key": "banana",
             "icon": "🍌",
-            "count": 2.0,
-            "label": "2 Bananen"
+            "count": 1.5,
+            "label": "1½ Bananen"
           }
         ],
-        "text": "2 Scheiben Toast mit Honig oder 2 Bananen"
+        "text": "1½ Scheiben Toast mit Honig oder 1½ Bananen"
       },
       {
         "key": "during",
         "title": "Unterwegs",
-        "kcal": 275,
+        "kcal": 241,
         "carbs_g": 70,
         "hint": "ab der ersten halben Stunde, in Schlucken bzw. Stücken",
         "portions": [
@@ -176,24 +224,24 @@
           {
             "key": "maoam",
             "icon": "🍬",
-            "count": 3.5,
-            "label": "3½ Maoam Bloxx"
+            "count": 3.0,
+            "label": "3 Maoam Bloxx"
           }
         ],
-        "text": "2 Dosen Cola oder 3½ Maoam Bloxx"
+        "text": "2 Dosen Cola oder 3 Maoam Bloxx"
       },
       {
         "key": "after",
         "title": "Danach",
-        "kcal": 110,
-        "carbs_g": 33,
+        "kcal": 96,
+        "carbs_g": 22,
         "hint": "innerhalb von 1–2 h, gern mit der nächsten Mahlzeit",
         "portions": [
           {
             "key": "toast",
             "icon": "🍞",
-            "count": 1.5,
-            "label": "1½ Scheiben Toast mit Honig"
+            "count": 1.0,
+            "label": "1 Scheibe Toast mit Honig"
           },
           {
             "key": "cola",
@@ -202,27 +250,27 @@
             "label": "1 Dose Cola"
           }
         ],
-        "text": "1½ Scheiben Toast mit Honig oder 1 Dose Cola"
+        "text": "1 Scheibe Toast mit Honig oder 1 Dose Cola"
       }
     ],
     "equivalents": [
       {
         "key": "cola",
         "icon": "🥤",
-        "count": 4.0,
-        "label": "4 Dosen Cola"
+        "count": 3.5,
+        "label": "3½ Dosen Cola"
       },
       {
         "key": "maoam",
         "icon": "🍬",
-        "count": 6.5,
-        "label": "6½ Maoam Bloxx"
+        "count": 6.0,
+        "label": "6 Maoam Bloxx"
       },
       {
         "key": "toast",
         "icon": "🍞",
-        "count": 5.5,
-        "label": "5½ Scheiben Toast mit Honig"
+        "count": 4.5,
+        "label": "4½ Scheiben Toast mit Honig"
       }
     ],
     "notes": [
@@ -231,14 +279,14 @@
       "Ohne hinterlegtes Gewicht mit 75 kg gerechnet (Einrichtung → Körpergewicht)."
     ],
     "done_today_kcal": null,
-    "short": "Extra essen: ≈ 551 kcal (4 Dosen Cola / 6½ Maoam Bloxx / 5½ Scheiben Toast mit Honig)"
+    "short": "Extra essen: ≈ 481 kcal (3½ Dosen Cola / 6 Maoam Bloxx / 4½ Scheiben Toast mit Honig)"
   },
   "zwift": {
-    "status": "unchanged",
-    "name": "Bikedash 15-10 Grundlage Z2 107min",
-    "event_id": 144748396,
-    "detail": null,
-    "date": "2026-10-15",
-    "at": "2026-10-15T23:03:45+00:00"
+    "status": "error",
+    "name": null,
+    "event_id": null,
+    "detail": "Kalender lesen: HTTP 503 Maintenance until 2026-10-16T04:30:00Z",
+    "date": "2026-10-16",
+    "at": "2026-10-16T04:26:05+00:00"
   }
 }
