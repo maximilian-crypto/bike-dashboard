@@ -189,7 +189,7 @@ THRESHOLD. TSB −20…−10 → dosiertes TEMPO. Gelbe Recovery (≥ 50) nach
 Nutzerentscheid (Okt. 2026): Gesundheit vor Leistung, aber Leistung soll
 kommen — „wenn kürzere Intervalle mehr bringen, yallah".
 
-**Wiedereinstieg, Kurz-Variante, Schlaf & Wochenrückblick (seit 2026-10-20,
+**Wiedereinstieg, Kurz-Variante, Schlaf & Wochenrückblick (seit 2026-10-18,
 aus dem Ideen-Radar #5, vom Nutzer freigegeben):**
 - **Wiedereinstieg** (`recommend.comeback_state`): Nach ≥ 7 trainingsfreien Tagen
   sind die ersten 2 Fahrten höchstens Z2 und auf 75 % gekürzt. Grund: die
