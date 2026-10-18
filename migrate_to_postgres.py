@@ -57,6 +57,8 @@ def main() -> int:
     print(f"  Whoop-Recovery:   {n}")
     n = store.upsert_whoop_cycles(rows_of("whoop_cycles"))
     print(f"  Whoop-Zyklen:     {n}")
+    n = store.upsert_whoop_sleep(rows_of("whoop_sleep"))
+    print(f"  Whoop-Schlaf:     {n}")
 
     # Wind-Segmente pro Fahrt übertragen.
     wind = rows_of("wind_segments")

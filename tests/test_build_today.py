@@ -110,7 +110,7 @@ def test_load_sources_survives_a_broken_database(monkeypatch):
     def _boom():
         raise RuntimeError("DB weg")
     monkeypatch.setattr(build_today.dataprep, "prep_rides", _boom)
-    assert build_today._load_sources() == {}
+    assert build_today._load_sources(dt.date(2026, 9, 17)) == {}
 
 
 # --- Zwift-Zustellung (über intervals.icu) ---------------------------------
@@ -145,7 +145,8 @@ def test_today_json_pushes_workout_to_intervals(tmp_path, monkeypatch):
 
         def post(self, url, **kw):
             calls.append(("POST", url))
-            assert kw["json"]["external_id"] == "bikedash-2026-06-15"
+            assert kw["json"]["external_id"] in ("bikedash-2026-06-15",
+                                                 "bikedash-2026-06-15-kurz")
             assert kw["json"]["name"].startswith("Bikedash 15-06")
             return _Resp({"id": 42})
 
@@ -163,7 +164,9 @@ def test_today_json_pushes_workout_to_intervals(tmp_path, monkeypatch):
         return
     assert payload["zwift"]["status"] == "sent"
     assert payload["zwift"]["event_id"] == 42
-    assert [c[0] for c in calls] == ["GET", "POST"]
+    # Volle Einheit + Kurz-Variante, ein Kalender-Abruf für beide.
+    assert [c[0] for c in calls] == ["GET", "POST", "POST"]
+    assert payload["zwift"]["short_status"] == "sent"
     assert "athlete/i12345/" in calls[1][1]
     last = zwift.last_result()
     assert last is not None and last.status == "sent" and last.date == "2026-06-15"

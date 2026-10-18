@@ -228,3 +228,50 @@ def test_remember_and_last_result_roundtrip():
 def test_status_line_reports_errors():
     res = zwift.PushResult("error", detail="HTTP 401 Unauthorized", date="2026-09-18")
     assert "Fehler" in zwift.status_line(res, today=DAY) and "401" in zwift.status_line(res, today=DAY)
+
+
+# --- Kurz-Variante: zweiter Eintrag pro Tag ------------------------------------
+
+def _rc_with_short(kind: str, minutes: int):
+    rc = _rc(kind, minutes)
+    blocks = power.short_structure(kind, FTP, "85–95")
+    rc.short_plan = [{"label": b.label, "minutes": b.minutes, "low_w": b.low_w,
+                      "high_w": b.high_w, "zone": b.zone, "cadence": b.cadence}
+                     for b in blocks]
+    return rc
+
+
+def test_full_and_short_variant_both_land_in_zwift():
+    s = _Session()
+    res = zwift.push_today(CFG, _rc_with_short("ENDURANCE", 89), DAY, session=s)
+    assert [c[0] for c in s.calls] == ["GET", "POST", "POST"]   # ein GET für beide
+    posted = [c[2]["json"] for c in s.calls if c[0] == "POST"]
+    assert [p["external_id"] for p in posted] == ["bikedash-2026-09-18",
+                                                  "bikedash-2026-09-18-kurz"]
+    assert posted[1]["name"] == "Bikedash 18-09 Kurz Grundlage Z2 30min"
+    assert "Kurz-Variante" in posted[1]["description"]
+    assert res.status == "sent" and res.short_status == "sent"
+    line = zwift.status_line(res, today=DAY)
+    assert "Kurz Grundlage Z2 30min" in line
+
+
+def test_short_variant_is_idempotent_and_updated_independently():
+    rc = _rc_with_short("ENDURANCE", 89)
+    full = zwift.event_payload(rc, DAY, FTP)
+    short = zwift.event_payload(rc, DAY, FTP, short=True)
+    existing = [{"id": 1, **full}, {"id": 2, **short, "description": "alt"}]
+    s = _Session(existing=existing)
+    res = zwift.push_today(CFG, rc, DAY, session=s)
+    assert res.status == "unchanged" and res.short_status == "updated"
+    assert [c[0] for c in s.calls] == ["GET", "PUT"]
+    assert s.calls[1][1].endswith("/events/2")
+
+
+def test_rest_day_removes_both_variants():
+    s = _Session(existing=[
+        {"id": 7, "external_id": "bikedash-2026-09-18", "name": "voll"},
+        {"id": 8, "external_id": "bikedash-2026-09-18-kurz", "name": "kurz"},
+    ])
+    res = zwift.push_today(CFG, _rc("REST", 0), DAY, session=s)
+    assert res.status == "deleted" and res.short_status == "deleted"
+    assert [c[0] for c in s.calls] == ["GET", "DELETE", "DELETE"]

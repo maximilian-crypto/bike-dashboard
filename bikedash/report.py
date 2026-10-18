@@ -158,9 +158,13 @@ def build_text(cfg: dict[str, Any], today: dt.date | None = None,
         hr = f" (HF {rc.hr_low}–{rc.hr_high})" if rc.hr_low else ""
         parts.append(f"{rc.title}: {rc.duration_min[0]}–{rc.duration_min[1]} min{power}{hr}, "
                      f"Trittfrequenz {rc.cadence}.")
+        if rc.short_duration_min:
+            sw = f" ({rc.short_summary})" if rc.short_summary else ""
+            parts.append(f"Wenig Kraft? Kurz-Variante: {rc.short_duration_min} min{sw}.")
         last = zwift.last_result()
         if last is not None and last.ok and last.date == today.isoformat():
-            parts.append("Zwift: Workout liegt bereit (Workouts → Custom → Intervals.icu).")
+            both = " — voll und kurz" if last.short_status in ("sent", "updated", "unchanged") else ""
+            parts.append(f"Zwift: Workout liegt bereit{both} (Workouts → Custom → Intervals.icu).")
     for w in rc.warnings:
         parts.append(f"⚠️ {w}")
     line = fuel_line(rc, today)
@@ -211,7 +215,10 @@ def fuel_line(rc: Any, today: dt.date | None = None) -> str:
         return "🍽 Ruhetag: kein Extra nötig — normale Mahlzeiten zählen trotzdem." \
             if rc.kind == "REST" else ""
     bits = [f"{p.title.lower()} {p.portions[0].label}" for p in fp.phases]
-    return f"🍽 Extra essen ≈ {fp.kcal_extra} kcal: " + " · ".join(bits) + "."
+    line = f"🍽 Extra essen ≈ {fp.kcal_extra} kcal: " + " · ".join(bits) + "."
+    if fp.fluid_text:
+        line += f" {fp.fluid_text}."
+    return line
 
 
 def fitness_line(today: dt.date | None = None) -> str:

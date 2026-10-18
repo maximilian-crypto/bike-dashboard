@@ -50,6 +50,19 @@ COOLDOWN_MIN = {"RECOVERY": 5, "ENDURANCE": 8, "TEMPO": 10, "THRESHOLD": 10, "VO
 
 MIN_REPS = 2
 
+# Kurz-Variante je Einheitentyp: (Gesamtdauer, Einfahren, Ausfahren, max.
+# Intervalle). Für Tage, an denen Kraft oder Zeit nicht fürs Volle reichen —
+# sie behält den Kern der Einheit (die Zone bzw. die harten Minuten) und
+# streicht Umfang. Umfang lässt sich über Wochen deutlich senken, ohne Form zu
+# verlieren, solange die Intensität bleibt (Spiering et al. 2021, JSCR).
+SHORT_PLAN: dict[str, tuple[int, int, int, int | None]] = {
+    "RECOVERY": (20, 5, 5, None),
+    "ENDURANCE": (30, 5, 5, None),
+    "TEMPO": (30, 8, 5, None),
+    "THRESHOLD": (35, 8, 5, 2),
+    "VO2MAX": (30, 8, 5, 2),      # 2×4 statt 4×4
+}
+
 
 @dataclass
 class PowerZone:
@@ -88,7 +101,8 @@ def zone_for(number: int | None, ftp: float | None) -> PowerZone | None:
 
 
 def structure(kind: str, duration_min: int, ftp: float | None,
-              cadence: str | None = None) -> list[Block]:
+              cadence: str | None = None, warmup: int | None = None,
+              cooldown: int | None = None, max_reps: int | None = None) -> list[Block]:
     """Tagesempfehlung als abfahrbare Blöcke.
 
     Die Intervallzahl ergibt sich aus der verfügbaren Hauptzeit, nicht aus einer
@@ -100,7 +114,8 @@ def structure(kind: str, duration_min: int, ftp: float | None,
     if not ftp or ftp <= 0 or duration_min <= 0 or kind not in INTERVALS:
         return []
 
-    warm, cool = WARMUP_MIN[kind], COOLDOWN_MIN[kind]
+    warm = WARMUP_MIN[kind] if warmup is None else warmup
+    cool = COOLDOWN_MIN[kind] if cooldown is None else cooldown
     plan = INTERVALS[kind]
     z1 = zone_for(1, ftp)
     assert z1 is not None  # ftp > 0 ist oben geprüft
@@ -117,6 +132,8 @@ def structure(kind: str, duration_min: int, ftp: float | None,
         work_min, rest_min, work_zone, rest_zone = plan
         reps = int((main_min + rest_min) // (work_min + rest_min))
         reps = min(reps, MAX_REPS.get(kind, reps))
+        if max_reps is not None:
+            reps = min(reps, max_reps)
         if reps >= MIN_REPS:
             wz = zone_for(work_zone, ftp)
             rz = zone_for(rest_zone, ftp)
@@ -140,6 +157,21 @@ def structure(kind: str, duration_min: int, ftp: float | None,
 
     blocks.append(Block("Ausfahren", cool, z1.low_w, z1.high_w, 1, None))
     return blocks
+
+
+def short_minutes(kind: str) -> int:
+    """Dauer der Kurz-Variante — auch ohne FTP (dann gilt die HF-Zone)."""
+    return SHORT_PLAN[kind][0] if kind in SHORT_PLAN else 0
+
+
+def short_structure(kind: str, ftp: float | None,
+                    cadence: str | None = None) -> list[Block]:
+    """Kurz-Variante als abfahrbare Blöcke (siehe ``SHORT_PLAN``)."""
+    if kind not in SHORT_PLAN:
+        return []
+    minutes, warm, cool, reps = SHORT_PLAN[kind]
+    return structure(kind, minutes, ftp, cadence, warmup=warm, cooldown=cool,
+                     max_reps=reps)
 
 
 def total_minutes(blocks: list[Block]) -> int:

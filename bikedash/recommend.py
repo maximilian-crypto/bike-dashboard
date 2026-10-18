@@ -30,6 +30,17 @@ HARD_IF = 0.80
 INTENSITY_GAP_DAYS = 10
 YELLOW_GAP_MIN_SCORE = 50.0
 
+# Wiedereinstieg nach einer Pause: nach so vielen trainingsfreien Tagen sind die
+# ersten Fahrten locker und etwas kürzer. Ohne diese Regel würde die
+# Intensitätslücke oben nach einer Pause ausgerechnet *harte* Intervalle
+# vorziehen — ausgeruht (TSB positiv) und mit grüner Recovery wäre die erste
+# Fahrt nach zwei Wochen 4×4 am Anschlag, mit der FTP von vorher. Zwei Wochen
+# Pause kosten messbar, aber wenig Ausdauer, und die kommt schnell zurück
+# (Mujika & Padilla 2000, Sports Med) — ein lockerer Start verschenkt nichts.
+COMEBACK_BREAK_DAYS = 7     # trainingsfreie Tage, ab denen es eine Pause ist
+COMEBACK_RIDES = 2          # so viele lockere Fahrten zum Reinkommen
+COMEBACK_DURATION = 0.75    # Anteil der normalen Dauer
+
 # Sessiontyp-Vorlagen: (Ziel-Zone, Basisdauer min, Trittfrequenz, RPE 1-10, Tempofaktor)
 TEMPLATES = {
     "REST":      dict(zone=None, base_min=0,  cadence="–",       rpe="–",   speed_factor=0.0),
@@ -90,6 +101,13 @@ class Recommendation:
     warnings: list[str] = field(default_factory=list)
     acwr: float | None = None
     streak_days: int = 0
+    # Wiedereinstieg nach einer Pause: (trainingsfreie Tage, Fahrten seither)
+    comeback: tuple[int, int] | None = None
+    # Kurz-Variante (20–35 min) für Tage mit wenig Kraft oder Zeit — liegt
+    # zusätzlich in Zwift, gewählt wird dort.
+    short_duration_min: int = 0
+    short_plan: list[dict] = field(default_factory=list)
+    short_summary: str | None = None
 
     @property
     def target_distance_mid(self) -> float:
@@ -136,6 +154,39 @@ def _latest_recovery(rec: pd.DataFrame, today: dt.date) -> float | None:
         return None
     val = last["recovery_score"]
     return float(val) if pd.notna(val) else None
+
+
+def comeback_state(rides: pd.DataFrame, today: dt.date) -> tuple[int, int] | None:
+    """Im Wiedereinstieg? Dann (trainingsfreie Tage der Pause, Fahrten seither).
+
+    Gezählt werden Fahrttage vor heute. Eine Pause ist eine Lücke von mindestens
+    ``COMEBACK_BREAK_DAYS`` Tagen ohne Fahrt; danach gelten die ersten
+    ``COMEBACK_RIDES`` Fahrttage als Wiedereinstieg. Der Beginn der Historie
+    zählt nicht als Pause — sonst wäre jeder neue Nutzer „zurück".
+    """
+    if rides.empty or "date" not in rides.columns:
+        return None
+    dates = sorted({d for d in rides["date"] if d < today})
+    if not dates:
+        return None
+    off_now = (today - dates[-1]).days - 1
+    if off_now >= COMEBACK_BREAK_DAYS:
+        return off_now, 0
+    n = 0
+    for i in range(len(dates) - 1, 0, -1):
+        n += 1
+        if n >= COMEBACK_RIDES:
+            return None
+        off = (dates[i] - dates[i - 1]).days - 1
+        if off >= COMEBACK_BREAK_DAYS:
+            return off, n
+    return None
+
+
+def _blocks_dicts(blocks: list) -> list[dict]:
+    return [{"label": b.label, "minutes": b.minutes, "low_w": b.low_w,
+             "high_w": b.high_w, "zone": b.zone, "cadence": b.cadence}
+            for b in blocks]
 
 
 def build(today: dt.date | None = None) -> Recommendation:
@@ -307,17 +358,34 @@ def build(today: dt.date | None = None) -> Recommendation:
     # Schutzgeländer: deckelt die Einheit, wenn sich Last ungesund aufschaukelt
     # (Lastsprung, zu viele Tage am Stück, gehäuft rote Recovery). Greift auch
     # bei grüner Recovery — und hebt nie an.
-    g = guard.check(rides, rec, today)
+    g = guard.check(rides, rec, today, dataprep.prep_sleep())
     capped = g.apply(kind)
     if capped != kind:
         reasons.append(f"Schutzgeländer: {TITLES[kind]} → {TITLES[capped]}.")
         kind = capped
 
+    # Wiedereinstieg: die ersten Fahrten nach einer Pause locker und kürzer —
+    # deckelt wie das Schutzgeländer, hebt nie an.
+    back = None if rode_today else comeback_state(rides, today)
+    if back is not None:
+        off, done = back
+        capped = guard.LADDER[min(guard.LADDER.index(kind), guard.LADDER.index("ENDURANCE"))]
+        reasons.append(
+            f"Willkommen zurück nach {off} Tagen Pause! Fahrt {done + 1} von "
+            f"{COMEBACK_RIDES} zum Reinkommen: locker und etwas kürzer, danach "
+            "geht es normal weiter."
+        )
+        if capped != kind:
+            reasons.append(f"Wiedereinstieg: {TITLES[kind]} → {TITLES[capped]}.")
+            kind = capped
+
     tpl = TEMPLATES[kind]
 
     # Dauer nach Volumenstand anpassen.
     base = tpl["base_min"]
-    if kind not in ("REST", "VO2MAX"):
+    if back is not None and kind != "REST":
+        base = int(base * COMEBACK_DURATION)
+    elif kind not in ("REST", "VO2MAX"):
         if progress < 0.7:
             base = int(base * 1.2)
         elif progress > 1.2:
@@ -344,12 +412,17 @@ def build(today: dt.date | None = None) -> Recommendation:
             p_low, p_high = pz.low_w, pz.high_w
         mid = int(sum(dur) / 2) if dur[1] else 0
         blocks = power.structure(kind, mid, ftp, tpl["cadence"])
-        p_blocks = [
-            {"label": b.label, "minutes": b.minutes, "low_w": b.low_w,
-             "high_w": b.high_w, "zone": b.zone, "cadence": b.cadence}
-            for b in blocks
-        ]
+        p_blocks = _blocks_dicts(blocks)
         p_summary = power.describe(blocks) or None
+
+    # Kurz-Variante: immer mitliefern, gewählt wird in Zwift bzw. am Rad. Nur
+    # sinnvoll, wenn sie wirklich kürzer ist als die Hauptvariante.
+    s_min, s_blocks, s_summary = 0, [], None
+    if kind != "REST" and power.short_minutes(kind) < (dur[0] or 0):
+        short = power.short_structure(kind, ftp, tpl["cadence"])
+        s_blocks = _blocks_dicts(short)
+        s_min = power.total_minutes(short) if short else power.short_minutes(kind)
+        s_summary = power.describe(short) or None
 
     # Distanzschätzung aus Dauer × zonentypischem Tempo.
     if base == 0:
@@ -382,6 +455,10 @@ def build(today: dt.date | None = None) -> Recommendation:
         warnings=g.warnings,
         acwr=g.acwr,
         streak_days=g.streak_days,
+        comeback=back,
+        short_duration_min=s_min,
+        short_plan=s_blocks,
+        short_summary=s_summary,
         week_load=round(week_load, 1),
         target_load=round(target_load, 1),
         phase=plan.phase,

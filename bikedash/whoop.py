@@ -119,6 +119,63 @@ def _score(rec: dict[str, Any]) -> dict[str, Any]:
     return rec.get("score") or {}
 
 
+def _hours(milli: Any) -> float | None:
+    try:
+        return round(float(milli) / 3_600_000, 2)
+    except (TypeError, ValueError):
+        return None
+
+
+def _wake_date(end: str | None, offset: str | None) -> str | None:
+    """Lokaler Aufwach-Tag (Whoop liefert UTC plus ``timezone_offset``)."""
+    if not end:
+        return None
+    try:
+        ts = dt.datetime.fromisoformat(end.replace("Z", "+00:00"))
+        if offset:
+            sign = -1 if offset.startswith("-") else 1
+            hh, mm = offset.lstrip("+-").split(":")[:2]
+            ts = ts + sign * dt.timedelta(hours=int(hh), minutes=int(mm))
+        return ts.date().isoformat()
+    except (ValueError, TypeError):
+        return end[:10]
+
+
+def sleep_row(sl: dict[str, Any]) -> dict[str, Any]:
+    """Whoop-Schlafdatensatz (API v2) → Zeile für ``whoop_sleep``.
+
+    Geschlafen = leicht + Tiefschlaf + REM (ohne Wachphasen im Bett). Bedarf =
+    Basisbedarf + Nachholbedarf aus Schlafschuld, Belastung und Nickerchen —
+    so, wie Whoop ihn selbst ausweist.
+    """
+    s = _score(sl)
+    st = s.get("stage_summary") or {}
+    need = s.get("sleep_needed") or {}
+    parts = [st.get(k) for k in ("total_light_sleep_time_milli",
+                                 "total_slow_wave_sleep_time_milli",
+                                 "total_rem_sleep_time_milli")]
+    asleep = _hours(sum(p for p in parts if p)) if any(parts) else None
+    need_parts = [need.get(k) or 0 for k in ("baseline_milli", "need_from_sleep_debt_milli",
+                                              "need_from_recent_strain_milli",
+                                              "need_from_recent_nap_milli")]
+    return {
+        "id": str(sl["id"]),
+        "cycle_id": sl.get("cycle_id"),
+        "start": sl.get("start"),
+        "end": sl.get("end"),
+        "wake_date": _wake_date(sl.get("end"), sl.get("timezone_offset")),
+        "nap": 1 if sl.get("nap") else 0,
+        "asleep_h": asleep,
+        "in_bed_h": _hours(st.get("total_in_bed_time_milli")),
+        "need_h": _hours(sum(need_parts)) if any(need_parts) else None,
+        "debt_h": _hours(need.get("need_from_sleep_debt_milli")),
+        "sleep_performance": s.get("sleep_performance_percentage"),
+        "sleep_efficiency": s.get("sleep_efficiency_percentage"),
+        "respiratory_rate": s.get("respiratory_rate"),
+        "raw_json": store.dumps(sl),
+    }
+
+
 def fetch_body_measurement(token: str) -> dict[str, Any]:
     """Holt Whoops Körpermaße inkl. der aus ~1 Jahr Daten bestimmten Max-HF."""
     headers = {"Authorization": f"Bearer {token}"}
@@ -194,16 +251,35 @@ def sync(cfg: dict[str, Any], *, full: bool = False) -> dict[str, int]:
             "raw_json": store.dumps(w),
         })
 
+    # --- Schlaf --- (die Berechtigung read:sleep wird seit jeher angefragt,
+    # die Daten aber erst seit Okt. 2026 abgeholt). Beim ersten Mal 90 Tage
+    # zurück, damit die Bremse in guard.py sofort eine Basis hat.
+    sleep_start = start
+    if not full and store.get_state("whoop_sleep_synced") is None:
+        sleep_start = (dt.datetime.now(dt.timezone.utc) - dt.timedelta(days=90)).isoformat()
+    # Fehler hier (z. B. ein altes Token ohne read:sleep) dürfen den Sync von
+    # Recovery & Co. nie kippen — dann fehlt eben nur die Schlaf-Bremse.
+    try:
+        sleep_rows = [sleep_row(sl) for sl in _paged(token, "activity/sleep", sleep_start)
+                      if sl.get("id") is not None]
+    except Exception as exc:  # noqa: BLE001
+        print(f"Whoop-Schlaf übersprungen: {exc}")
+        sleep_rows = None
+
     n_cycles = store.upsert_whoop_cycles(cycle_rows)
     n_rec = store.upsert_whoop_recovery([r for r in rec_rows if r["cycle_id"] is not None])
     n_wk = store.upsert_whoop_workouts(wk_rows)
+    n_sleep = 0
+    if sleep_rows is not None:
+        n_sleep = store.upsert_whoop_sleep(sleep_rows)
+        store.set_state("whoop_sleep_synced", "1")
 
     # Fortschritt merken: jüngstes gesehenes Zyklus-Ende.
     ends = [c.get("end") for c in cycles_raw if c.get("end")]
     if ends:
         store.set_state("whoop_last_start", max(ends))
 
-    return {"cycles": n_cycles, "recovery": n_rec, "workouts": n_wk}
+    return {"cycles": n_cycles, "recovery": n_rec, "workouts": n_wk, "sleep": n_sleep}
 
 
 def is_connected() -> bool:

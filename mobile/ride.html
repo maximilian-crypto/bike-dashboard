@@ -773,6 +773,9 @@ function showTodayBanner(d){
   if(rec.hr_low) bits.push(`Z${rec.zone_number} ${rec.hr_low}–${rec.hr_high} bpm`);
   if(rec.cadence && rec.cadence!=='–') bits.push(rec.cadence+' U/min');
   if(rec.target_distance_km) bits.push(`Ziel ~${Math.round(rec.target_distance_km)} km · „Route" tippen`);
+  // Kurz-Variante liegt zusätzlich in Zwift (bikedash/power.py SHORT_PLAN).
+  if(rec.short_duration_min) bits.push(`kurz: ${rec.short_duration_min}′`);
+  if(rec.comeback) bits.push('👋 Wiedereinstieg: locker');
   const ms=d.milestone;
   if(ms && ms.next_name && ms.next_remaining_km!=null){
     const rem=Math.round(ms.next_remaining_km);

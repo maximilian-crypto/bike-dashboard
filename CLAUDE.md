@@ -61,6 +61,7 @@ bike-dashboard/
 │  ├─ zwift.py            # NEU: Tagesworkout → intervals.icu-Kalender → Zwift-Bibliothek
 │  ├─ coach.py            # KI-Coach (Claude API)
 │  ├─ report.py           # Morgen-Report (ntfy-Push)
+│  ├─ weekly.py           # NEU: Wochenrückblick sonntags (ntfy-Push, ohne Soll-Rot)
 │  └─ backup.py           # Datensicherung
 ├─ dashboard.py           # Streamlit-App (ein grosses Skript, Tabs via st.tabs)
 ├─ build_today.py         # schreibt mobile/today.json
@@ -188,6 +189,33 @@ THRESHOLD. TSB −20…−10 → dosiertes TEMPO. Gelbe Recovery (≥ 50) nach
 Nutzerentscheid (Okt. 2026): Gesundheit vor Leistung, aber Leistung soll
 kommen — „wenn kürzere Intervalle mehr bringen, yallah".
 
+**Wiedereinstieg, Kurz-Variante, Schlaf & Wochenrückblick (seit 2026-10-20,
+aus dem Ideen-Radar #5, vom Nutzer freigegeben):**
+- **Wiedereinstieg** (`recommend.comeback_state`): Nach ≥ 7 trainingsfreien Tagen
+  sind die ersten 2 Fahrten höchstens Z2 und auf 75 % gekürzt. Grund: die
+  Intensitätslücken-Regel oben hätte nach einer Pause — ausgeruht, TSB positiv,
+  grüne Recovery — ausgerechnet 4×4 vorgezogen. Deckelt wie das Schutzgeländer,
+  hebt nie an. Der Beginn der Historie zählt nicht als Pause.
+- **Kurz-Variante** (`power.SHORT_PLAN`, `Recommendation.short_plan`): zu jeder
+  Einheit 20–35 min mit demselben Kern (2×4 statt 4×4, 20' Z2 statt 75').
+  **Beide Varianten liegen jeden Tag in Zwift** (`external_id …-kurz`, Name
+  „Bikedash TT-MM Kurz …"); gewählt wird in der Zwift-App. Nutzerwunsch: nach
+  langen Klinikdiensten nicht morgens entscheiden müssen, was abends geht.
+  `fuel.for_recommendation(short=True)` rechnet die Energie dafür.
+- **Schlaf als Bremse** (`whoop_sleep`, `dataprep.prep_sleep`, `guard.py`): die
+  Berechtigung `read:sleep` wurde immer angefragt, die Daten aber nie geholt.
+  Jetzt Sync über `activity/sleep` (beim ersten Mal 90 Tage zurück). 2 von 3
+  Nächten < 6 h → nichts Hartes. Kurze Nächte sind im Diagramm gelb, nicht rot.
+- **Infekt-Warnzeichen** (`guard.illness_signs`): Ruhepuls ≥ +5 bpm **und**
+  Hauttemperatur ≥ +0,5 °C über dem 30-Tage-Median → Ruhetag-Hinweis. Nur beide
+  zusammen, als Warnzeichen formuliert, nie als Diagnose.
+- **Wochenrückblick** (`weekly.py`): sonntags ab 18 Uhr (Montag bis 12 Uhr
+  nachgeholt), Marker `weekly_sent_week` in `app_kv`. Bewusst **ohne**
+  Soll-Ist-Vergleich und ohne „verfehlt" — eine Woche ohne Fahrt heißt „ruhige
+  Woche". Aufruf: `send_report.py --if-due --weekly-if-due` im Sync-Workflow.
+- **Trinkzeile** in `fuel.py` (400–800 ml/h je Intensität, auf der Rolle eher
+  mehr). Bewusst ohne Schwitztest/Wiegen.
+
 **Wichtige Konventionen:**
 - Design-Tokens (`C_IN`, `C_ABOVE`, `PANEL_A`, `MUTED`, `ACCENT` …) stehen oben
   in `dashboard.py` und spiegeln 1:1 die CSS-Variablen in `mobile/ride.html`.
@@ -228,11 +256,15 @@ Live-Ride-PWA mit BLE-Puls/-Kadenz und Karte.
 | 10 | **Dunkles Streamlit-Theme** (`.streamlit/config.toml`) — die Diagramme waren app-weit hell in einer dunklen App | `.gitignore`, `.streamlit/config.toml` | fertig, im Browser geprüft |
 
 | 12 | **Schutzgeländer gegen Überlastung** — Lastsprung (ACWR), Tage am Stück, gehäuft rote Recovery deckeln die Empfehlung bis zum Ruhetag | `bikedash/guard.py`, Tab „Heute", `today.json`, Morgen-Report | Code fertig, 9 Tests grün, Tab „Heute" im Browser geprüft (Stopp- und Normalfall) |
+| 14 | **Wiedereinstieg nach Pause** — erste 2 Fahrten nach ≥ 7 Tagen Pause locker und kürzer statt 4×4 | `bikedash/recommend.py`, Hinweis im Tab „Heute", `today.json` (`comeback`), PWA | Code fertig, Tests grün, Tab „Heute" geprüft |
+| 15 | **Kurz-Variante, beide in Zwift** — 20–35 min-Version jeder Einheit, zweiter intervals.icu-Eintrag `…-kurz` | `power.py`, `recommend.py`, `zwift.py`, `fuel.py`, Tab „Heute" (Reiter Voll/Kurz), `today.json`, PWA, Report | Code fertig, Tests grün, Tab geprüft. **Offen: Sichtprüfung in der Zwift-App** |
+| 16 | **Schlaf + Infekt-Warnzeichen als Bremse** | `whoop.py` (Sleep-Sync), `store.py` (`whoop_sleep`), `dataprep.prep_sleep`, `guard.py`, Tab „Erholung" | Code fertig, Tests grün, Schlafdiagramm geprüft. **Offen: erster echter Whoop-Sync** |
+| 17 | **Wochenrückblick sonntags** + Trinkzeile | `bikedash/weekly.py`, `send_report.py --weekly-if-due`, `sync.yml`, `fuel.py` | Code fertig, Tests grün, Text mit Testdaten geprüft |
 | 13 | **4×4-Intervalle & Intensität vom Wochenziel entkoppelt** — neuer Einheitentyp `VO2MAX`, Intensitätslücken-Regel, Wattdaten-basierte Erkennung harter Einheiten | `bikedash/recommend.py`, `bikedash/power.py`, `zwift.py`, `fuel.py`, `report.py` | Code fertig, Tests grün, Tab „Heute" + Zwift-Text geprüft |
 | 8 | **Morgen-Report ereignisgesteuert** — Push, sobald die heutige Whoop-Recovery da ist, spätestens 10:00; erste Zeile = Entscheidung | `bikedash/report.py`, `send_report.py --if-due`, `sync.yml` | Code fertig, Tests grün. **Offen: `NTFY_TOPIC` als Actions-Secret + ntfy-App abonnieren** |
 
-**Tests:** 198 grün (`python -m pytest -q`), inkl. Suites
-`tests/test_milestones.py`, `tests/test_maintenance.py`, `tests/test_dataprep.py`, `tests/test_season.py`, `tests/test_power.py`, `tests/test_zwift.py`, `tests/test_report.py`, `tests/test_fitness.py`, `tests/test_fuel.py` und `tests/test_guard.py`.
+**Tests:** 219 grün (`python -m pytest -q`), inkl. Suites
+`tests/test_milestones.py`, `tests/test_maintenance.py`, `tests/test_dataprep.py`, `tests/test_season.py`, `tests/test_power.py`, `tests/test_zwift.py`, `tests/test_report.py`, `tests/test_fitness.py`, `tests/test_fuel.py`, `tests/test_guard.py` und `tests/test_weekly.py`.
 
 **Zwift-Zustellung verifiziert (2026-09-18, Lauf #346):** `today.json` meldet
 `zwift.status = sent`, Event-ID 136989140 im intervals.icu-Kalender.

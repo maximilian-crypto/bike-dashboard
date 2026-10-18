@@ -126,6 +126,31 @@ def prep_recovery() -> pd.DataFrame:
     return df.dropna(subset=["date"]).sort_values("date").reset_index(drop=True)
 
 
+def prep_sleep() -> pd.DataFrame:
+    """Hauptschlaf je Nacht (ohne Nickerchen), indiziert über den Aufwach-Tag.
+
+    Mehrere Schlafphasen mit demselben Aufwach-Tag (aufgewacht, wieder
+    eingeschlafen) werden addiert.
+    """
+    try:
+        df = store.read_table("whoop_sleep")
+    except Exception:  # noqa: BLE001 – Tabelle fehlt in alten Datenbanken
+        return pd.DataFrame()
+    if df.empty:
+        return df
+    df = df[df["nap"].fillna(0).astype(int) == 0].copy()
+    df["date"] = pd.to_datetime(df["wake_date"], errors="coerce")
+    df = df.dropna(subset=["date"])
+    if df.empty:
+        return df
+    agg = df.groupby("date").agg(asleep_h=("asleep_h", lambda x: x.sum(min_count=1)),
+                                 need_h=("need_h", "max"),
+                                 debt_h=("debt_h", "max"),
+                                 sleep_performance=("sleep_performance", "mean"),
+                                 respiratory_rate=("respiratory_rate", "mean"))
+    return agg.reset_index().sort_values("date").reset_index(drop=True)
+
+
 def prep_cycles() -> pd.DataFrame:
     df = store.read_table("whoop_cycles")
     if df.empty:

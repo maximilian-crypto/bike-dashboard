@@ -24,8 +24,9 @@ Was hier passiert:
 - ``push_today``: legt das Workout für heute an bzw. aktualisiert es. Der
   Sync läuft alle vier Stunden, die Empfehlung ändert sich über den Tag (Whoop-
   Recovery kommt morgens) — deshalb idempotent über ``external_id``: pro Tag
-  genau ein Eintrag, nie Duplikate. Wird der Tag ein Ruhetag, verschwindet der
-  Eintrag wieder. Unveränderte Workouts werden nicht neu geschrieben, damit
+  genau zwei Einträge (volle Einheit + Kurz-Variante ``…-kurz``), nie
+  Duplikate. Gewählt wird in der Zwift-App. Wird der Tag ein Ruhetag,
+  verschwinden beide wieder. Unveränderte Workouts werden nicht neu geschrieben, damit
   intervals.icu nicht alle vier Stunden nach Zwift nachschiebt.
 
 Fehler hier dürfen den Tagesplan nie kippen: ``push_today`` wirft nicht, sondern
@@ -48,6 +49,7 @@ from . import store
 API_BASE = "https://intervals.icu/api/v1"
 TIMEOUT_S = 20
 EXTERNAL_PREFIX = "bikedash-"     # external_id = bikedash-JJJJ-MM-TT
+SHORT_SUFFIX = "-kurz"            # Kurz-Variante: bikedash-JJJJ-MM-TT-kurz
 NAME_PREFIX = "Bikedash"
 KV_KEY = "zwift_last_push"
 
@@ -77,6 +79,9 @@ class PushResult:
     detail: str | None = None
     date: str | None = None
     at: str | None = None
+    # Kurz-Variante (zweiter Kalendereintrag desselben Tages)
+    short_status: str | None = None
+    short_name: str | None = None
 
     @property
     def ok(self) -> bool:
@@ -119,14 +124,17 @@ def _ascii_name(text: str) -> str:
     return re.sub(r"\s+", " ", text).strip()
 
 
-def workout_name(kind: str, day: dt.date, total_min: int) -> str:
+def workout_name(kind: str, day: dt.date, total_min: int, short: bool = False) -> str:
     """Kurzer, Zwift-tauglicher Name: ``Bikedash 18-09 Grundlage Z2 89min``.
 
     Das Datum steht vorn, weil der Zwift-Ordner mehrere Tage nebeneinander
-    zeigen kann und man sonst nicht sieht, welches Workout das heutige ist.
+    zeigen kann und man sonst nicht sieht, welches Workout das heutige ist. Die
+    Kurz-Variante heißt ``Bikedash 18-09 Kurz Grundlage Z2 30min`` — sie steht
+    damit in Zwift direkt neben der vollen Einheit.
     """
-    short = SHORT_TITLES.get(kind, kind.title())
-    return _ascii_name(f"{NAME_PREFIX} {day:%d-%m} {short} {total_min}min")
+    title = SHORT_TITLES.get(kind, kind.title())
+    tag = " Kurz" if short else ""
+    return _ascii_name(f"{NAME_PREFIX} {day:%d-%m}{tag} {title} {total_min}min")
 
 
 def _cadence_rpm(cadence: str | None) -> int | None:
@@ -180,26 +188,28 @@ def workout_text(power_plan: list[dict[str, Any]], ftp: int,
     return "\n".join(parts).strip() + "\n"
 
 
-def event_payload(rc: Any, day: dt.date, ftp: int) -> dict[str, Any]:
+def event_payload(rc: Any, day: dt.date, ftp: int, short: bool = False) -> dict[str, Any]:
     """Der Kalendereintrag, den intervals.icu nach Zwift weiterreicht."""
-    plan: list[dict[str, Any]] = list(getattr(rc, "power_plan", []) or [])
+    attr = "short_plan" if short else "power_plan"
+    plan: list[dict[str, Any]] = list(getattr(rc, attr, []) or [])
     total_min = sum(int(b["minutes"]) for b in plan)
-    headline = f"Bike-Dashboard, Tagesempfehlung vom {day:%d.%m.%Y}: {rc.title}"
+    variant = " (Kurz-Variante)" if short else ""
+    headline = f"Bike-Dashboard, Tagesempfehlung vom {day:%d.%m.%Y}: {rc.title}{variant}"
     return {
         "category": "WORKOUT",
         "start_date_local": f"{day.isoformat()}T00:00:00",
         "type": "Ride",
         "indoor": True,
-        "name": workout_name(rc.kind, day, total_min),
+        "name": workout_name(rc.kind, day, total_min, short),
         "description": workout_text(plan, ftp, headline),
-        "external_id": external_id(day),
+        "external_id": external_id(day, short),
         "moving_time": total_min * 60,
         "icu_ftp": int(ftp),
     }
 
 
-def external_id(day: dt.date) -> str:
-    return f"{EXTERNAL_PREFIX}{day.isoformat()}"
+def external_id(day: dt.date, short: bool = False) -> str:
+    return f"{EXTERNAL_PREFIX}{day.isoformat()}{SHORT_SUFFIX if short else ''}"
 
 
 # ---------------------------------------------------------------------------
@@ -220,9 +230,9 @@ def _err(resp: Any) -> str:
     return f"HTTP {resp.status_code} {body}".strip()
 
 
-def _find_existing(session: Any, base: str, auth: tuple[str, str],
-                   day: dt.date) -> dict[str, Any] | None:
-    """Unser Eintrag für diesen Tag (per external_id), sonst None."""
+def _day_events(session: Any, base: str, auth: tuple[str, str],
+                day: dt.date) -> list[dict[str, Any]]:
+    """Alle Workout-Einträge des Tages (ein Aufruf für beide Varianten)."""
     resp = session.get(
         f"{base}/events",
         params={"oldest": day.isoformat(), "newest": day.isoformat(),
@@ -231,8 +241,11 @@ def _find_existing(session: Any, base: str, auth: tuple[str, str],
     )
     if resp.status_code != 200:
         raise RuntimeError(f"Kalender lesen: {_err(resp)}")
-    events = resp.json() or []
-    ext = external_id(day)
+    return list(resp.json() or [])
+
+
+def _find(events: list[dict[str, Any]], ext: str) -> dict[str, Any] | None:
+    """Unser Eintrag (per external_id), sonst None."""
     for ev in events:
         if ev.get("external_id") == ext:
             return ev
@@ -245,14 +258,59 @@ def _same(existing: dict[str, Any], payload: dict[str, Any]) -> bool:
             == payload["description"].strip())
 
 
+def _sync_one(sess: Any, base: str, auth: tuple[str, str], day: dt.date,
+              existing: dict[str, Any] | None, payload: dict[str, Any] | None,
+              now: str) -> PushResult:
+    """Einen Kalendereintrag anlegen, aktualisieren oder (payload=None) löschen."""
+    if payload is None:
+        if existing and existing.get("id") is not None:
+            resp = sess.delete(f"{base}/events/{existing['id']}", auth=auth,
+                               timeout=TIMEOUT_S)
+            if resp.status_code not in (200, 204):
+                raise RuntimeError(f"Löschen: {_err(resp)}")
+            return PushResult("deleted", name=existing.get("name"),
+                              event_id=existing.get("id"),
+                              detail="Ruhetag – Workout entfernt",
+                              date=day.isoformat(), at=now)
+        return PushResult("skipped", date=day.isoformat(), at=now)
+
+    if existing is not None:
+        if _same(existing, payload):
+            return PushResult("unchanged", name=payload["name"],
+                              event_id=existing.get("id"), date=day.isoformat(), at=now)
+        resp = sess.put(f"{base}/events/{existing['id']}", json=payload,
+                        auth=auth, timeout=TIMEOUT_S)
+        if resp.status_code != 200:
+            raise RuntimeError(f"Aktualisieren: {_err(resp)}")
+        return PushResult("updated", name=payload["name"],
+                          event_id=existing.get("id"), date=day.isoformat(), at=now)
+
+    # upsertOnUid ist in der API-Beschreibung ein Pflichtparameter; wir
+    # haben oben schon selbst nach Duplikaten gesucht.
+    resp = sess.post(f"{base}/events", params={"upsertOnUid": "false"},
+                     json=payload, auth=auth, timeout=TIMEOUT_S)
+    if resp.status_code != 200:
+        raise RuntimeError(f"Anlegen: {_err(resp)}")
+    created = resp.json() if resp.text else {}
+    return PushResult("sent", name=payload["name"],
+                      event_id=(created or {}).get("id"), date=day.isoformat(), at=now)
+
+
 def push_today(cfg: dict[str, Any], rc: Any, day: dt.date,
                session: Any | None = None) -> PushResult:
     """Heutiges Workout nach intervals.icu (→ Zwift) schreiben. Wirft nie.
 
+    Zwei Einträge pro Tag: die volle Einheit und die Kurz-Variante
+    (``…-kurz``). Gewählt wird in der Zwift-App — so muss morgens niemand
+    vorher entscheiden, wie viel nach der Arbeit noch geht.
+
     - nicht eingerichtet → ``skipped``
-    - Ruhetag / keine Wattstruktur → vorhandener Eintrag wird gelöscht
+    - Ruhetag / keine Wattstruktur → vorhandene Einträge werden gelöscht
     - vorhanden und identisch → ``unchanged`` (kein erneuter Push nach Zwift)
     - vorhanden, aber anders → ``updated``; sonst ``sent``
+
+    Das Ergebnis beschreibt die volle Einheit; die Kurz-Variante steht in
+    ``short_status``/``short_name``.
     """
     now = dt.datetime.now(dt.timezone.utc).isoformat(timespec="seconds")
     api_key, athlete_id = settings(cfg)
@@ -262,51 +320,26 @@ def push_today(cfg: dict[str, Any], rc: Any, day: dt.date,
 
     ftp = getattr(rc, "ftp", None)
     plan = list(getattr(rc, "power_plan", []) or [])
+    short_plan = list(getattr(rc, "short_plan", []) or [])
     sess = session or requests.Session()
     auth = _auth(api_key)
     base = f"{API_BASE}/athlete/{athlete_id}"
 
     try:
-        existing = _find_existing(sess, base, auth, day)
+        events = _day_events(sess, base, auth, day)
+        main_payload = event_payload(rc, day, int(ftp)) if plan and ftp else None
+        short_payload = (event_payload(rc, day, int(ftp), short=True)
+                         if main_payload and short_plan else None)
 
-        if not plan or not ftp:
-            if existing and existing.get("id") is not None:
-                resp = sess.delete(f"{base}/events/{existing['id']}", auth=auth,
-                                   timeout=TIMEOUT_S)
-                if resp.status_code not in (200, 204):
-                    raise RuntimeError(f"Löschen: {_err(resp)}")
-                return PushResult("deleted", name=existing.get("name"),
-                                  event_id=existing.get("id"),
-                                  detail="Ruhetag – Workout entfernt",
-                                  date=day.isoformat(), at=now)
-            reason = "Ruhetag" if not plan else "keine FTP hinterlegt"
-            return PushResult("skipped", detail=reason, date=day.isoformat(), at=now)
-
-        payload = event_payload(rc, day, int(ftp))
-
-        if existing is not None:
-            if _same(existing, payload):
-                return PushResult("unchanged", name=payload["name"],
-                                  event_id=existing.get("id"),
-                                  date=day.isoformat(), at=now)
-            resp = sess.put(f"{base}/events/{existing['id']}", json=payload,
-                            auth=auth, timeout=TIMEOUT_S)
-            if resp.status_code != 200:
-                raise RuntimeError(f"Aktualisieren: {_err(resp)}")
-            return PushResult("updated", name=payload["name"],
-                              event_id=existing.get("id"),
-                              date=day.isoformat(), at=now)
-
-        # upsertOnUid ist in der API-Beschreibung ein Pflichtparameter; wir
-        # haben oben schon selbst nach Duplikaten gesucht.
-        resp = sess.post(f"{base}/events", params={"upsertOnUid": "false"},
-                         json=payload, auth=auth, timeout=TIMEOUT_S)
-        if resp.status_code != 200:
-            raise RuntimeError(f"Anlegen: {_err(resp)}")
-        created = resp.json() if resp.text else {}
-        return PushResult("sent", name=payload["name"],
-                          event_id=(created or {}).get("id"),
-                          date=day.isoformat(), at=now)
+        res = _sync_one(sess, base, auth, day, _find(events, external_id(day)),
+                        main_payload, now)
+        if main_payload is None and res.status == "skipped":
+            res.detail = "Ruhetag" if not plan else "keine FTP hinterlegt"
+        short = _sync_one(sess, base, auth, day, _find(events, external_id(day, True)),
+                          short_payload, now)
+        res.short_status = short.status
+        res.short_name = short.name
+        return res
 
     except Exception as exc:  # noqa: BLE001 – Fehler dürfen den Tagesplan nie kippen
         # today.json liegt öffentlich auf Pages: Athleten-ID aus dem Fehlertext nehmen.
@@ -356,7 +389,10 @@ def status_line(result: PushResult | None, today: dt.date | None = None) -> str:
         if stale:
             return (f"Zuletzt am {result.date} geschickt{when} — das heutige "
                     "Workout kommt mit dem nächsten Sync-Lauf.")
-        return (f"Heute in Zwift bereit: **{result.name}**{when} → "
+        extra = (f" und kurz: **{result.short_name}**"
+                 if result.short_name and result.short_status in ("sent", "updated", "unchanged")
+                 else "")
+        return (f"Heute in Zwift bereit: **{result.name}**{extra}{when} → "
                 "Zwift → Workouts → Custom → Ordner „Intervals.icu“.")
     if result.status == "deleted":
         return f"Ruhetag — das Zwift-Workout für {result.date} wurde entfernt{when}."

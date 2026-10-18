@@ -63,10 +63,12 @@ jobs:
           INTERVALS_ATHLETE_ID: ${{ secrets.INTERVALS_ATHLETE_ID }}
         run: python build_today.py
 
-      - name: Morgen-Report aufs Handy (nur wenn fällig)
-        # Sendet einmal pro Tag: sobald die heutige Whoop-Recovery da ist,
-        # spätestens zur Frist. Läuft NACH build_today, damit die Zwift-Zeile
-        # stimmt. Fehler hier dürfen den Sync nicht rot machen.
+      - name: Morgen-Report und Wochenrückblick aufs Handy (nur wenn fällig)
+        # Morgen-Report einmal pro Tag: sobald die heutige Whoop-Recovery da
+        # ist, spätestens zur Frist. Wochenrückblick sonntags ab 18 Uhr (der
+        # 4-h-Lauf um 20:13 UTC), sonst Montagmorgen nachgeholt. Läuft NACH
+        # build_today, damit die Zwift-Zeile stimmt. Fehler hier dürfen den
+        # Sync nicht rot machen.
         continue-on-error: true
         env:
           DATABASE_URL: ${{ secrets.DATABASE_URL }}
@@ -82,7 +84,7 @@ jobs:
           ATHLETE_SEASON_START: ${{ secrets.ATHLETE_SEASON_START }}
           NTFY_TOPIC: ${{ secrets.NTFY_TOPIC }}
           DASHBOARD_URL: ${{ secrets.DASHBOARD_URL }}
-        run: python send_report.py --if-due
+        run: python send_report.py --if-due --weekly-if-due
 
       - name: today.json committen (nur bei Änderung)
         run: |

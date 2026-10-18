@@ -59,6 +59,14 @@ DURING_CARBS_G_PER_H = 45
 KCAL_PER_G_CARB = 4.0
 BEFORE_SHARE = 0.3           # Anteil des Mehrbedarfs, der vor die Einheit gehört
 
+# Trinken: 400–800 ml/h ist die gängige Spanne, je nach Schweißrate, Wärme und
+# Intensität. Auf der Rolle fehlt der Fahrtwind — dort eher am oberen Ende.
+# Bewusst ohne Schwitztest (wiegen vor/nach der Fahrt): eine gute Faustregel
+# reicht, und das Wiegen gehört nicht in dieses Dashboard.
+FLUID_ML_PER_H = {"RECOVERY": 500, "ENDURANCE": 550, "TEMPO": 650,
+                  "THRESHOLD": 700, "VO2MAX": 700}
+FLUID_FROM_MIN = 20
+
 
 @dataclass(frozen=True)
 class Food:
@@ -138,6 +146,18 @@ class FuelPlan:
     equivalents: list[Portion] = field(default_factory=list)   # Gesamtmenge
     notes: list[str] = field(default_factory=list)
     done_today_kcal: int | None = None
+    fluid_ml_per_h: int = 0
+    fluid_l: float = 0.0
+
+    @property
+    def fluid_text(self) -> str:
+        """„💧 ca. 0,6 l (550 ml/h), auf der Rolle eher mehr"."""
+        if not self.fluid_l:
+            return ""
+        litres = f"{self.fluid_l:.1f}".replace(".", ",")
+        salt = ", ab 1 h eine Prise Salz oder Elektrolyte" if self.duration_min >= 60 else ""
+        return (f"💧 ca. {litres} l trinken ({self.fluid_ml_per_h} ml/h), "
+                f"auf der Rolle eher mehr{salt}")
 
     @property
     def available(self) -> bool:
@@ -148,12 +168,14 @@ class FuelPlan:
         if not self.available:
             return ""
         eq = " / ".join(p.label for p in self.equivalents[:3])
-        return f"Extra essen: ≈ {self.kcal_extra} kcal ({eq})"
+        fluid = f" · 💧 {self.fluid_l:.1f} l".replace(".", ",") if self.fluid_l else ""
+        return f"Extra essen: ≈ {self.kcal_extra} kcal ({eq}){fluid}"
 
     def to_dict(self) -> dict[str, Any]:
         d = asdict(self)
         d["kcal_range"] = list(self.kcal_range)
         d["short"] = self.short()
+        d["fluid_text"] = self.fluid_text
         for ph, src in zip(d["phases"], self.phases):
             ph["text"] = src.text
         return d
@@ -299,9 +321,19 @@ def build_plan(kind: str, duration_min: int, weight_kg: float | None = None,
         notes.append(f"Ohne hinterlegtes Gewicht mit {DEFAULT_WEIGHT_KG:.0f} kg gerechnet "
                      "(Einrichtung → Körpergewicht).")
 
+    rate, litres = fluid(kind, duration_min)
     return FuelPlan(kind, int(duration_min), int(round(extra)), _range(extra), source,
                     w, weight_known, _phases(parts),
-                    [portion(extra, k) for k in ("cola", "maoam", "toast")], notes)
+                    [portion(extra, k) for k in ("cola", "maoam", "toast")], notes,
+                    fluid_ml_per_h=rate, fluid_l=litres)
+
+
+def fluid(kind: str, duration_min: float) -> tuple[int, float]:
+    """(ml pro Stunde, Liter für die Einheit) — auf 0,1 l aufgerundet."""
+    rate = FLUID_ML_PER_H.get(kind, 0)
+    if not rate or duration_min < FLUID_FROM_MIN:
+        return 0, 0.0
+    return rate, math.ceil(rate * duration_min / 60.0 / 100.0) / 10.0
 
 
 def _range(kcal: float) -> tuple[int, int]:
@@ -342,10 +374,17 @@ def done_today(rides: pd.DataFrame, today: dt.date, weight: float) -> float:
 
 
 def for_recommendation(rc: Any, today: dt.date | None = None,
-                       rides: pd.DataFrame | None = None) -> FuelPlan:
+                       rides: pd.DataFrame | None = None,
+                       short: bool = False) -> FuelPlan:
     """FuelPlan zur heutigen Empfehlung — gleiche Rechnung für Dashboard,
-    today.json und Morgen-Report."""
+    today.json und Morgen-Report. ``short=True`` rechnet die Kurz-Variante."""
     today = today or dt.date.today()
+    if short:
+        minutes = int(getattr(rc, "short_duration_min", 0) or 0)
+        if rc.kind == "REST" or minutes <= 0:
+            return build_plan("REST", 0, weight_kg())
+        return build_plan(rc.kind, minutes, weight_kg(),
+                          getattr(rc, "short_plan", None) or None)
     w = weight_kg()
     done = None
     if rc.kind == "REST":

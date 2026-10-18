@@ -91,3 +91,57 @@ def test_recommend_respects_guard_with_green_recovery():
     assert rc.streak_days == 6
     assert rc.kind == "REST" and rc.guard_level == "stop"
     assert rc.warnings
+
+
+# --- Schlaf ------------------------------------------------------------------
+
+def _sleep(days_hours, today=TODAY):
+    return pd.DataFrame({"date": [pd.Timestamp(today - dt.timedelta(days=d)) for d, _ in days_hours],
+                         "asleep_h": [h for _, h in days_hours]})
+
+
+def test_two_short_nights_in_three_mean_nothing_hard():
+    g = guard.check(_rides([], TODAY), NO_REC, TODAY,
+                    _sleep([(0, 5.2), (1, 7.5), (2, 5.8)]))
+    assert g.short_nights == 2 and g.cap == "ENDURANCE" and g.level == "caution"
+    assert "Schlaf" in g.warnings[0] and "Kurz-Variante" in g.warnings[0]
+
+
+def test_single_short_night_is_just_life():
+    g = guard.check(_rides([], TODAY), NO_REC, TODAY,
+                    _sleep([(0, 5.0), (1, 7.5), (2, 7.0), (3, 4.0)]))
+    assert g.short_nights == 1 and g.cap is None
+
+
+def test_no_sleep_data_changes_nothing():
+    assert guard.check(_rides([], TODAY), NO_REC, TODAY, None).cap is None
+    assert guard.check(_rides([], TODAY), NO_REC, TODAY, pd.DataFrame()).cap is None
+
+
+# --- Infekt-Warnzeichen --------------------------------------------------------
+
+def _rec_vitals(today_rhr, today_temp, base_days=20):
+    rows = [(d, 52.0 + (d % 3) * 0.5, 34.0 + (d % 2) * 0.1) for d in range(1, base_days + 1)]
+    rows.append((0, today_rhr, today_temp))
+    return pd.DataFrame({
+        "date": [pd.Timestamp(TODAY - dt.timedelta(days=d)) for d, _, _ in rows],
+        "recovery_score": [60.0] * len(rows),
+        "resting_heart_rate": [r for _, r, _ in rows],
+        "skin_temp_celsius": [t for _, _, t in rows],
+    })
+
+
+def test_raised_pulse_and_skin_temp_together_mean_rest():
+    g = guard.check(_rides([], TODAY), _rec_vitals(60.0, 34.8), TODAY)
+    assert g.illness is not None and g.illness[0] >= 5 and g.illness[1] >= 0.5
+    assert g.cap == "REST" and g.level == "stop"
+    assert "Warnzeichen" in g.warnings[-1] and "Keine Diagnose" in g.warnings[-1]
+
+
+def test_one_signal_alone_does_not_trigger():
+    assert guard.check(_rides([], TODAY), _rec_vitals(60.0, 34.1), TODAY).illness is None
+    assert guard.check(_rides([], TODAY), _rec_vitals(53.0, 35.0), TODAY).illness is None
+
+
+def test_illness_needs_a_baseline():
+    assert guard.check(_rides([], TODAY), _rec_vitals(65.0, 35.5, base_days=5), TODAY).illness is None

@@ -6,13 +6,19 @@ Benutzung:
     python send_report.py --if-due   # nur senden, wenn fällig (Sync-Workflow):
                                      # heutige Whoop-Recovery da oder Frist erreicht,
                                      # und heute noch nicht gesendet
+    python send_report.py --weekly-if-due  # Wochenrückblick, wenn fällig
+                                     # (So ab 18 Uhr, Mo bis 12 Uhr nachholen)
+    python send_report.py --weekly   # Wochenrückblick der laufenden Woche zeigen
+                                     # (mit --print nur anzeigen)
 """
 
 from __future__ import annotations
 
 import sys
 
-from bikedash import config, report
+import datetime as dt
+
+from bikedash import config, report, weekly
 
 
 def main() -> int:
@@ -22,12 +28,20 @@ def main() -> int:
         print(f"⚠️  {exc}")
         return 1
 
-    if "--if-due" in sys.argv:
-        status, why = report.send_if_due(cfg)
-        print(f"Morgen-Report: {status} ({why})")
+    if "--if-due" in sys.argv or "--weekly-if-due" in sys.argv:
+        if "--if-due" in sys.argv:
+            status, why = report.send_if_due(cfg)
+            print(f"Morgen-Report: {status} ({why})")
+        if "--weekly-if-due" in sys.argv:
+            status, why = weekly.send_if_due(cfg)
+            print(f"Wochenrückblick: {status} ({why})")
         return 0
 
-    title, message = report.build_text(cfg)
+    if "--weekly" in sys.argv:
+        today = dt.date.today()
+        title, message = weekly.build_text(today - dt.timedelta(days=today.weekday()))
+    else:
+        title, message = report.build_text(cfg)
     print(title)
     print(message)
 

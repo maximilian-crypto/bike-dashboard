@@ -86,6 +86,23 @@ CREATE TABLE IF NOT EXISTS whoop_cycles (
     raw_json            TEXT
 );
 
+CREATE TABLE IF NOT EXISTS whoop_sleep (
+    id                  TEXT PRIMARY KEY,
+    cycle_id            {INT},
+    start               TEXT,
+    "end"               TEXT,
+    wake_date           TEXT,
+    nap                 {INT},
+    asleep_h            REAL,
+    in_bed_h            REAL,
+    need_h              REAL,
+    debt_h              REAL,
+    sleep_performance   REAL,
+    sleep_efficiency    REAL,
+    respiratory_rate    REAL,
+    raw_json            TEXT
+);
+
 CREATE TABLE IF NOT EXISTS sync_state (
     key    TEXT PRIMARY KEY,
     value  TEXT
@@ -191,6 +208,10 @@ def upsert_whoop_workouts(rows: list[dict[str, Any]]) -> int:
     return _upsert("whoop_workouts", rows, "id")
 
 
+def upsert_whoop_sleep(rows: list[dict[str, Any]]) -> int:
+    return _upsert("whoop_sleep", rows, "id")
+
+
 def upsert_whoop_recovery(rows: list[dict[str, Any]]) -> int:
     return _upsert("whoop_recovery", rows, "cycle_id")
 
@@ -280,7 +301,8 @@ def read_table(table: str) -> pd.DataFrame:
 def counts() -> dict[str, int]:
     out: dict[str, int] = {}
     with _engine().connect() as conn:
-        for t in ("strava_activities", "whoop_workouts", "whoop_recovery", "whoop_cycles"):
+        for t in ("strava_activities", "whoop_workouts", "whoop_recovery", "whoop_cycles",
+                  "whoop_sleep"):
             out[t] = conn.execute(text(f"SELECT COUNT(*) FROM {t}")).scalar_one()
     return out
 

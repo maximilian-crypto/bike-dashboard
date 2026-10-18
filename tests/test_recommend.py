@@ -22,10 +22,13 @@ def _seed_rides(today):
 
 
 def _seed_fresh(today):
-    """Wenige, länger zurückliegende Fahrten → frische Form (TSB nahe/über 0),
-    diese Woche kein Volumen. Prüft den Quality-Pfad, wenn die Form ihn zulässt."""
+    """Wenige lockere Fahrten in den letzten Tagen → frische Form, kein harter
+    Reiz in der Historie. Prüft den Quality-Pfad, wenn die Form ihn zulässt.
+
+    Bewusst ohne Pause ≥ 7 Tage: früher lagen die Fahrten 10/14 Tage zurück —
+    das ist seit `COMEBACK_BREAK_DAYS` ein Wiedereinstieg und deckelt auf Z2."""
     rides = [ride(200 + i, dt.datetime.combine(today - dt.timedelta(days=d), dt.time(9)))
-             for i, d in enumerate((10, 14))]
+             for i, d in enumerate((4, 6))]
     store.upsert_strava_activities(rides)
     store.set_state("whoop_max_hr", "185")
 
@@ -118,7 +121,7 @@ def test_intervals_not_blocked_by_exceeded_week_target(monkeypatch):
 
 def test_yellow_after_long_gap_gets_tempo(monkeypatch):
     today = dt.date(2026, 6, 15)
-    _seed_fresh(today)   # letzte Fahrten vor 10/14 Tagen, locker
+    _seed_fresh(today)   # nur lockere Fahrten, nie ein harter Reiz
     store.upsert_whoop_recovery([recovery(1, today, 55.0)])
     monkeypatch.setattr(recommend, "_current_tsb", lambda rides, today: 5.0)
     rc = recommend.build(today=today)
@@ -161,3 +164,76 @@ def test_power_ride_counts_as_hard_by_intensity_factor(monkeypatch):
     monkeypatch.setattr(recommend, "_current_tsb", lambda rides, today: 5.0)
     rc = recommend.build(today=today)
     assert rc.kind == "ENDURANCE"   # gestern hart → heute Grundlage
+
+
+def _seed_break(today, off_days, rides_since=0):
+    """Regelmäßiges Training, dann `off_days` Tage Pause, dann `rides_since`
+    lockere Fahrten bis gestern."""
+    last_before = today - dt.timedelta(days=off_days + rides_since + 1)
+    before = [ride(800 + i, dt.datetime.combine(last_before - dt.timedelta(days=2 * i),
+                                                dt.time(9)))
+              for i in range(10)]
+    since = [ride(900 + i, dt.datetime.combine(today - dt.timedelta(days=rides_since - i),
+                                               dt.time(9)))
+             for i in range(rides_since)]
+    store.upsert_strava_activities(before + since)
+    store.set_state("whoop_max_hr", "185")
+
+
+def test_comeback_state_detects_break():
+    today = dt.date(2026, 10, 22)
+    _seed_break(today, off_days=14)
+    from bikedash import dataprep
+    rides = dataprep.prep_rides()
+    assert recommend.comeback_state(rides, today) == (14, 0)
+
+
+def test_comeback_after_two_weeks_is_easy_not_4x4(monkeypatch):
+    """Nutzerbefund Okt. 2026: nach zwei Wochen Pause, ausgeruht und grün,
+    wäre die erste Fahrt sonst 4×4 am Anschlag geworden."""
+    today = dt.date(2026, 10, 22)
+    _seed_break(today, off_days=14)
+    store.upsert_whoop_recovery([recovery(1, today, 90.0)])
+    monkeypatch.setattr(recommend, "_current_tsb", lambda rides, today: 15.0)
+    rc = recommend.build(today=today)
+    assert rc.comeback == (14, 0)
+    assert rc.kind == "ENDURANCE"
+    assert rc.duration_min[1] < recommend.TEMPLATES["ENDURANCE"]["base_min"]
+    assert any("Willkommen zurück" in r for r in rc.rationale)
+
+
+def test_comeback_ends_after_two_rides(monkeypatch):
+    today = dt.date(2026, 10, 22)
+    _seed_break(today, off_days=14, rides_since=1)
+    store.upsert_whoop_recovery([recovery(1, today, 90.0)])
+    monkeypatch.setattr(recommend, "_current_tsb", lambda rides, today: 15.0)
+    assert recommend.build(today=today).comeback == (14, 1)
+
+    store.upsert_strava_activities([ride(999, dt.datetime.combine(
+        today - dt.timedelta(days=2), dt.time(9)))])
+    rc = recommend.build(today=today)
+    assert rc.comeback is None
+    assert rc.kind == "VO2MAX"
+
+
+def test_comeback_never_lifts_red_day():
+    today = dt.date(2026, 10, 22)
+    _seed_break(today, off_days=10)
+    store.upsert_whoop_recovery([recovery(1, today, 20.0)])
+    rc = recommend.build(today=today)
+    assert rc.kind in ("RECOVERY", "REST")
+
+
+def test_short_variant_keeps_core_and_is_shorter(monkeypatch):
+    from bikedash import config
+    monkeypatch.setattr(config, "ftp_from_config", lambda: 170)
+    today = dt.date(2026, 6, 15)
+    _seed_fresh(today)
+    store.upsert_whoop_recovery([recovery(1, today, 90.0)])
+    monkeypatch.setattr(recommend, "_current_tsb", lambda rides, today: 12.0)
+    rc = recommend.build(today=today)
+    assert rc.kind == "VO2MAX"
+    assert 0 < rc.short_duration_min < rc.duration_min[0]
+    work = [b for b in rc.short_plan if b["label"].startswith("Intervall")]
+    assert len(work) == 2 and all(b["zone"] == 5 for b in work)
+    assert rc.short_summary.startswith("8' ein · 2×4'")

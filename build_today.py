@@ -50,7 +50,7 @@ def _parse_cadence(text: str) -> tuple[int | None, int | None]:
     return None, None
 
 
-def _load_sources(days: int = 28) -> dict[str, int]:
+def _load_sources(today: dt.date, days: int = 28) -> dict[str, int]:
     """Zählt, woraus die Trainingslast der letzten Wochen berechnet wurde.
 
     Dient der Selbstkontrolle des gehosteten Laufs: steht hier kein ``power``,
@@ -62,8 +62,8 @@ def _load_sources(days: int = 28) -> dict[str, int]:
         rides = dataprep.prep_rides()
         if rides.empty or "load_source" not in rides.columns:
             return {}
-        cutoff = dt.date.today() - dt.timedelta(days=days)
-        recent = rides[rides["date"] >= cutoff]
+        cutoff = today - dt.timedelta(days=days)
+        recent = rides[(rides["date"] >= cutoff) & (rides["date"] <= today)]
         return {str(k): int(v) for k, v in recent["load_source"].value_counts().items()}
     except Exception:  # noqa: BLE001 – Diagnosefeld darf den Tagesplan nie kippen
         return {}
@@ -112,14 +112,14 @@ def _fitness_payload() -> dict[str, Any] | None:
         return None
 
 
-def _fuel_payload(rc: Any, today: dt.date) -> dict[str, Any] | None:
+def _fuel_payload(rc: Any, today: dt.date, short: bool = False) -> dict[str, Any] | None:
     """Wie viel extra essen fürs heutige Workout (bikedash/fuel.py).
 
     Nur aggregierte kcal und Portionen — das Körpergewicht selbst steht nicht in
     der öffentlichen Datei.
     """
     try:
-        d = fuel.for_recommendation(rc, today).to_dict()
+        d = fuel.for_recommendation(rc, today, short=short).to_dict()
     except Exception:  # noqa: BLE001 – ein Hinweisfeld darf den Tagesplan nie kippen
         return None
     d.pop("weight_kg", None)
@@ -160,9 +160,10 @@ def build(out_path: Path = DEFAULT_OUT, today: dt.date | None = None) -> dict[st
     # veröffentlichen. Die PWA plant die Route weiter clientseitig aus dem GPS.
     wx = _weather_payload(cfg)
     milestone = _milestone_payload()
-    load_sources = _load_sources()
+    load_sources = _load_sources(today)
     fit = _fitness_payload()
     fuel_plan = _fuel_payload(rc, today)
+    fuel_short = _fuel_payload(rc, today, short=True) if rc.short_plan or rc.short_duration_min else None
 
     # Tagesworkout in die Zwift-Bibliothek (über intervals.icu). Wirft nie;
     # das Ergebnis steht in today.json und app_kv, damit man im Dashboard
@@ -199,6 +200,13 @@ def build(out_path: Path = DEFAULT_OUT, today: dt.date | None = None) -> dict[st
             "power_high": rc.power_high,
             "power_summary": rc.power_summary,
             "power_plan": rc.power_plan,
+            # Kurz-Variante (20–35 min) — liegt zusätzlich in Zwift, gewählt
+            # wird dort bzw. am Rad.
+            "short_duration_min": rc.short_duration_min,
+            "short_summary": rc.short_summary,
+            "short_plan": rc.short_plan,
+            # Wiedereinstieg nach Pause: [trainingsfreie Tage, Fahrten seither]
+            "comeback": list(rc.comeback) if rc.comeback else None,
             "rationale": rc.rationale,
             # Schutzgeländer gegen Überlastung (bikedash/guard.py)
             "guard_level": rc.guard_level,
@@ -227,6 +235,7 @@ def build(out_path: Path = DEFAULT_OUT, today: dt.date | None = None) -> dict[st
         # Energie fürs Workout: Mehrbedarf in kcal, aufgeteilt auf vorher /
         # unterwegs / danach und übersetzt in Cola, Maoam, Toast.
         "fuel": fuel_plan,
+        "fuel_short": fuel_short,
         # Ist das heutige Workout in Zwift angekommen? (sent/updated/unchanged =
         # ja; skipped = nicht eingerichtet oder Ruhetag; error = Fehlertext)
         "zwift": push.to_dict(),

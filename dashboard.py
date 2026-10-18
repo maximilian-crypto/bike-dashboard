@@ -329,6 +329,11 @@ def load_recovery() -> pd.DataFrame:
 
 
 @st.cache_data(ttl=120)
+def load_sleep() -> pd.DataFrame:
+    return dataprep.prep_sleep()
+
+
+@st.cache_data(ttl=120)
 def load_cycles() -> pd.DataFrame:
     return dataprep.prep_cycles()
 
@@ -889,6 +894,17 @@ with tab_today:
             st.error(w, icon=":material/health_and_safety:")
         else:
             st.warning(w, icon=":material/health_and_safety:")
+    # Wiedereinstieg nach einer Pause (recommend.comeback_state): freundlich,
+    # kein Warnton — eine Pause ist kein Fehler.
+    if rc.comeback:
+        _off, _done = rc.comeback
+        st.info(
+            f"**Willkommen zurück!** Nach {_off} Tagen Pause sind die ersten "
+            f"{recommend.COMEBACK_RIDES} Fahrten locker und etwas kürzer — "
+            f"heute Fahrt {_done + 1} von {recommend.COMEBACK_RIDES}. Danach geht es "
+            "normal weiter.",
+            icon=":material/waving_hand:",
+        )
     if not rc.warnings:
         _acwr = f" · Lastverhältnis {rc.acwr:.2f} (gesund bis 1,3)".replace(".", ",") if rc.acwr else ""
         st.caption(
@@ -902,8 +918,9 @@ with tab_today:
     tritt = rc.cadence + ("" if rc.cadence == "–" else " U/min")
     dist = (f"{rc.distance_km[0]:.0f}–{rc.distance_km[1]:.0f} km"
             if rc.distance_km[1] > 0 else "–")
+    _kurz = f"kurz: {rc.short_duration_min} Min" if rc.short_duration_min else None
     reco_cards([
-        ("Dauer", dauer, None, None),
+        ("Dauer", dauer, _kurz, None),
         (hf_label, hf_value, rc.zone_label, accent if rc.hr_low else None),
         ("Trittfrequenz", tritt, "U/min", None),
         ("Anstrengung", rc.rpe, "RPE 1–10", None),
@@ -935,12 +952,28 @@ with tab_today:
             f"FTP {rc.ftp} W</span>",
             unsafe_allow_html=True,
         )
-        plan_df = pd.DataFrame([
-            {"Abschnitt": b["label"], "Minuten": b["minutes"],
-             "Watt": f"{b['low_w']}–{b['high_w']}", "Zone": f"Z{b['zone']}"}
-            for b in rc.power_plan
-        ])
-        st.dataframe(plan_df, width="stretch", hide_index=True)
+        def _plan_df(blocks: list[dict]) -> pd.DataFrame:
+            return pd.DataFrame([
+                {"Abschnitt": b["label"], "Minuten": b["minutes"],
+                 "Watt": f"{b['low_w']}–{b['high_w']}", "Zone": f"Z{b['zone']}"}
+                for b in blocks
+            ])
+        # Beide Varianten liegen in Zwift — gewählt wird dort, je nachdem,
+        # wie viel nach dem Tag noch geht.
+        if rc.short_plan:
+            _full_min = sum(b["minutes"] for b in rc.power_plan)
+            t_full, t_short = st.tabs([f"Voll · {_full_min} Min",
+                                       f"Kurz · {rc.short_duration_min} Min"])
+            with t_full:
+                st.dataframe(_plan_df(rc.power_plan), width="stretch", hide_index=True)
+            with t_short:
+                st.markdown(f"**{rc.short_summary}** &nbsp;·&nbsp; "
+                            f"<span style='color:{MUTED}'>für Tage mit wenig Kraft oder "
+                            "Zeit — der Kern der Einheit bleibt, der Umfang geht.</span>",
+                            unsafe_allow_html=True)
+                st.dataframe(_plan_df(rc.short_plan), width="stretch", hide_index=True)
+        else:
+            st.dataframe(_plan_df(rc.power_plan), width="stretch", hide_index=True)
         # Die Tabelle ist die Anleitung; die Automatik ist das Zwift-Workout.
         # Ohne Einrichtung steht hier, wo man sie einschaltet — sonst der
         # Status des letzten Sync-Laufs (kam das Workout wirklich an?).
@@ -969,6 +1002,9 @@ with tab_today:
     if fp.available:
         cards = [("Extra essen", f"≈ {fp.kcal_extra} kcal",
                   f"{fp.kcal_range[0]}–{fp.kcal_range[1]} kcal", ACCENT)]
+        if fp.fluid_l:
+            cards.append(("Trinken", f"💧 {fp.fluid_l:.1f} l".replace(".", ","),
+                          f"{fp.fluid_ml_per_h} ml/h · auf der Rolle eher mehr", None))
         for ph in fp.phases:
             alt = (f"oder {ph.portions[1].label} · " if len(ph.portions) > 1 else "")
             cards.append((f"{ph.title} · ≈ {ph.kcal} kcal",
@@ -980,6 +1016,18 @@ with tab_today:
             + " · ".join(f"{p.icon} {p.label}" for p in fp.equivalents)
             + "."
         )
+        if rc.short_duration_min:
+            fps = fuel.for_recommendation(rc, short=True)
+            if fps.available:
+                st.markdown(
+                    f"Fährst du die **Kurz-Variante** ({rc.short_duration_min} Min): "
+                    f"≈ {fps.kcal_extra} kcal extra — "
+                    + " · ".join(f"{p.icon} {p.label}" for p in fps.equivalents[:2])
+                    + (f" · 💧 {fps.fluid_l:.1f} l".replace(".", ",") if fps.fluid_l else "")
+                    + "."
+                )
+        if fp.fluid_text:
+            st.caption(fp.fluid_text + ".")
         for note in fp.notes:
             st.caption(note)
     else:
@@ -1625,6 +1673,40 @@ with tab3:
                 else:
                     st.info("Noch zu wenige überlappende Tage für diese Auswertung.",
                            icon=":material/bedtime:")
+
+        # --- Schlaf (Whoop, seit Okt. 2026 synchronisiert) ---
+        # Zwei von drei Nächten unter 6 h bremsen die Tagesempfehlung
+        # (guard.py). Kurze Nächte sind gelb, nicht rot: Schlaf ist hier ein
+        # Hebel, kein Zeugnis.
+        st.subheader(":material/hotel: Schlaf", anchor=False)
+        sl = load_sleep()
+        if sl.empty:
+            st.info("Noch keine Schlafdaten — sie kommen mit dem nächsten Whoop-Sync "
+                    "(die letzten 90 Tage werden einmalig nachgeholt).",
+                    icon=":material/hotel:")
+        else:
+            recent = sl[sl["date"] >= sl["date"].max() - pd.Timedelta(days=41)].copy()
+            recent["farbe"] = np.where(recent["asleep_h"] < 6.0, C_AMBER, C_IN)
+            fig = go.Figure(go.Bar(x=recent["date"], y=recent["asleep_h"],
+                                   marker_color=recent["farbe"],
+                                   hovertemplate="%{x|%d.%m.}: %{y:.1f} h<extra></extra>"))
+            if recent["need_h"].notna().any():
+                fig.add_trace(go.Scatter(x=recent["date"], y=recent["need_h"], mode="lines",
+                                         line=dict(color=MUTED, dash="dot"),
+                                         name="Bedarf laut Whoop",
+                                         hovertemplate="Bedarf %{y:.1f} h<extra></extra>"))
+            fig.add_hline(y=6, line_dash="dot", line_color=C_AMBER)
+            fig.update_layout(title="Geschlafen pro Nacht (h) — letzte 6 Wochen",
+                              xaxis_title="", yaxis_title="h", showlegend=False)
+            st.plotly_chart(fig, width="stretch")
+            week = sl[sl["date"] >= sl["date"].max() - pd.Timedelta(days=6)]["asleep_h"].dropna()
+            if len(week):
+                short_n = int((week < 6.0).sum())
+                st.caption(
+                    f"Letzte 7 Nächte: Ø {week.mean():.1f} h".replace(".", ",")
+                    + f" · {short_n} {'Nacht' if short_n == 1 else 'Nächte'} unter 6 h. "
+                    "Zwei von drei kurzen Nächten → die Tagesempfehlung lässt Hartes weg."
+                )
 
 
 # ===========================================================================

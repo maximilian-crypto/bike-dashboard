@@ -31,6 +31,18 @@ Drei Signale, jedes mit Herkunft:
    anhaltend erhöhter Ruhepuls / gedrückte HRV bei funktionellem
    Overreaching) — dann Ruhetag, auch wenn heute ein grüner Ausreißer dabei ist.
 
+4. **Wenig Schlaf.** Schlafmangel senkt Ausdauer und Kraft und erhöht das
+   Verletzungsrisiko; Athleten mit ~7 h profitieren von 45–110 min mehr Schlaf
+   (Systematisches Review, Sleep Med. 2021). Zwei von drei Nächten unter
+   `SLEEP_SHORT_H` → nichts Hartes. Eine einzelne kurze Nacht ist Alltag.
+
+5. **Infekt-Warnzeichen.** Ruhepuls *und* Hauttemperatur gleichzeitig deutlich
+   über der persönlichen Basis (Median der letzten 30 Tage). In Wearable-Studien
+   stiegen beide oft schon vor Symptombeginn (Mishra et al. 2020, Nat Biomed
+   Eng: im Median +7 bpm; systematisches Review: Temperaturanstieg bei 76 %).
+   Ein Signal allein ist unspezifisch (Training, Alkohol, Hitze) — deshalb nur
+   beide zusammen, und als Warnzeichen formuliert, nie als Diagnose.
+
 Rein und ohne DB — `recommend.build` reicht die Daten herein.
 """
 
@@ -59,6 +71,15 @@ RED_RECOVERY = 34.0      # Whoop „rot" (wie `recommend._band`)
 RED_WINDOW_DAYS = 7
 RED_DAYS_STOP = 3        # 3 rote Tage binnen 7 → Ruhetag
 
+SLEEP_SHORT_H = 6.0      # darunter gilt eine Nacht als kurz
+SLEEP_WINDOW = 3         # betrachtete Nächte (inkl. letzter Nacht)
+SLEEP_SHORT_NIGHTS = 2   # so viele kurze Nächte im Fenster → nichts Hartes
+
+ILL_RHR_DELTA = 5.0      # bpm über dem 30-Tage-Median
+ILL_TEMP_DELTA = 0.5     # °C Hauttemperatur über dem 30-Tage-Median
+ILL_BASE_DAYS = 30
+ILL_MIN_BASE = 14        # so viele Basistage braucht es mindestens
+
 
 @dataclass
 class Guard:
@@ -67,6 +88,8 @@ class Guard:
     acwr: float | None = None
     streak_days: int = 0
     red_days: int = 0
+    short_nights: int = 0
+    illness: tuple[float, float] | None = None   # (Δ Ruhepuls bpm, Δ Haut °C)
     warnings: list[str] = field(default_factory=list)
 
     def apply(self, kind: str) -> str:
@@ -131,7 +154,42 @@ def red_days(rec: pd.DataFrame, today: dt.date) -> int:
     return int((win["recovery_score"] < RED_RECOVERY).sum())
 
 
-def check(rides: pd.DataFrame, rec: pd.DataFrame, today: dt.date) -> Guard:
+def short_nights(sleep: pd.DataFrame | None, today: dt.date) -> int:
+    """Kurze Nächte (< ``SLEEP_SHORT_H``) unter den letzten ``SLEEP_WINDOW``."""
+    if sleep is None or sleep.empty or "asleep_h" not in sleep.columns:
+        return 0
+    since = today - dt.timedelta(days=SLEEP_WINDOW - 1)
+    d = sleep["date"].dt.date
+    win = sleep[(d >= since) & (d <= today)]["asleep_h"].dropna()
+    return int((win < SLEEP_SHORT_H).sum())
+
+
+def illness_signs(rec: pd.DataFrame, today: dt.date) -> tuple[float, float] | None:
+    """(Δ Ruhepuls, Δ Hauttemperatur), wenn beide heute über der Schwelle liegen."""
+    if rec.empty or "skin_temp_celsius" not in rec.columns:
+        return None
+    d = rec["date"].dt.date
+    now = rec[d == today]
+    if now.empty:
+        return None
+    rhr = now["resting_heart_rate"].iloc[-1]
+    temp = now["skin_temp_celsius"].iloc[-1]
+    if pd.isna(rhr) or pd.isna(temp):
+        return None
+    base = rec[(d >= today - dt.timedelta(days=ILL_BASE_DAYS)) & (d < today)]
+    b_rhr = base["resting_heart_rate"].dropna()
+    b_temp = base["skin_temp_celsius"].dropna()
+    if len(b_rhr) < ILL_MIN_BASE or len(b_temp) < ILL_MIN_BASE:
+        return None
+    d_rhr = float(rhr) - float(b_rhr.median())
+    d_temp = float(temp) - float(b_temp.median())
+    if d_rhr >= ILL_RHR_DELTA and d_temp >= ILL_TEMP_DELTA:
+        return round(d_rhr, 1), round(d_temp, 2)
+    return None
+
+
+def check(rides: pd.DataFrame, rec: pd.DataFrame, today: dt.date,
+          sleep: pd.DataFrame | None = None) -> Guard:
     g = Guard()
 
     ratio, _ = acwr(rides, today)
@@ -162,4 +220,20 @@ def check(rides: pd.DataFrame, rec: pd.DataFrame, today: dt.date) -> Guard:
                  f"{g.red_days} rote Recovery-Tage in den letzten {RED_WINDOW_DAYS} "
                  "Tagen — das Muster deutet auf Überlastung oder einen Infekt. "
                  "Heute Ruhetag, auch wenn es sich gut anfühlt.")
+
+    g.short_nights = short_nights(sleep, today)
+    if g.short_nights >= SLEEP_SHORT_NIGHTS:
+        _tighten(g, "ENDURANCE", "caution",
+                 f"{g.short_nights} der letzten {SLEEP_WINDOW} Nächte unter "
+                 f"{SLEEP_SHORT_H:.0f} h Schlaf — heute nichts Hartes, die Kurz-Variante "
+                 "reicht völlig. Gerade ist Schlaf der größere Hebel als Training.")
+
+    g.illness = illness_signs(rec, today)
+    if g.illness is not None:
+        d_rhr, d_temp = g.illness
+        _tighten(g, "REST", "stop",
+                 f"Ruhepuls +{d_rhr:.0f} bpm und Hauttemperatur +{_de(d_temp)} °C über "
+                 "deinem Normalwert — ein Muster, das oft vor einem Infekt auftritt. "
+                 "Heute Ruhetag: viel trinken, gut essen, früh schlafen. "
+                 "Keine Diagnose, nur ein Warnzeichen.")
     return g
