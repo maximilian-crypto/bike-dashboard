@@ -1,11 +1,11 @@
 {
-  "generated_at": "2026-10-18T04:25:37+00:00",
+  "generated_at": "2026-10-18T08:48:07+00:00",
   "date": "2026-10-18",
   "recommendation": {
     "kind": "ENDURANCE",
     "title": "Grundlagenausdauer (Z2)",
-    "readiness_band": "unknown",
-    "recovery_score": null,
+    "readiness_band": "yellow",
+    "recovery_score": 45.0,
     "zone_number": 2,
     "zone_label": "Z2 · Grundlage",
     "hr_low": 144,
@@ -56,11 +56,11 @@
       }
     ],
     "rationale": [
-      "Keine aktuelle Whoop-Recovery — neutrale Annahme.",
+      "Whoop-Recovery heute: 45 %.",
       "Diese Woche bisher 0 / Ziel 67 Last (0 %, ≈ 1.1 h).",
       "Planwoche 5, Phase „Grundlage“ — noch 19 Wochen bis zum Saisonstart.",
       "Form (TSB) aktuell -5.",
-      "Ohne Erholungsdaten konservativ: ruhige Grundlage (Z2)."
+      "Erholung mittel & Woche noch dünn: ruhige Grundlage (Z2)."
     ],
     "guard_level": "ok",
     "warnings": [],
@@ -79,13 +79,13 @@
     }
   },
   "weather": {
-    "temp_c": 8.7,
-    "wind_kmh": 21.5,
-    "wind_deg": 40,
+    "temp_c": 10.7,
+    "wind_kmh": 17.7,
+    "wind_deg": 57,
     "wind_dir": "NO",
-    "gust_kmh": 41.4,
-    "code": 3,
-    "desc": "bedeckt"
+    "gust_kmh": 36.7,
+    "code": 80,
+    "desc": "Regenschauer"
   },
   "milestone": {
     "total_km": 1050.0,
@@ -98,10 +98,10 @@
     "next_km": 1070.0
   },
   "fitness": {
-    "score": 67.9,
+    "score": 67.5,
     "tier": "Im Aufbau",
-    "delta_30": -0.7,
-    "delta_90": 14.2,
+    "delta_30": -1.1,
+    "delta_90": 13.8,
     "best": 78.5,
     "subscores": {
       "cap": {
@@ -116,8 +116,8 @@
       },
       "reg": {
         "label": "Regeneration",
-        "score": 77.0,
-        "n": 39
+        "score": 74.8,
+        "n": 40
       },
       "kon": {
         "label": "Konsistenz",
@@ -234,11 +234,11 @@
     "short": "Extra essen: ≈ 551 kcal (4 Dosen Cola / 6½ Maoam Bloxx / 5½ Scheiben Toast mit Honig)"
   },
   "zwift": {
-    "status": "sent",
+    "status": "unchanged",
     "name": "Bikedash 18-10 Grundlage Z2 107min",
     "event_id": 145595184,
     "detail": null,
     "date": "2026-10-18",
-    "at": "2026-10-18T04:25:36+00:00"
+    "at": "2026-10-18T08:48:05+00:00"
   }
 }
