@@ -288,3 +288,45 @@ def send_if_due(cfg: dict[str, Any], now: dt.datetime | None = None) -> tuple[st
         return "failed", "ntfy hat nicht angenommen"
     mark_sent(today)
     return "sent", why
+
+
+# ---------------------------------------------------------------------------
+# Im Lauf nachfassen
+# ---------------------------------------------------------------------------
+
+WAIT_INTERVAL_S = 600     # alle 10 Minuten nachsehen
+WAIT_MAX_ROUNDS = 30      # Sicherheitsnetz: höchstens 5 h
+
+
+def send_waiting(cfg: dict[str, Any], refresh: Any, *,
+                 now_fn: Any = None, sleep_fn: Any = None,
+                 interval_s: int = WAIT_INTERVAL_S,
+                 max_rounds: int = WAIT_MAX_ROUNDS) -> tuple[str, str]:
+    """Wartet der Morgen-Report, im selben Lauf nachfassen statt auf den
+    nächsten Zeitplan-Slot zu hoffen.
+
+    Hintergrund (Diagnose 22.10.2026): GitHub verwirft fast alle Slots des
+    Morgenfensters — pro Tag kam nur der Lauf um ~06:35 an, der nächste erst
+    gegen 11:20. War die Recovery um 06:35 noch nicht da, ging der Report
+    Stunden zu spät raus. Jetzt bleibt der Lauf aktiv: alle ``interval_s``
+    ``refresh()`` (Whoop nachladen, Tagesplan neu bauen), dann erneut prüfen —
+    bis gesendet ist oder ``due()`` zur Frist von selbst sendet.
+    """
+    import time
+
+    now_fn = now_fn or (lambda: dt.datetime.now(dt.timezone.utc))
+    sleep_fn = sleep_fn or time.sleep
+    status, why = send_if_due(cfg, now_fn())
+    rounds = 0
+    while status == "waiting" and rounds < max_rounds:
+        now_local = now_fn().astimezone(TZ)
+        if now_local.time() >= DEADLINE:      # nach der Frist wartet nichts mehr
+            break
+        sleep_fn(interval_s)
+        rounds += 1
+        try:
+            refresh()
+        except Exception as exc:  # noqa: BLE001 – Nachladen darf das Senden nie kippen
+            print(f"  Nachladen fehlgeschlagen: {exc}")
+        status, why = send_if_due(cfg, now_fn())
+    return status, why

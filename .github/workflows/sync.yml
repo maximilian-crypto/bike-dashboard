@@ -24,6 +24,7 @@ permissions:
 jobs:
   sync:
     runs-on: ubuntu-latest
+    timeout-minutes: 330   # Nachfassen am Morgen dauert höchstens bis 10:00
     steps:
       - uses: actions/checkout@v4
 
@@ -84,7 +85,10 @@ jobs:
           ATHLETE_SEASON_START: ${{ secrets.ATHLETE_SEASON_START }}
           NTFY_TOPIC: ${{ secrets.NTFY_TOPIC }}
           DASHBOARD_URL: ${{ secrets.DASHBOARD_URL }}
-        run: python send_report.py --if-due --weekly-if-due
+        # --wait: wartet der Report noch auf die Recovery, fasst derselbe Lauf
+        # alle 10 min nach (bis 10:00). GitHub verwirft die meisten
+        # Morgen-Slots — auf den nächsten Lauf zu hoffen, hieß oft 11:20.
+        run: python send_report.py --if-due --weekly-if-due --wait
 
       - name: today.json committen (nur bei Änderung)
         run: |

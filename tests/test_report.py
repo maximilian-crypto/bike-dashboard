@@ -190,3 +190,52 @@ def test_send_push_sets_click_header(monkeypatch):
     assert seen["url"] == "https://ntfy.sh/t0pic"
     assert seen["headers"]["Click"] == "https://x.streamlit.app"
     assert not report.send_push({"report": {"ntfy_topic": "DEIN_NTFY_THEMA"}}, "t", "m")
+
+
+# --- Nachfassen im selben Lauf (Diagnose 22.10.2026) ------------------------
+
+def _clock(start):
+    """Uhr, die bei jedem sleep() vorrückt — ohne echtes Warten."""
+    state = {"now": start}
+    return (lambda: state["now"]), (lambda s: state.__setitem__("now", state["now"] + dt.timedelta(seconds=s)))
+
+
+def test_send_waiting_retries_until_recovery_arrives(monkeypatch):
+    start = dt.datetime(2026, 10, 22, 4, 36, tzinfo=dt.timezone.utc)   # 06:36 MESZ
+    now_fn, sleep_fn = _clock(start)
+    calls = {"refresh": 0}
+    answers = iter([("waiting", "wartet"), ("waiting", "wartet"), ("sent", "Recovery da")])
+    monkeypatch.setattr(report, "send_if_due", lambda cfg, now=None: next(answers))
+
+    def refresh():
+        calls["refresh"] += 1
+
+    status, _ = report.send_waiting({}, refresh, now_fn=now_fn, sleep_fn=sleep_fn)
+    assert status == "sent" and calls["refresh"] == 2
+    assert now_fn() == start + dt.timedelta(minutes=20)
+
+
+def test_send_waiting_stops_at_deadline_and_survives_refresh_errors(monkeypatch):
+    start = dt.datetime(2026, 10, 22, 7, 45, tzinfo=dt.timezone.utc)   # 09:45 MESZ
+    now_fn, sleep_fn = _clock(start)
+    seen = []
+
+    def fake_due(cfg, now=None):
+        seen.append(now)
+        # ab 10:00 deutscher Zeit sendet die echte due()-Logik von selbst
+        return ("sent", "Frist") if now.astimezone(report.TZ).time() >= report.DEADLINE \
+            else ("waiting", "wartet")
+    monkeypatch.setattr(report, "send_if_due", fake_due)
+
+    def boom():
+        raise RuntimeError("Whoop down")
+
+    status, _ = report.send_waiting({}, boom, now_fn=now_fn, sleep_fn=sleep_fn)
+    assert status == "sent" and len(seen) == 3    # 09:45, 09:55, 10:05
+
+
+def test_send_waiting_does_nothing_when_not_waiting(monkeypatch):
+    monkeypatch.setattr(report, "send_if_due", lambda cfg, now=None: ("already", "heute schon"))
+    slept = []
+    status, _ = report.send_waiting({}, lambda: None, sleep_fn=slept.append)
+    assert status == "already" and slept == []

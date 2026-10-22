@@ -131,7 +131,12 @@ Spalte `date` — die ist der Zyklusbeginn = Einschlafen, also meist gestern);
 Frist 10:00 deutscher Zeit erreicht → senden mit Hinweis
 „Recovery fehlt noch"; nie vor 06:00. Marker `report_sent_date` in `app_kv`.
 Grund: die alte feste Uhrzeit 06:30 lag vor der Whoop-Recovery und hätte still
-mit dem Wert von gestern gerechnet. Erste Zeile trägt die Entscheidung (Einheit,
+mit dem Wert von gestern gerechnet. **Nachfassen im selben Lauf (seit 2026-10-22):** In
+der Praxis kommt pro Morgen nur *ein* Lauf an (~06:35), der nächste erst gegen
+11:20. Fehlt die Recovery um 06:35, bleibt der Lauf deshalb aktiv
+(`send_report.py --wait` → `report.send_waiting`): alle 10 min Whoop nachladen,
+Tagesplan + Zwift neu bauen, erneut prüfen — bis gesendet oder Frist 10:00.
+Job-Timeout 330 min. Kostet nichts, das Repo ist öffentlich. Erste Zeile trägt die Entscheidung (Einheit,
 Dauer, Watt, Zwift bereit), Wetter nur an Fahrtagen. Kanal ntfy (Secret
 `NTFY_TOPIC`), optional `DASHBOARD_URL` als Klick-Ziel. Nutzerentscheid
 (Sept 2026): ntfy, morgens, spätestens 10:00.
@@ -263,7 +268,7 @@ Live-Ride-PWA mit BLE-Puls/-Kadenz und Karte.
 | 13 | **4×4-Intervalle & Intensität vom Wochenziel entkoppelt** — neuer Einheitentyp `VO2MAX`, Intensitätslücken-Regel, Wattdaten-basierte Erkennung harter Einheiten | `bikedash/recommend.py`, `bikedash/power.py`, `zwift.py`, `fuel.py`, `report.py` | Code fertig, Tests grün, Tab „Heute" + Zwift-Text geprüft |
 | 8 | **Morgen-Report ereignisgesteuert** — Push, sobald die heutige Whoop-Recovery da ist, spätestens 10:00; erste Zeile = Entscheidung | `bikedash/report.py`, `send_report.py --if-due`, `sync.yml` | Code fertig, Tests grün. **Offen: `NTFY_TOPIC` als Actions-Secret + ntfy-App abonnieren** |
 
-**Tests:** 219 grün (`python -m pytest -q`), inkl. Suites
+**Tests:** 222 grün (`python -m pytest -q`), inkl. Suites
 `tests/test_milestones.py`, `tests/test_maintenance.py`, `tests/test_dataprep.py`, `tests/test_season.py`, `tests/test_power.py`, `tests/test_zwift.py`, `tests/test_report.py`, `tests/test_fitness.py`, `tests/test_fuel.py`, `tests/test_guard.py` und `tests/test_weekly.py`.
 
 **Zwift-Zustellung verifiziert (2026-09-18, Lauf #346):** `today.json` meldet

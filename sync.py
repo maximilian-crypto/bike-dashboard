@@ -44,7 +44,8 @@ def main() -> int:
             res = whoop.sync(cfg, full=full)
             print(
                 f"  Whoop:   {res['recovery']} Recovery, "
-                f"{res['cycles']} Zyklen, {res['workouts']} Workouts aktualisiert."
+                f"{res['cycles']} Zyklen, {res['workouts']} Workouts, "
+                f"{res.get('sleep', 0)} Schlafdaten aktualisiert."
             )
         except Exception as exc:  # noqa: BLE001
             ok = False
@@ -55,7 +56,7 @@ def main() -> int:
     c = store.counts()
     print(
         f"  Gesamt in DB: {c['strava_activities']} Fahrten, "
-        f"{c['whoop_recovery']} Recovery-Tage."
+        f"{c['whoop_recovery']} Recovery-Tage, {c.get('whoop_sleep', 0)} Schlafdaten."
     )
 
     # Einmal täglich eine Sicherung anlegen.
