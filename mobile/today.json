@@ -1,11 +1,11 @@
 {
-  "generated_at": "2026-10-22T04:37:16+00:00",
+  "generated_at": "2026-10-22T08:37:30+00:00",
   "date": "2026-10-22",
   "recommendation": {
     "kind": "ENDURANCE",
     "title": "Grundlagenausdauer (Z2)",
-    "readiness_band": "unknown",
-    "recovery_score": null,
+    "readiness_band": "green",
+    "recovery_score": 71.0,
     "zone_number": 2,
     "zone_label": "Z2 · Grundlage",
     "hr_low": 144,
@@ -88,12 +88,14 @@
       0
     ],
     "rationale": [
-      "Keine aktuelle Whoop-Recovery — neutrale Annahme.",
+      "Whoop-Recovery heute: 71 %.",
       "Diese Woche bisher 0 / Ziel 74 Last (0 %, ≈ 1.2 h).",
       "Planwoche 6, Phase „Grundlage“ — noch 18 Wochen bis zum Saisonstart.",
       "Form (TSB) aktuell -5.",
-      "Ohne Erholungsdaten konservativ: ruhige Grundlage (Z2).",
-      "Willkommen zurück nach 18 Tagen Pause! Fahrt 1 von 2 zum Reinkommen: locker und etwas kürzer, danach geht es normal weiter."
+      "Bestens erholt & harte Einheit frei: 4×4 min nahe Maximalpuls. Das Protokoll mit der besten Studienlage für Schlagvolumen und VO2max (Helgerud et al. 2007) — kurz, hart, wirksam.",
+      "Letzter harter Reiz vor 35 Tagen.",
+      "Willkommen zurück nach 18 Tagen Pause! Fahrt 1 von 2 zum Reinkommen: locker und etwas kürzer, danach geht es normal weiter.",
+      "Wiedereinstieg: 4×4-Intervalle (Z5) → Grundlagenausdauer (Z2)."
     ],
     "guard_level": "ok",
     "warnings": [],
@@ -112,13 +114,13 @@
     }
   },
   "weather": {
-    "temp_c": 8.2,
-    "wind_kmh": 18.3,
-    "wind_deg": 216,
+    "temp_c": 8.4,
+    "wind_kmh": 17.7,
+    "wind_deg": 204,
     "wind_dir": "SW",
-    "gust_kmh": 36.4,
-    "code": 3,
-    "desc": "bedeckt"
+    "gust_kmh": 37.4,
+    "code": 1,
+    "desc": "überwiegend klar"
   },
   "milestone": {
     "total_km": 1050.0,
@@ -131,10 +133,10 @@
     "next_km": 1070.0
   },
   "fitness": {
-    "score": 65.4,
+    "score": 65.9,
     "tier": "Im Aufbau",
-    "delta_30": -2.8,
-    "delta_90": 11.7,
+    "delta_30": -2.3,
+    "delta_90": 12.2,
     "best": 78.5,
     "subscores": {
       "cap": {
@@ -149,8 +151,8 @@
       },
       "reg": {
         "label": "Regeneration",
-        "score": 74.9,
-        "n": 39
+        "score": 77.0,
+        "n": 40
       },
       "kon": {
         "label": "Konsistenz",
@@ -358,13 +360,13 @@
     "fluid_text": "💧 ca. 0,3 l trinken (550 ml/h), auf der Rolle eher mehr"
   },
   "zwift": {
-    "status": "sent",
+    "status": "unchanged",
     "name": "Bikedash 22-10 Grundlage Z2 66min",
     "event_id": 147024481,
     "detail": null,
     "date": "2026-10-22",
-    "at": "2026-10-22T04:37:15+00:00",
-    "short_status": "sent",
+    "at": "2026-10-22T08:37:29+00:00",
+    "short_status": "unchanged",
     "short_name": "Bikedash 22-10 Kurz Grundlage Z2 30min"
   }
 }
