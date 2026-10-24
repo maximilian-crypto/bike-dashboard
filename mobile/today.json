@@ -1,11 +1,11 @@
 {
-  "generated_at": "2026-10-23T19:57:19+00:00",
-  "date": "2026-10-23",
+  "generated_at": "2026-10-24T04:20:43+00:00",
+  "date": "2026-10-24",
   "recommendation": {
     "kind": "ENDURANCE",
     "title": "Grundlagenausdauer (Z2)",
-    "readiness_band": "green",
-    "recovery_score": 85.0,
+    "readiness_band": "unknown",
+    "recovery_score": null,
     "zone_number": 2,
     "zone_label": "Z2 · Grundlage",
     "hr_low": 144,
@@ -84,18 +84,16 @@
       }
     ],
     "comeback": [
-      19,
+      20,
       0
     ],
     "rationale": [
-      "Whoop-Recovery heute: 85 %.",
+      "Keine aktuelle Whoop-Recovery — neutrale Annahme.",
       "Diese Woche bisher 0 / Ziel 74 Last (0 %, ≈ 1.2 h).",
       "Planwoche 6, Phase „Grundlage“ — noch 18 Wochen bis zum Saisonstart.",
       "Form (TSB) aktuell -5.",
-      "Bestens erholt & harte Einheit frei: 4×4 min nahe Maximalpuls. Das Protokoll mit der besten Studienlage für Schlagvolumen und VO2max (Helgerud et al. 2007) — kurz, hart, wirksam.",
-      "Letzter harter Reiz vor 36 Tagen.",
-      "Willkommen zurück nach 19 Tagen Pause! Fahrt 1 von 2 zum Reinkommen: locker und etwas kürzer, danach geht es normal weiter.",
-      "Wiedereinstieg: 4×4-Intervalle (Z5) → Grundlagenausdauer (Z2)."
+      "Ohne Erholungsdaten konservativ: ruhige Grundlage (Z2).",
+      "Willkommen zurück nach 20 Tagen Pause! Fahrt 1 von 2 zum Reinkommen: locker und etwas kürzer, danach geht es normal weiter."
     ],
     "guard_level": "ok",
     "warnings": [],
@@ -114,13 +112,13 @@
     }
   },
   "weather": {
-    "temp_c": 9.7,
-    "wind_kmh": 18.1,
-    "wind_deg": 125,
-    "wind_dir": "SO",
-    "gust_kmh": 41.0,
-    "code": 80,
-    "desc": "Regenschauer"
+    "temp_c": 8.7,
+    "wind_kmh": 25.6,
+    "wind_deg": 200,
+    "wind_dir": "S",
+    "gust_kmh": 55.1,
+    "code": 3,
+    "desc": "bedeckt"
   },
   "milestone": {
     "total_km": 1050.0,
@@ -360,13 +358,13 @@
     "fluid_text": "💧 ca. 0,3 l trinken (550 ml/h), auf der Rolle eher mehr"
   },
   "zwift": {
-    "status": "unchanged",
-    "name": "Bikedash 23-10 Grundlage Z2 66min",
-    "event_id": 147323815,
-    "detail": null,
-    "date": "2026-10-23",
-    "at": "2026-10-23T19:57:18+00:00",
-    "short_status": "unchanged",
-    "short_name": "Bikedash 23-10 Kurz Grundlage Z2 30min"
+    "status": "skipped",
+    "name": null,
+    "event_id": null,
+    "detail": "intervals.icu nicht eingerichtet",
+    "date": "2026-10-24",
+    "at": "2026-10-24T04:20:42+00:00",
+    "short_status": null,
+    "short_name": null
   }
 }
