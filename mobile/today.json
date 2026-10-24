@@ -1,11 +1,11 @@
 {
-  "generated_at": "2026-10-24T08:49:30+00:00",
+  "generated_at": "2026-10-24T12:39:48+00:00",
   "date": "2026-10-24",
   "recommendation": {
     "kind": "ENDURANCE",
     "title": "Grundlagenausdauer (Z2)",
-    "readiness_band": "unknown",
-    "recovery_score": null,
+    "readiness_band": "yellow",
+    "recovery_score": 34.0,
     "zone_number": 2,
     "zone_label": "Z2 · Grundlage",
     "hr_low": 144,
@@ -88,11 +88,11 @@
       0
     ],
     "rationale": [
-      "Keine aktuelle Whoop-Recovery — neutrale Annahme.",
+      "Whoop-Recovery heute: 34 %.",
       "Diese Woche bisher 0 / Ziel 74 Last (0 %, ≈ 1.2 h).",
       "Planwoche 6, Phase „Grundlage“ — noch 18 Wochen bis zum Saisonstart.",
       "Form (TSB) aktuell -5.",
-      "Ohne Erholungsdaten konservativ: ruhige Grundlage (Z2).",
+      "Erholung mittel & Woche noch dünn: ruhige Grundlage (Z2).",
       "Willkommen zurück nach 20 Tagen Pause! Fahrt 1 von 2 zum Reinkommen: locker und etwas kürzer, danach geht es normal weiter."
     ],
     "guard_level": "ok",
@@ -112,13 +112,13 @@
     }
   },
   "weather": {
-    "temp_c": 10.9,
-    "wind_kmh": 20.1,
-    "wind_deg": 227,
+    "temp_c": 11.2,
+    "wind_kmh": 22.9,
+    "wind_deg": 222,
     "wind_dir": "SW",
-    "gust_kmh": 42.5,
-    "code": 61,
-    "desc": "leichter Regen"
+    "gust_kmh": 50.4,
+    "code": 3,
+    "desc": "bedeckt"
   },
   "milestone": {
     "total_km": 1050.0,
@@ -131,10 +131,10 @@
     "next_km": 1070.0
   },
   "fitness": {
-    "score": 66.2,
+    "score": 66.0,
     "tier": "Im Aufbau",
-    "delta_30": -2.0,
-    "delta_90": 12.5,
+    "delta_30": -2.2,
+    "delta_90": 12.3,
     "best": 78.5,
     "subscores": {
       "cap": {
@@ -149,8 +149,8 @@
       },
       "reg": {
         "label": "Regeneration",
-        "score": 79.8,
-        "n": 40
+        "score": 79.0,
+        "n": 41
       },
       "kon": {
         "label": "Konsistenz",
@@ -363,7 +363,7 @@
     "event_id": 147619534,
     "detail": null,
     "date": "2026-10-24",
-    "at": "2026-10-24T08:49:29+00:00",
+    "at": "2026-10-24T12:39:47+00:00",
     "short_status": "unchanged",
     "short_name": "Bikedash 24-10 Kurz Grundlage Z2 30min"
   }
