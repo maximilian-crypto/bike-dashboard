@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-10-24T12:39:48+00:00",
+  "generated_at": "2026-10-24T12:58:28+00:00",
   "date": "2026-10-24",
   "recommendation": {
     "kind": "ENDURANCE",
@@ -112,11 +112,11 @@
     }
   },
   "weather": {
-    "temp_c": 11.2,
-    "wind_kmh": 22.9,
-    "wind_deg": 222,
+    "temp_c": 10.9,
+    "wind_kmh": 23.5,
+    "wind_deg": 221,
     "wind_dir": "SW",
-    "gust_kmh": 50.4,
+    "gust_kmh": 50.8,
     "code": 3,
     "desc": "bedeckt"
   },
@@ -363,7 +363,7 @@
     "event_id": 147619534,
     "detail": null,
     "date": "2026-10-24",
-    "at": "2026-10-24T12:39:47+00:00",
+    "at": "2026-10-24T12:58:27+00:00",
     "short_status": "unchanged",
     "short_name": "Bikedash 24-10 Kurz Grundlage Z2 30min"
   }
