@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-10-24T04:20:43+00:00",
+  "generated_at": "2026-10-24T08:08:46+00:00",
   "date": "2026-10-24",
   "recommendation": {
     "kind": "ENDURANCE",
@@ -112,13 +112,13 @@
     }
   },
   "weather": {
-    "temp_c": 8.7,
-    "wind_kmh": 25.6,
-    "wind_deg": 200,
-    "wind_dir": "S",
-    "gust_kmh": 55.1,
-    "code": 3,
-    "desc": "bedeckt"
+    "temp_c": 10.1,
+    "wind_kmh": 19.2,
+    "wind_deg": 214,
+    "wind_dir": "SW",
+    "gust_kmh": 43.6,
+    "code": 80,
+    "desc": "Regenschauer"
   },
   "milestone": {
     "total_km": 1050.0,
@@ -363,7 +363,7 @@
     "event_id": null,
     "detail": "intervals.icu nicht eingerichtet",
     "date": "2026-10-24",
-    "at": "2026-10-24T04:20:42+00:00",
+    "at": "2026-10-24T08:08:45+00:00",
     "short_status": null,
     "short_name": null
   }
