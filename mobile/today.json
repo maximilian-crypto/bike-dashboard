@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-10-25T19:00:21+00:00",
+  "generated_at": "2026-10-25T22:32:25+00:00",
   "date": "2026-10-25",
   "recommendation": {
     "kind": "REST",
@@ -58,11 +58,11 @@
     }
   },
   "weather": {
-    "temp_c": 10.5,
-    "wind_kmh": 27.5,
-    "wind_deg": 248,
-    "wind_dir": "W",
-    "gust_kmh": 62.6,
+    "temp_c": 9.5,
+    "wind_kmh": 25.0,
+    "wind_deg": 243,
+    "wind_dir": "SW",
+    "gust_kmh": 67.3,
     "code": 80,
     "desc": "Regenschauer"
   },
@@ -172,13 +172,13 @@
   },
   "fuel_short": null,
   "zwift": {
-    "status": "deleted",
-    "name": "Bikedash 25-10 Grundlage Z2 66min",
-    "event_id": 147953325,
-    "detail": "Ruhetag – Workout entfernt",
+    "status": "skipped",
+    "name": null,
+    "event_id": null,
+    "detail": "Ruhetag",
     "date": "2026-10-25",
-    "at": "2026-10-25T19:00:20+00:00",
-    "short_status": "deleted",
-    "short_name": "Bikedash 25-10 Kurz Grundlage Z2 30min"
+    "at": "2026-10-25T22:32:24+00:00",
+    "short_status": "skipped",
+    "short_name": null
   }
 }
