@@ -239,3 +239,16 @@ def test_send_waiting_does_nothing_when_not_waiting(monkeypatch):
     slept = []
     status, _ = report.send_waiting({}, lambda: None, sleep_fn=slept.append)
     assert status == "already" and slept == []
+
+
+def test_send_waiting_does_not_idle_through_the_night(monkeypatch):
+    """Befund 25.10.2026: der Lauf um ~00:30 wartete 5 h, weil vor 06:00 nie
+    gesendet wird. Vor WAIT_FROM wird gar nicht gewartet."""
+    start = dt.datetime(2026, 10, 24, 22, 26, tzinfo=dt.timezone.utc)   # 00:26 MESZ
+    now_fn, sleep_fn = _clock(start)
+    monkeypatch.setattr(report, "send_if_due",
+                        lambda cfg, now=None: ("waiting", "vor 06:00 Uhr wird nicht gesendet"))
+    slept = []
+    status, _ = report.send_waiting({}, lambda: None, now_fn=now_fn,
+                                    sleep_fn=lambda s: slept.append(s))
+    assert status == "waiting" and slept == []

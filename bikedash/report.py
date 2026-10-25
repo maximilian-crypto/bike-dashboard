@@ -295,6 +295,7 @@ def send_if_due(cfg: dict[str, Any], now: dt.datetime | None = None) -> tuple[st
 # ---------------------------------------------------------------------------
 
 WAIT_INTERVAL_S = 600     # alle 10 Minuten nachsehen
+WAIT_FROM = dt.time(5, 0) # erst ab hier lohnt Warten — nachts kommt keine Recovery
 WAIT_MAX_ROUNDS = 30      # Sicherheitsnetz: höchstens 5 h
 
 
@@ -317,6 +318,10 @@ def send_waiting(cfg: dict[str, Any], refresh: Any, *,
     now_fn = now_fn or (lambda: dt.datetime.now(dt.timezone.utc))
     sleep_fn = sleep_fn or time.sleep
     status, why = send_if_due(cfg, now_fn())
+    # Nachtläufe (~00:30) warteten sonst 5 h im Leerlauf und hielten die
+    # Warteschlange fest (Befund 25.10.2026) — dort sofort aufhören.
+    if now_fn().astimezone(TZ).time() < WAIT_FROM:
+        return status, why
     rounds = 0
     while status == "waiting" and rounds < max_rounds:
         now_local = now_fn().astimezone(TZ)
