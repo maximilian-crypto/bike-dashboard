@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-10-25T09:05:46+00:00",
+  "generated_at": "2026-10-25T13:10:37+00:00",
   "date": "2026-10-25",
   "recommendation": {
     "kind": "ENDURANCE",
@@ -114,13 +114,13 @@
     }
   },
   "weather": {
-    "temp_c": 11.1,
-    "wind_kmh": 23.0,
-    "wind_deg": 220,
+    "temp_c": 12.0,
+    "wind_kmh": 27.7,
+    "wind_deg": 232,
     "wind_dir": "SW",
-    "gust_kmh": 47.5,
-    "code": 2,
-    "desc": "teils bewölkt"
+    "gust_kmh": 58.0,
+    "code": 80,
+    "desc": "Regenschauer"
   },
   "milestone": {
     "total_km": 1079.2,
@@ -360,13 +360,13 @@
     "fluid_text": "💧 ca. 0,3 l trinken (550 ml/h), auf der Rolle eher mehr"
   },
   "zwift": {
-    "status": "sent",
+    "status": "unchanged",
     "name": "Bikedash 25-10 Grundlage Z2 66min",
     "event_id": 147953325,
     "detail": null,
     "date": "2026-10-25",
-    "at": "2026-10-25T09:05:45+00:00",
-    "short_status": "sent",
+    "at": "2026-10-25T13:10:36+00:00",
+    "short_status": "unchanged",
     "short_name": "Bikedash 25-10 Kurz Grundlage Z2 30min"
   }
 }
