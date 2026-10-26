@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-10-26T14:24:01+00:00",
+  "generated_at": "2026-10-26T15:09:55+00:00",
   "date": "2026-10-26",
   "recommendation": {
     "kind": "ENDURANCE",
@@ -108,9 +108,9 @@
     }
   },
   "weather": {
-    "temp_c": 12.1,
-    "wind_kmh": 16.1,
-    "wind_deg": 230,
+    "temp_c": 11.5,
+    "wind_kmh": 13.9,
+    "wind_deg": 217,
     "wind_dir": "SW",
     "gust_kmh": 32.4,
     "code": 3,
@@ -363,13 +363,13 @@
     "fluid_text": "💧 ca. 0,3 l trinken (550 ml/h), auf der Rolle eher mehr"
   },
   "zwift": {
-    "status": "updated",
+    "status": "unchanged",
     "name": "Bikedash 26-10 Grundlage Z2 107min",
     "event_id": 148331045,
     "detail": null,
     "date": "2026-10-26",
-    "at": "2026-10-26T14:24:00+00:00",
-    "short_status": "updated",
+    "at": "2026-10-26T15:09:54+00:00",
+    "short_status": "unchanged",
     "short_name": "Bikedash 26-10 Kurz Grundlage Z2 30min"
   }
 }
