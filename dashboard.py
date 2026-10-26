@@ -47,7 +47,7 @@ if _pkg is not None:
             del _sys.modules[_name]
 
 from bikedash import (
-    backup, coach, config, dataprep, fitness, form, fuel, maintenance, milestones,
+    backup, coach, config, dataprep, fitness, form, fuel, intensity, maintenance, milestones,
     recommend, report, routing, season, store, strava, weather, webauth, whoop,
     windlab, zones, zwift,
 )
@@ -797,6 +797,10 @@ if st.sidebar.button("Jetzt synchronisieren", icon=":material/sync:", width="str
         msgs = []
         if strava.is_connected():
             msgs.append(f"Strava {strava.sync(cfg)}")
+            try:
+                intensity.sync_recent(cfg)   # Pulsverlauf neuer Fahrten
+            except Exception:  # noqa: BLE001
+                pass
         if whoop.is_connected():
             res = whoop.sync(cfg)
             msgs.append(f"Whoop {res['recovery']}")

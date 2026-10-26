@@ -58,6 +58,7 @@ bike-dashboard/
 │  ├─ milestones.py       # NEU: Distanz-Meilensteine & Orden
 │  ├─ maintenance.py      # NEU: Verschleiss-/Wartungs-Tracker
 │  ├─ fuel.py            # NEU: Extra-kcal fürs Workout in Cola/Maoam/Toast
+│  ├─ intensity.py       # NEU: Puls-Histogramm je Fahrt → harte Einheiten erkennen
 │  ├─ zwift.py            # NEU: Tagesworkout → intervals.icu-Kalender → Zwift-Bibliothek
 │  ├─ coach.py            # KI-Coach (Claude API)
 │  ├─ report.py           # Morgen-Report (ntfy-Push)
@@ -223,6 +224,19 @@ aus dem Ideen-Radar #5, vom Nutzer freigegeben):**
 - **Trinkzeile** in `fuel.py` (400–800 ml/h je Intensität, auf der Rolle eher
   mehr). Bewusst ohne Schwitztest/Wiegen.
 
+**Harte Einheiten aus dem Pulsverlauf (seit 2026-10-26):** Die Empfehlung
+wertet nur das *Gefahrene* aus, nie den Plan von gestern. „Hart" hing draußen
+am Durchschnittspuls — eine Fahrt mit einer Stunde Z2 und einer Stunde Z4
+(Nutzerfall 25.10.) galt als locker, am Folgetag stand 4×4 im Plan. Jetzt holt
+`sync.py` (und der Sync-Knopf) für Fahrten der letzten 14 Tage einmal die
+Strava-Streams (`intensity.sync_recent`) und speichert nur ein Puls-Histogramm
+(Sekunden je bpm, Tabelle `ride_hr_hist`), keine Rohdaten. Zonen werden beim
+Lesen mit den *aktuellen* Grenzen gerechnet. ≥ 12 min Puls ≥ Z4 → hart
+(`intensity.HARD_MINUTES_Z4`, 4×4 bringt ~12–14 min), zusätzlich zu den
+bisherigen Prüfungen. Derselbe Abruf füttert die Ermüdungsresistenz des
+Fitness-Index. Die Last (TSS) rechnet bewusst weiter aus dem Durchschnittspuls —
+eine Umstellung würde die TSB-Schwellen verschieben.
+
 **Wichtige Konventionen:**
 - Design-Tokens (`C_IN`, `C_ABOVE`, `PANEL_A`, `MUTED`, `ACCENT` …) stehen oben
   in `dashboard.py` und spiegeln 1:1 die CSS-Variablen in `mobile/ride.html`.
@@ -270,7 +284,7 @@ Live-Ride-PWA mit BLE-Puls/-Kadenz und Karte.
 | 13 | **4×4-Intervalle & Intensität vom Wochenziel entkoppelt** — neuer Einheitentyp `VO2MAX`, Intensitätslücken-Regel, Wattdaten-basierte Erkennung harter Einheiten | `bikedash/recommend.py`, `bikedash/power.py`, `zwift.py`, `fuel.py`, `report.py` | Code fertig, Tests grün, Tab „Heute" + Zwift-Text geprüft |
 | 8 | **Morgen-Report ereignisgesteuert** — Push, sobald die heutige Whoop-Recovery da ist, spätestens 10:00; erste Zeile = Entscheidung | `bikedash/report.py`, `send_report.py --if-due`, `sync.yml` | Code fertig, Tests grün. **Offen: `NTFY_TOPIC` als Actions-Secret + ntfy-App abonnieren** |
 
-**Tests:** 223 grün (`python -m pytest -q`), inkl. Suites
+**Tests:** 230 grün (`python -m pytest -q`), inkl. Suites
 `tests/test_milestones.py`, `tests/test_maintenance.py`, `tests/test_dataprep.py`, `tests/test_season.py`, `tests/test_power.py`, `tests/test_zwift.py`, `tests/test_report.py`, `tests/test_fitness.py`, `tests/test_fuel.py`, `tests/test_guard.py` und `tests/test_weekly.py`.
 
 **Zwift-Zustellung verifiziert (2026-09-18, Lauf #346):** `today.json` meldet

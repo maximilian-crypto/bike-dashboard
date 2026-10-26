@@ -13,7 +13,7 @@ from __future__ import annotations
 import sys
 from datetime import datetime
 
-from bikedash import backup, config, store, strava, whoop
+from bikedash import backup, config, intensity, store, strava, whoop
 
 
 def main() -> int:
@@ -38,6 +38,17 @@ def main() -> int:
             print(f"  Strava:  FEHLER – {exc}")
     else:
         print("  Strava:  nicht verbunden (python connect.py strava).")
+
+    # Pulsverlauf neuer Fahrten: erkennt harte Abschnitte, die der
+    # Durchschnittspuls verwässert (bikedash/intensity.py).
+    if strava.is_connected():
+        try:
+            res = intensity.sync_recent(cfg)
+            if res["processed"]:
+                print(f"  Pulsverlauf: {res['processed']} Fahrten ausgewertet "
+                      f"({res['with_hr']} mit Puls).")
+        except Exception as exc:  # noqa: BLE001
+            print(f"  Pulsverlauf übersprungen: {exc}")
 
     if whoop.is_connected():
         try:

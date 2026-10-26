@@ -126,6 +126,13 @@ CREATE TABLE IF NOT EXISTS ride_metrics (
     computed_at  TEXT
 );
 
+CREATE TABLE IF NOT EXISTS ride_hr_hist (
+    ride_id      {INT} PRIMARY KEY,
+    ride_day     TEXT,
+    hist         TEXT,
+    computed_at  TEXT
+);
+
 CREATE TABLE IF NOT EXISTS wind_segments (
     ride_id        {INT},
     t_idx          {INT},
@@ -223,6 +230,10 @@ def upsert_whoop_cycles(rows: list[dict[str, Any]]) -> int:
 def upsert_ride_metrics(rows: list[dict[str, Any]]) -> int:
     """Aus Streams gewonnene Fahrtkennzahlen (Decoupling, HF-Erholung)."""
     return _upsert("ride_metrics", rows, "ride_id")
+
+
+def upsert_ride_hr_hist(rows: list[dict[str, Any]]) -> int:
+    return _upsert("ride_hr_hist", rows, "ride_id")
 
 
 def replace_wind_segments(ride_id: int, rows: list[dict[str, Any]]) -> int:

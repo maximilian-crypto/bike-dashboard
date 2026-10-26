@@ -12,7 +12,7 @@ from dataclasses import dataclass, field
 
 import pandas as pd
 
-from . import config, dataprep, form, guard, power, season, zones
+from . import config, dataprep, form, guard, intensity, power, season, zones
 
 # Form-Schwellen (TSB = CTL − ATL). Praktiker-Heuristik (Allen/Coggan) — bewusst
 # als kalibrierbare Startwerte, NICHT als hart validierte Grenzen (siehe Doku).
@@ -226,10 +226,19 @@ def build(today: dt.date | None = None) -> Recommendation:
 
     ftp = config.ftp_from_config()
 
+    # Minuten Puls ≥ Z4 je Fahrt (aus dem Pulsverlauf, siehe intensity.py).
+    z4_min: dict[int, float] = {}
+    if lthr or max_hr:
+        z4_min = intensity.minutes_above_map(zones.zone_for(4, max_hr, rest_hr, lthr).low_bpm)
+
     def _is_hard(row) -> bool:
-        """Harte Einheit? Mit echten Wattdaten über den Intensity Factor — der
-        Durchschnittspuls verwässert Intervalle, weil Ein-/Ausfahren und Pausen
-        mitzählen. Sonst im Schnitt Z3+ (HRR ≥ 0,75) bzw. hoher Relative Effort."""
+        """Harte Einheit? Zuerst über die Zeit in Z4+ aus dem Pulsverlauf — so
+        zählt auch eine Fahrt, die erst in der zweiten Hälfte hart wird. Mit
+        echten Wattdaten über den Intensity Factor — der Durchschnittspuls
+        verwässert Intervalle, weil Ein-/Ausfahren und Pausen mitzählen. Sonst
+        im Schnitt Z3+ (HRR ≥ 0,75) bzw. hoher Relative Effort."""
+        if z4_min.get(int(row["id"]), 0.0) >= intensity.HARD_MINUTES_Z4:
+            return True
         np_w = row.get("weighted_average_watts")
         if ftp and row.get("load_source") == "power" and pd.notna(np_w):
             return np_w / ftp >= HARD_IF
