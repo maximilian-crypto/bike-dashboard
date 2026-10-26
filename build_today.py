@@ -235,6 +235,10 @@ def build(out_path: Path = DEFAULT_OUT, today: dt.date | None = None) -> dict[st
         # Energie fürs Workout: Mehrbedarf in kcal, aufgeteilt auf vorher /
         # unterwegs / danach und übersetzt in Cola, Maoam, Toast.
         "fuel": fuel_plan,
+        # Einrichtungs-Check des Sync-Laufs: nur gesetzt/nicht gesetzt, nie
+        # Werte (die Datei ist öffentlich). Das Dashboard vergleicht damit
+        # seine eigene Umgebung — Actions und Streamlit haben getrennte Secrets.
+        "setup": {i["env"]: i["set"] for i in config.setup_status(cfg)},
         "fuel_short": fuel_short,
         # Ist das heutige Workout in Zwift angekommen? (sent/updated/unchanged =
         # ja; skipped = nicht eingerichtet oder Ruhetag; error = Fehlertext)

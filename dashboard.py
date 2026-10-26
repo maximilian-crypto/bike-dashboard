@@ -47,9 +47,9 @@ if _pkg is not None:
             del _sys.modules[_name]
 
 from bikedash import (
-    backup, coach, config, dataprep, fitness, form, fuel, intensity, maintenance, milestones,
-    recommend, report, routing, season, store, strava, weather, webauth, whoop,
-    windlab, zones, zwift,
+    backup, coach, config, dataprep, fitness, form, fuel, intensity, maintenance,
+    milestones, overview, recommend, report, routing, season, store, strava,
+    weather, webauth, whoop, windlab, zones, zwift,
 )
 
 st.set_page_config(page_title="RIDE · Fahrrad-Dashboard", page_icon="🚴", layout="wide")
@@ -200,6 +200,28 @@ st.markdown(
           font-variant-numeric:tabular-nums; }}
       .mcard .v.accent {{ color: var(--mc, {TEXT}); }}
       .mcard .s {{ font-size:.72rem; color:{FAINT}; margin-top:3px; }}
+
+      /* Startseite: drei Kacheln „über dich" */
+      .spanels {{ display:grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+          gap:12px; margin: 2px 0 14px; }}
+      .sp {{ background: linear-gradient(158deg, {PANEL_A}, {PANEL_B});
+          border:1px solid {BORDER}; border-radius:16px; padding:14px 18px 12px;
+          box-shadow: inset 0 1px 0 rgba(255,255,255,.03), 0 8px 20px -18px #000; }}
+      .sp .st {{ font-size:.72rem; color:{MUTED}; text-transform:uppercase;
+          letter-spacing:.08em; font-weight:600; }}
+      .sp .sv {{ font-size:2rem; font-weight:600; letter-spacing:-.02em; margin:4px 0 8px;
+          font-variant-numeric:tabular-nums; }}
+      .sp .su {{ font-size:.8rem; color:{MUTED}; font-weight:500; margin-left:8px;
+          letter-spacing:0; }}
+      .sp .sr {{ display:flex; align-items:baseline; gap:8px; font-size:.86rem;
+          padding:3px 0; border-top:1px solid {BORDER}; }}
+      .sp .sr span:first-child {{ color:{MUTED}; min-width:92px; }}
+      .sp .sr b {{ font-weight:600; }}
+      .sp .tr {{ margin-left:auto; font-size:.8rem; white-space:nowrap; }}
+      .sp .sf {{ font-size:.72rem; color:{FAINT}; margin-top:6px; }}
+      .chips {{ display:flex; flex-wrap:wrap; gap:8px; margin-top:12px; }}
+      .chip {{ background: rgba(255,255,255,.05); border:1px solid {BORDER2};
+          border-radius:999px; padding:4px 12px; font-size:.88rem; white-space:nowrap; }}
 
       /* schlanke Scrollbar */
       ::-webkit-scrollbar {{ width: 9px; height: 9px; }}
@@ -519,6 +541,42 @@ def _do_connect(provider: str) -> None:
         st.error(f"Verbindung fehlgeschlagen: {exc}", icon=":material/error:")
 
 
+def render_setup_check() -> None:
+    """Welche Werte fehlen — hier im Dashboard und im Sync (GitHub Actions)?
+
+    Beide haben getrennte Secrets; genau so blieb ATHLETE_LTHR monatelang im
+    Sync leer (CLAUDE.md 8b). Der Sync meldet seinen Stand über today.json
+    (nur gesetzt/nicht gesetzt, keine Werte).
+    """
+    import json
+    import pathlib
+
+    mine = config.setup_status()
+    sync: dict = {}
+    try:
+        tj = json.loads((pathlib.Path(__file__).parent / "mobile" / "today.json")
+                        .read_text(encoding="utf-8"))
+        sync = tj.get("setup") or {}
+    except (OSError, ValueError):
+        pass
+
+    def mark(ok: bool | None) -> str:
+        return "–" if ok is None else ("✅" if ok else "⚪ fehlt")
+
+    rows = [{"Einstellung": i["label"], "Dashboard": mark(i["set"]),
+             "Sync (Actions)": mark(sync.get(i["env"])) if sync else "–",
+             "Wenn es fehlt": i["fallback"], "Secret": i["env"]}
+            for i in mine]
+    missing = sum(1 for i in mine if not i["set"]) + sum(1 for v in sync.values() if not v)
+    with st.expander(f"Einrichtungs-Check · {missing} Wert{'e' if missing != 1 else ''} "
+                     "mit Vorgabe" if missing else "Einrichtungs-Check · alles gesetzt",
+                     icon=":material/checklist:", expanded=bool(missing)):
+        st.caption("Dashboard und Sync haben **getrennte** Secrets (Streamlit bzw. "
+                   "GitHub → Settings → Secrets → Actions). Fehlt ein Wert, gilt die "
+                   "Vorgabe rechts — das kann gewollt sein.")
+        st.dataframe(pd.DataFrame(rows), width="stretch", hide_index=True)
+
+
 def render_setup() -> None:
     raw = config.load_config_raw()
     s = raw.get("strava", {})
@@ -551,6 +609,8 @@ def render_setup() -> None:
     sc[3].metric("Zwift-Workout", "Automatisch" if zwift_ok else "Ausstehend",
                 delta="via intervals.icu" if zwift_ok else "einrichten",
                 delta_color="normal" if zwift_ok else "off")
+
+    render_setup_check()
 
     with st.expander("1) Strava — Fahrtdaten", icon=":material/directions_bike:",
                      expanded=not strava_ok):
@@ -841,15 +901,6 @@ cyc = cycles[cycles["date"].dt.date >= start_d] if not cycles.empty else cycles
 # Kopf-KPIs
 # ---------------------------------------------------------------------------
 brand_bar()
-c1, c2, c3, c4, c5 = st.columns(5)
-c1.metric(":material/directions_bike: Fahrten", f"{len(r)}")
-c2.metric(":material/route: Distanz", de_num(r["distance_km"].sum(), "km"))
-c3.metric(":material/landscape: Höhenmeter", de_num(r["elev_m"].sum(), "m"))
-c4.metric(":material/schedule: Stunden", de_num(r["moving_h"].sum(), "h", 1))
-if not rec.empty and rec["recovery_score"].notna().any():
-    c5.metric(":material/self_improvement: Ø Recovery", f"{rec['recovery_score'].mean():.0f} %")
-else:
-    c5.metric(":material/speed: Ø Tempo", f"{r['avg_speed_kmh'].mean():.1f} km/h")
 
 (tab_today, tab_fit, tab1, tab2, tab3, tab_wind, tab_orden, tab_maint, tab_coach,
  tab_setup) = st.tabs(
@@ -876,7 +927,107 @@ indoor_km_all = float(rides["distance_km_indoor"].sum())
 with tab_today:
     rc = recommend.build()
     accent = BAND_COLORS[rc.readiness_band]
+    today_d = dt.date.today()
 
+    # --- 1) Über dich: Erholung heute · diese Woche · Fortschritt ----------
+    # Nutzerentscheid Okt. 2026: oben nur die Zahlen über sich selbst, jede mit
+    # Bezug (Normalwert, Vorwoche, 30 Tage). Kein Soll-Rot.
+    try:
+        _sleep = load_sleep()
+    except Exception:  # noqa: BLE001
+        _sleep = pd.DataFrame()
+    ov_rec = overview.recovery_today(recovery, _sleep, today_d)
+    ov_week = overview.this_week(rides, today_d)
+    try:
+        _fi = load_fitness()
+    except Exception:  # noqa: BLE001
+        _fi = None
+    ov_prog = overview.progress(_fi, rc.tsb)
+
+    def _trend(delta: float | None, unit: str, good_up: bool, dec: int = 0) -> str:
+        """„▲ 6 ms" grün, wenn die Richtung gut ist, sonst bernstein — nie rot."""
+        if delta is None:
+            return ""
+        if abs(delta) < (0.5 if dec == 0 else 0.05):
+            return f"<span class='tr' style='color:{MUTED}'>≈ Normalwert</span>"
+        up = delta > 0
+        col = C_IN if up == good_up else C_AMBER
+        num = f"{abs(delta):.{dec}f}".replace(".", ",")
+        return f"<span class='tr' style='color:{col}'>{'▲' if up else '▼'} {num} {unit}</span>"
+
+    def _row(label: str, value: str, extra: str = "") -> str:
+        return f"<div class='sr'><span>{label}</span><b>{value}</b>{extra}</div>"
+
+    # Erholung
+    if ov_rec.available:
+        band = recommend._band(ov_rec.score)
+        big = f"{ov_rec.score:.0f} %" if ov_rec.score is not None else "–"
+        rows = []
+        if ov_rec.hrv is not None:
+            rows.append(_row("HRV", f"{ov_rec.hrv:.0f} ms",
+                             _trend(ov_rec.hrv_delta, "ms", good_up=True)))
+        if ov_rec.rhr is not None:
+            rows.append(_row("Ruhepuls", f"{ov_rec.rhr:.0f} bpm",
+                             _trend(ov_rec.rhr_delta, "bpm", good_up=False)))
+        if ov_rec.sleep_h is not None:
+            need = (f"<span class='tr' style='color:{MUTED}'>Bedarf "
+                    f"{de_num(ov_rec.sleep_need_h, 'h', 1)}</span>" if ov_rec.sleep_need_h else "")
+            rows.append(_row("Schlaf", de_num(ov_rec.sleep_h, "h", 1), need))
+        foot = "" if ov_rec.is_today else "<div class='sf'>Stand gestern — heutige Recovery fehlt noch</div>"
+        p_rec = (f"<div class='sp'><div class='st'>Erholung heute</div>"
+                 f"<div class='sv' style='color:{BAND_COLORS[band]}'>{big}"
+                 f"<span class='su'>{BAND_TEXT[band]}</span></div>{''.join(rows)}{foot}</div>")
+    else:
+        p_rec = ("<div class='sp'><div class='st'>Erholung heute</div><div class='sv'>–</div>"
+                 "<div class='sf'>Keine Whoop-Daten — Einrichtung → Whoop</div></div>")
+
+    # Diese Woche
+    wk_rows = [_row("Fahrten", f"{ov_week.rides}", f"<span class='tr' style='color:{MUTED}'>"
+                    f"{de_num(ov_week.km, 'km')}</span>"),
+               _row("Vorwoche bis heute", de_num(ov_week.prev_hours, "h", 1))]
+    if rc.target_hours:
+        _ph = f" · {rc.phase_label}" if rc.phase_label else ""
+        _dl = " · Entlastungswoche" if rc.is_deload else ""
+        wk_rows.append(_row("Plan", f"≈ {de_num(rc.target_hours, 'h', 1)}",
+                            f"<span class='tr' style='color:{MUTED}'>{_ph.strip(' ·')}{_dl}</span>"))
+    p_week = (f"<div class='sp'><div class='st'>Diese Woche</div>"
+              f"<div class='sv'>{de_num(ov_week.hours, 'h', 1)}"
+              f"<span class='su'>Mo–heute</span></div>{''.join(wk_rows)}</div>")
+
+    # Fortschritt
+    pr_rows = []
+    if ov_prog.fitness_delta_30 is not None:
+        pr_rows.append(_row("30 Tage", "", _trend(ov_prog.fitness_delta_30, "Punkte",
+                                                   good_up=True, dec=1)))
+    if ov_prog.form_label:
+        pr_rows.append(_row("Form", ov_prog.form_label,
+                            f"<span class='tr' style='color:{MUTED}'>TSB "
+                            f"{ov_prog.tsb:+.0f}</span>"))
+    big_fi = de_num(ov_prog.fitness, "", 1) if ov_prog.fitness is not None else "–"
+    tier = f"<span class='su'>{ov_prog.tier}</span>" if ov_prog.tier else ""
+    p_prog = (f"<div class='sp'><div class='st'>Fortschritt · Fitness-Index</div>"
+              f"<div class='sv'>{big_fi}{tier}</div>{''.join(pr_rows)}</div>")
+
+    st.markdown(f"<div class='spanels'>{p_rec}{p_week}{p_prog}</div>", unsafe_allow_html=True)
+
+    # --- 2) Die Entscheidung für heute: eine Karte ---------------------------
+    fp = fuel.for_recommendation(rc)
+    chips = []
+    if rc.kind == "REST":
+        chips.append("🛋 Ruhetag")
+    else:
+        kurz = f" · kurz {rc.short_duration_min}′" if rc.short_duration_min else ""
+        chips.append(f"⏱ {rc.duration_min[0]}–{rc.duration_min[1]} min{kurz}")
+        if rc.hr_low:
+            chips.append(f"❤ Z{rc.zone_number} {rc.hr_low}–{rc.hr_high} bpm")
+        if rc.power_low:
+            chips.append(f"⚡ {rc.power_low}–{rc.power_high} W")
+        if rc.cadence and rc.cadence != "–":
+            chips.append(f"🔄 {rc.cadence} U/min")
+    if fp.available:
+        fl = f" · 💧 {fp.fluid_l:.1f} l".replace(".", ",") if fp.fluid_l else ""
+        chips.append(f"🍽 ≈ {fp.kcal_extra} kcal extra{fl}")
+    chip_html = "".join(f"<span class='chip'>{c}</span>" for c in chips)
     st.markdown(
         f"""
         <div class="reco-card" style="--accent:{accent}">
@@ -885,228 +1036,163 @@ with tab_today:
             {f'· {rc.recovery_score:.0f}%' if rc.recovery_score is not None else ''}
           </span>
           <div class="reco-title">{rc.title}</div>
+          <div class="chips">{chip_html}</div>
         </div>
         """,
         unsafe_allow_html=True,
     )
 
-    # Schutzgeländer (bikedash/guard.py): bremst, wenn sich Last ungesund
-    # aufschaukelt. Auch im grünen Bereich sichtbar — damit klar ist, dass
-    # jemand aufpasst.
+    # Hinweise knapp unter der Karte: Schutzgeländer (bremst), Wiedereinstieg
+    # (freundlich, kein Warnton), sonst eine Zeile „alles im grünen Bereich".
     for w in rc.warnings:
-        if rc.guard_level == "stop":
-            st.error(w, icon=":material/health_and_safety:")
-        else:
-            st.warning(w, icon=":material/health_and_safety:")
-    # Wiedereinstieg nach einer Pause (recommend.comeback_state): freundlich,
-    # kein Warnton — eine Pause ist kein Fehler.
+        (st.error if rc.guard_level == "stop" else st.warning)(
+            w, icon=":material/health_and_safety:")
     if rc.comeback:
         _off, _done = rc.comeback
-        st.info(
-            f"**Willkommen zurück!** Nach {_off} Tagen Pause sind die ersten "
-            f"{recommend.COMEBACK_RIDES} Fahrten locker und etwas kürzer — "
-            f"heute Fahrt {_done + 1} von {recommend.COMEBACK_RIDES}. Danach geht es "
-            "normal weiter.",
-            icon=":material/waving_hand:",
-        )
+        st.info(f"**Willkommen zurück!** Nach {_off} Tagen Pause: Fahrt {_done + 1} von "
+                f"{recommend.COMEBACK_RIDES} locker und etwas kürzer, danach geht es normal weiter.",
+                icon=":material/waving_hand:")
+    _zw_cfg = config.load_config_raw()
+    config._overlay_env(_zw_cfg)
+    _zline = ""
+    if rc.power_plan and zwift.configured(_zw_cfg):
+        _last = zwift.last_result()
+        _zline = zwift.status_line(_last)
+        if _last is not None and _last.status == "error":
+            st.warning(f":material/sync_problem: {_zline}")
+            _zline = ""
+    _guard = ""
     if not rc.warnings:
-        _acwr = f" · Lastverhältnis {rc.acwr:.2f} (gesund bis 1,3)".replace(".", ",") if rc.acwr else ""
-        st.caption(
-            f":material/health_and_safety: Überlastungs-Check: alles im grünen Bereich"
-            f"{_acwr} · {rc.streak_days} Trainingstag{'e' if rc.streak_days != 1 else ''} am Stück"
-        )
+        _acwr = f" · Lastverhältnis {rc.acwr:.2f}".replace(".", ",") if rc.acwr else ""
+        _guard = f":material/health_and_safety: Überlastungs-Check ok{_acwr}"
+    st.caption("  \n".join(x for x in (_zline and f":material/directions_bike: {_zline}", _guard) if x))
 
-    dauer = "Pause" if rc.kind == "REST" else f"{rc.duration_min[0]}–{rc.duration_min[1]} Min"
-    hf_label = f"HF-Zone {rc.zone_number}" if rc.hr_low else "HF-Zone"
-    hf_value = f"{rc.hr_low}–{rc.hr_high} bpm" if rc.hr_low else "–"
-    tritt = rc.cadence + ("" if rc.cadence == "–" else " U/min")
-    dist = (f"{rc.distance_km[0]:.0f}–{rc.distance_km[1]:.0f} km"
-            if rc.distance_km[1] > 0 else "–")
-    _kurz = f"kurz: {rc.short_duration_min} Min" if rc.short_duration_min else None
-    reco_cards([
-        ("Dauer", dauer, _kurz, None),
-        (hf_label, hf_value, rc.zone_label, accent if rc.hr_low else None),
-        ("Trittfrequenz", tritt, "U/min", None),
-        ("Anstrengung", rc.rpe, "RPE 1–10", None),
-        ("Ziel-Distanz", dist, None, None),
-    ])
-
-    pcol, _ = st.columns([2, 1])
-    with pcol:
-        prog = min(rc.week_load / rc.target_load, 1.0) if rc.target_load else 0.0
-        phase = f"Phase „{rc.phase_label}“" if rc.phase_label else ""
-        deload = " · **Entlastungswoche**" if rc.is_deload else ""
-        rest = f" · noch {rc.weeks_to_go} Wochen bis zur Saison" if rc.weeks_to_go else ""
-        st.caption(
-            f"Wochenfortschritt: {rc.week_load:.0f} von {rc.target_load:.0f} Last "
-            f"(≈ {rc.target_hours:.1f} h) · {rc.week_rides} Fahrten · {rc.week_km:.0f} km  \n"
-            f"{phase}{deload}{rest}"
-        )
-        st.progress(prog)
-
-    # --- Wattplan für die Rolle ---
-    # Drinnen ist Leistung die steuerbare Größe: die Herzfrequenz hinkt dem Reiz
-    # ein bis zwei Minuten hinterher und driftet mit der Hitze. Ohne hinterlegte
-    # FTP bleibt der Abschnitt weg und es ändert sich nichts am Bisherigen.
+    # --- 3) Details zum Aufklappen ------------------------------------------
     if rc.power_plan:
-        st.subheader(":material/bolt: So fährst du das auf der Rolle", anchor=False)
-        st.markdown(
-            f"**{rc.power_summary}** &nbsp;·&nbsp; "
-            f"<span style='color:{MUTED}'>Trittfrequenz {rc.cadence} · "
-            f"FTP {rc.ftp} W</span>",
-            unsafe_allow_html=True,
-        )
-        def _plan_df(blocks: list[dict]) -> pd.DataFrame:
-            return pd.DataFrame([
-                {"Abschnitt": b["label"], "Minuten": b["minutes"],
-                 "Watt": f"{b['low_w']}–{b['high_w']}", "Zone": f"Z{b['zone']}"}
-                for b in blocks
-            ])
-        # Beide Varianten liegen in Zwift — gewählt wird dort, je nachdem,
-        # wie viel nach dem Tag noch geht.
-        if rc.short_plan:
-            _full_min = sum(b["minutes"] for b in rc.power_plan)
-            t_full, t_short = st.tabs([f"Voll · {_full_min} Min",
-                                       f"Kurz · {rc.short_duration_min} Min"])
-            with t_full:
-                st.dataframe(_plan_df(rc.power_plan), width="stretch", hide_index=True)
-            with t_short:
-                st.markdown(f"**{rc.short_summary}** &nbsp;·&nbsp; "
-                            f"<span style='color:{MUTED}'>für Tage mit wenig Kraft oder "
-                            "Zeit — der Kern der Einheit bleibt, der Umfang geht.</span>",
-                            unsafe_allow_html=True)
-                st.dataframe(_plan_df(rc.short_plan), width="stretch", hide_index=True)
-        else:
-            st.dataframe(_plan_df(rc.power_plan), width="stretch", hide_index=True)
-        # Die Tabelle ist die Anleitung; die Automatik ist das Zwift-Workout.
-        # Ohne Einrichtung steht hier, wo man sie einschaltet — sonst der
-        # Status des letzten Sync-Laufs (kam das Workout wirklich an?).
-        _zw_cfg = config.load_config_raw()
-        config._overlay_env(_zw_cfg)
-        if zwift.configured(_zw_cfg):
-            _last = zwift.last_result()
-            _line = zwift.status_line(_last)
-            if _last is not None and _last.status == "error":
-                st.warning(f":material/sync_problem: {_line}")
+        with st.expander(f"Wattplan · {rc.power_summary}", icon=":material/bolt:"):
+            def _plan_df(blocks: list[dict]) -> pd.DataFrame:
+                return pd.DataFrame([
+                    {"Abschnitt": b["label"], "Minuten": b["minutes"],
+                     "Watt": f"{b['low_w']}–{b['high_w']}", "Zone": f"Z{b['zone']}"}
+                    for b in blocks
+                ])
+            st.caption(f"Trittfrequenz {rc.cadence} · FTP {rc.ftp} W")
+            # Beide Varianten liegen in Zwift — gewählt wird dort.
+            if rc.short_plan:
+                _full_min = sum(b["minutes"] for b in rc.power_plan)
+                t_full, t_short = st.tabs([f"Voll · {_full_min} Min",
+                                           f"Kurz · {rc.short_duration_min} Min"])
+                with t_full:
+                    st.dataframe(_plan_df(rc.power_plan), width="stretch", hide_index=True)
+                with t_short:
+                    st.caption(f"{rc.short_summary} — der Kern der Einheit bleibt, der Umfang geht.")
+                    st.dataframe(_plan_df(rc.short_plan), width="stretch", hide_index=True)
             else:
-                st.markdown(f":material/directions_bike: {_line}")
+                st.dataframe(_plan_df(rc.power_plan), width="stretch", hide_index=True)
+            if not zwift.configured(_zw_cfg):
+                st.caption("Automatisch in Zwift: einmalig unter **Einrichtung → 5) Zwift** "
+                           "einschalten.")
+
+    # Energie fürs Workout (bikedash/fuel.py) — als „tanken", nie als „verdient".
+    _ehead = (f"Energie fürs Workout · ≈ {fp.kcal_extra} kcal" if fp.available
+              else "Energie fürs Workout")
+    with st.expander(_ehead, icon=":material/restaurant:"):
+        if fp.available:
+            cards = [("Extra essen", f"≈ {fp.kcal_extra} kcal",
+                      f"{fp.kcal_range[0]}–{fp.kcal_range[1]} kcal", ACCENT)]
+            if fp.fluid_l:
+                cards.append(("Trinken", f"💧 {fp.fluid_l:.1f} l".replace(".", ","),
+                              f"{fp.fluid_ml_per_h} ml/h · auf der Rolle eher mehr", None))
+            for ph in fp.phases:
+                alt = (f"oder {ph.portions[1].label} · " if len(ph.portions) > 1 else "")
+                cards.append((f"{ph.title} · ≈ {ph.kcal} kcal",
+                              f"{ph.portions[0].icon} {ph.portions[0].label}",
+                              f"{alt}{ph.hint}", None))
+            reco_cards(cards)
+            st.markdown("Insgesamt ≈ " + " · ".join(f"{p.icon} {p.label}" for p in fp.equivalents) + ".")
+            if rc.short_duration_min:
+                fps = fuel.for_recommendation(rc, short=True)
+                if fps.available:
+                    st.markdown(
+                        f"**Kurz-Variante** ({rc.short_duration_min} Min): ≈ {fps.kcal_extra} kcal — "
+                        + " · ".join(f"{p.icon} {p.label}" for p in fps.equivalents[:2])
+                        + (f" · 💧 {fps.fluid_l:.1f} l".replace(".", ",") if fps.fluid_l else "") + ".")
+            for note in fp.notes:
+                st.caption(note)
         else:
-            st.caption(
-                "Dieses Workout kann automatisch in deiner Zwift-Bibliothek liegen — "
-                "einmalig unter **Einrichtung → 5) Zwift** einschalten. Bis dahin: "
-                "Zwift im freien Ritt starten und die Wattzahl über das virtuelle "
-                "Schalten halten."
-            )
+            st.markdown(fp.notes[0] if fp.notes else fuel.REST_NOTE)
 
-    # --- Energie fürs Workout ---
-    # Übersetzt den Mehrbedarf der Einheit in Portionen (bikedash/fuel.py).
-    # Bewusst als „tanken", nie als „verdient": die Zahl kommt oben drauf.
-    fp = fuel.for_recommendation(rc)
-    st.subheader(":material/restaurant: Energie fürs Workout", anchor=False)
-    if fp.available:
-        cards = [("Extra essen", f"≈ {fp.kcal_extra} kcal",
-                  f"{fp.kcal_range[0]}–{fp.kcal_range[1]} kcal", ACCENT)]
-        if fp.fluid_l:
-            cards.append(("Trinken", f"💧 {fp.fluid_l:.1f} l".replace(".", ","),
-                          f"{fp.fluid_ml_per_h} ml/h · auf der Rolle eher mehr", None))
-        for ph in fp.phases:
-            alt = (f"oder {ph.portions[1].label} · " if len(ph.portions) > 1 else "")
-            cards.append((f"{ph.title} · ≈ {ph.kcal} kcal",
-                          f"{ph.portions[0].icon} {ph.portions[0].label}",
-                          f"{alt}{ph.hint}", None))
-        reco_cards(cards)
-        st.markdown(
-            "Insgesamt entspricht das ≈ "
-            + " · ".join(f"{p.icon} {p.label}" for p in fp.equivalents)
-            + "."
-        )
-        if rc.short_duration_min:
-            fps = fuel.for_recommendation(rc, short=True)
-            if fps.available:
-                st.markdown(
-                    f"Fährst du die **Kurz-Variante** ({rc.short_duration_min} Min): "
-                    f"≈ {fps.kcal_extra} kcal extra — "
-                    + " · ".join(f"{p.icon} {p.label}" for p in fps.equivalents[:2])
-                    + (f" · 💧 {fps.fluid_l:.1f} l".replace(".", ",") if fps.fluid_l else "")
-                    + "."
-                )
-        if fp.fluid_text:
-            st.caption(fp.fluid_text + ".")
-        for note in fp.notes:
-            st.caption(note)
-    else:
-        st.info(fp.notes[0] if fp.notes else fuel.REST_NOTE, icon=":material/restaurant:")
-
-    with st.expander("Warum diese Empfehlung?", icon=":material/lightbulb:", expanded=True):
+    with st.expander("Warum diese Empfehlung?", icon=":material/lightbulb:"):
         for line in rc.rationale:
             st.markdown(f"- {line}")
 
-    # --- Wetter am Start ---
+    # --- Wetter & Route ---
     wx = load_weather()
-    if wx is not None:
-        st.subheader(f":material/{_wx_icon(wx.code)}: Wetter am Start · {wx.desc}", anchor=False)
-        w1, w2, w3, w4 = st.columns(4)
-        w1.metric(":material/thermostat: Temperatur", f"{wx.temp_c:.0f} °C", help=f"gefühlt {wx.feels_c:.0f} °C")
-        w2.metric(":material/water_drop: Niederschlag", f"{wx.precip_mm:.1f} mm",
-                  help=f"{wx.precip_prob}% Wahrscheinlichkeit heute")
-        w3.metric(":material/light_mode: UV-Index", f"{wx.uv:.0f}")
-        w4.metric(":material/air: Wind", f"{wx.wind_kmh:.0f} km/h",
-                  delta=f"aus {wx.wind_dir} · Böen {wx.gust_kmh:.0f}", delta_color="off")
-        for tip in weather.advice(wx):
-            st.markdown(f"- {tip}")
+    _whead = (f"Wetter & Route · {wx.desc}, {wx.temp_c:.0f} °C, Wind {wx.wind_kmh:.0f} km/h"
+              if wx is not None else "Wetter & Route")
+    with st.expander(_whead, icon=f":material/{_wx_icon(wx.code) if wx is not None else 'map'}:"):
+        if wx is not None:
+            w1, w2, w3, w4 = st.columns(4)
+            w1.metric(":material/thermostat: Temperatur", f"{wx.temp_c:.0f} °C", help=f"gefühlt {wx.feels_c:.0f} °C")
+            w2.metric(":material/water_drop: Niederschlag", f"{wx.precip_mm:.1f} mm",
+                      help=f"{wx.precip_prob}% Wahrscheinlichkeit heute")
+            w3.metric(":material/light_mode: UV-Index", f"{wx.uv:.0f}")
+            w4.metric(":material/air: Wind", f"{wx.wind_kmh:.0f} km/h",
+                      delta=f"aus {wx.wind_dir} · Böen {wx.gust_kmh:.0f}", delta_color="off")
+            for tip in weather.advice(wx):
+                st.markdown(f"- {tip}")
+        # --- Route ---
+        st.markdown("**Passende Route**")
+        try:
+            cfg = config.load_config()
+            routing_ready = config.has_routing(cfg)
+        except Exception:  # noqa: BLE001
+            cfg, routing_ready = None, False
 
-    # --- Route ---
-    st.subheader(":material/map: Passende Route", anchor=False)
-    try:
-        cfg = config.load_config()
-        routing_ready = config.has_routing(cfg)
-    except Exception:  # noqa: BLE001
-        cfg, routing_ready = None, False
+        if rc.kind == "REST":
+            st.info("Heute ist ein Ruhetag — keine Route nötig. Erhol dich gut.",
+                    icon=":material/self_improvement:")
+        elif not routing_ready:
+            st.info(
+                "Routen-Generierung ist noch nicht eingerichtet. Trage in `config.toml` "
+                "deinen **OpenRouteService-API-Key** und deine **Heimat-Koordinaten** ein "
+                "(Anleitung in der README), dann erscheint hier eine Karte.",
+                icon=":material/map:",
+            )
+        else:
+            col_a, col_b = st.columns([1, 1])
+            gen = col_a.button("Route generieren", icon=":material/navigation:", width="stretch")
+            new_var = col_b.button("Andere Variante", icon=":material/shuffle:", width="stretch")
+            # Windklug planen, sobald nennenswerter Wind weht.
+            wind_deg = wx.wind_deg if (wx is not None and wx.wind_kmh >= 8) else None
+            if gen or new_var:
+                seed = None if gen else (st.session_state.get("route_seed", 1) + 7)
+                with st.spinner("Berechne windklugen Rundkurs …"):
+                    try:
+                        rt = routing.generate_loop(
+                            cfg, rc.target_distance_mid, seed=seed, wind_from_deg=wind_deg
+                        )
+                        st.session_state["route"] = rt
+                        st.session_state["route_seed"] = rt.seed
+                    except Exception as exc:  # noqa: BLE001
+                        st.error(f"Route fehlgeschlagen: {exc}", icon=":material/error:")
 
-    if rc.kind == "REST":
-        st.info("Heute ist ein Ruhetag — keine Route nötig. Erhol dich gut.",
-                icon=":material/self_improvement:")
-    elif not routing_ready:
-        st.info(
-            "Routen-Generierung ist noch nicht eingerichtet. Trage in `config.toml` "
-            "deinen **OpenRouteService-API-Key** und deine **Heimat-Koordinaten** ein "
-            "(Anleitung in der README), dann erscheint hier eine Karte.",
-            icon=":material/map:",
-        )
-    else:
-        col_a, col_b = st.columns([1, 1])
-        gen = col_a.button("Route generieren", icon=":material/navigation:", width="stretch")
-        new_var = col_b.button("Andere Variante", icon=":material/shuffle:", width="stretch")
-        # Windklug planen, sobald nennenswerter Wind weht.
-        wind_deg = wx.wind_deg if (wx is not None and wx.wind_kmh >= 8) else None
-        if gen or new_var:
-            seed = None if gen else (st.session_state.get("route_seed", 1) + 7)
-            with st.spinner("Berechne windklugen Rundkurs …"):
-                try:
-                    rt = routing.generate_loop(
-                        cfg, rc.target_distance_mid, seed=seed, wind_from_deg=wind_deg
+            rt = st.session_state.get("route")
+            if rt is not None:
+                mcol1, mcol2 = st.columns(2)
+                mcol1.metric(":material/route: Routenlänge", f"{rt.distance_km:.1f} km")
+                mcol2.metric(":material/landscape: Höhenmeter", f"{rt.ascent_m:.0f} m")
+                if wind_deg is not None:
+                    summ = routing.wind_summary(rt, wx.wind_deg, wx.wind_kmh)
+                    (st.success if summ["ok"] else st.info)(
+                        summ["hint"], icon=":material/air:" if summ["ok"] else ":material/info:"
                     )
-                    st.session_state["route"] = rt
-                    st.session_state["route_seed"] = rt.seed
-                except Exception as exc:  # noqa: BLE001
-                    st.error(f"Route fehlgeschlagen: {exc}", icon=":material/error:")
-
-        rt = st.session_state.get("route")
-        if rt is not None:
-            mcol1, mcol2 = st.columns(2)
-            mcol1.metric(":material/route: Routenlänge", f"{rt.distance_km:.1f} km")
-            mcol2.metric(":material/landscape: Höhenmeter", f"{rt.ascent_m:.0f} m")
-            if wind_deg is not None:
-                summ = routing.wind_summary(rt, wx.wind_deg, wx.wind_kmh)
-                (st.success if summ["ok"] else st.info)(
-                    summ["hint"], icon=":material/air:" if summ["ok"] else ":material/info:"
-                )
-            st.plotly_chart(route_map(rt), width="stretch")
-            prof = pd.DataFrame({"km": rt.profile_dist_km, "Höhe (m)": rt.profile_ele_m})
-            figp = px.area(prof, x="km", y="Höhe (m)", title="Höhenprofil")
-            figp.update_traces(line_color=ACCENT, fillcolor="rgba(255,90,54,0.18)")
-            figp.update_layout(height=220, margin=dict(t=40, b=0))
-            st.plotly_chart(figp, width="stretch")
+                st.plotly_chart(route_map(rt), width="stretch")
+                prof = pd.DataFrame({"km": rt.profile_dist_km, "Höhe (m)": rt.profile_ele_m})
+                figp = px.area(prof, x="km", y="Höhe (m)", title="Höhenprofil")
+                figp.update_traces(line_color=ACCENT, fillcolor="rgba(255,90,54,0.18)")
+                figp.update_layout(height=220, margin=dict(t=40, b=0))
+                st.plotly_chart(figp, width="stretch")
 
     # --- HF-Zonen-Referenz ---
     mhr = zones.max_hr_from_data()
@@ -1461,6 +1547,17 @@ with tab_fit:
 # Tab 1: Leistung & Fortschritt
 # ===========================================================================
 with tab1:
+    # Summen über den gewählten Zeitraum (Sidebar) — standen früher über allen
+    # Tabs, gehören aber zur Analyse, nicht zur Startseite.
+    c1, c2, c3, c4, c5 = st.columns(5)
+    c1.metric(":material/directions_bike: Fahrten", f"{len(r)}")
+    c2.metric(":material/route: Distanz", de_num(r["distance_km"].sum(), "km"))
+    c3.metric(":material/landscape: Höhenmeter", de_num(r["elev_m"].sum(), "m"))
+    c4.metric(":material/schedule: Stunden", de_num(r["moving_h"].sum(), "h", 1))
+    if not rec.empty and rec["recovery_score"].notna().any():
+        c5.metric(":material/self_improvement: Ø Recovery", f"{rec['recovery_score'].mean():.0f} %")
+    else:
+        c5.metric(":material/speed: Ø Tempo", f"{r['avg_speed_kmh'].mean():.1f} km/h")
     st.subheader(":material/trending_up: Entwicklung über die Zeit", anchor=False)
     weekly = (
         r.set_index("start").resample("W").agg(

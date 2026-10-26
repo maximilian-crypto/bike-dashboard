@@ -63,6 +63,7 @@ bike-dashboard/
 │  ├─ coach.py            # KI-Coach (Claude API)
 │  ├─ report.py           # Morgen-Report (ntfy-Push)
 │  ├─ weekly.py           # NEU: Wochenrückblick sonntags (ntfy-Push, ohne Soll-Rot)
+│  ├─ overview.py         # NEU: Kopf-Kacheln der Startseite (Erholung, Woche, Fortschritt)
 │  └─ backup.py           # Datensicherung
 ├─ dashboard.py           # Streamlit-App (ein grosses Skript, Tabs via st.tabs)
 ├─ build_today.py         # schreibt mobile/today.json
@@ -237,6 +238,24 @@ bisherigen Prüfungen. Derselbe Abruf füttert die Ermüdungsresistenz des
 Fitness-Index. Die Last (TSS) rechnet bewusst weiter aus dem Durchschnittspuls —
 eine Umstellung würde die TSB-Schwellen verschieben.
 
+**Startseite kompakt (seit 2026-10-26, Nutzerwunsch „zu clunky"):** Tab „Heute"
+= oben drei Kacheln über den Nutzer (`overview.py`: Erholung heute mit HRV/
+Ruhepuls gegen den 30-Tage-Median und Schlaf gegen Whoops Bedarf · diese Woche
+Mo–heute neben der Vorwoche bis zum selben Tag · Fitness-Index + Form), dann
+**eine** Entscheidungskarte mit Chips (Dauer voll/kurz, Puls, Watt, Kadenz,
+kcal + Trinken), darunter Warnungen/Wiedereinstieg und eine Statuszeile. Alles
+andere (Wattplan, Energie-Details, Begründung, Wetter & Route, HF-Zonen) steckt
+in zugeklappten Aufklappern. Die Zeitraum-Summen (Fahrten/Distanz/Höhenmeter/
+Stunden) stehen nicht mehr über allen Tabs, sondern oben in „Leistung &
+Fortschritt", wo der Sidebar-Filter wirkt. Deltas sind grün/bernstein, nie rot.
+
+**Einrichtungs-Check (seit 2026-10-26, Ideen-Radar #6 Nr. 3):**
+`config.setup_status()` meldet je Einstellung gesetzt/nicht gesetzt und was
+ohne sie gilt. Einrichtung zeigt **Dashboard und Sync nebeneinander** — die
+Sync-Seite kommt aus `today.json` (`setup`, nur Booleans, nie Werte). Neue
+Einstellungen mit stiller Vorgabe gehören in `config.SETUP_ITEMS`
+(zusätzlich zur Checkliste in 8b).
+
 **Wichtige Konventionen:**
 - Design-Tokens (`C_IN`, `C_ABOVE`, `PANEL_A`, `MUTED`, `ACCENT` …) stehen oben
   in `dashboard.py` und spiegeln 1:1 die CSS-Variablen in `mobile/ride.html`.
@@ -284,7 +303,7 @@ Live-Ride-PWA mit BLE-Puls/-Kadenz und Karte.
 | 13 | **4×4-Intervalle & Intensität vom Wochenziel entkoppelt** — neuer Einheitentyp `VO2MAX`, Intensitätslücken-Regel, Wattdaten-basierte Erkennung harter Einheiten | `bikedash/recommend.py`, `bikedash/power.py`, `zwift.py`, `fuel.py`, `report.py` | Code fertig, Tests grün, Tab „Heute" + Zwift-Text geprüft |
 | 8 | **Morgen-Report ereignisgesteuert** — Push, sobald die heutige Whoop-Recovery da ist, spätestens 10:00; erste Zeile = Entscheidung | `bikedash/report.py`, `send_report.py --if-due`, `sync.yml` | Code fertig, Tests grün. **Offen: `NTFY_TOPIC` als Actions-Secret + ntfy-App abonnieren** |
 
-**Tests:** 230 grün (`python -m pytest -q`), inkl. Suites
+**Tests:** 236 grün (`python -m pytest -q`), inkl. Suites
 `tests/test_milestones.py`, `tests/test_maintenance.py`, `tests/test_dataprep.py`, `tests/test_season.py`, `tests/test_power.py`, `tests/test_zwift.py`, `tests/test_report.py`, `tests/test_fitness.py`, `tests/test_fuel.py`, `tests/test_guard.py` und `tests/test_weekly.py`.
 
 **Zwift-Zustellung verifiziert (2026-09-18, Lauf #346):** `today.json` meldet

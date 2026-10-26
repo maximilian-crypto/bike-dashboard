@@ -170,3 +170,16 @@ def test_today_json_pushes_workout_to_intervals(tmp_path, monkeypatch):
     assert "athlete/i12345/" in calls[1][1]
     last = zwift.last_result()
     assert last is not None and last.status == "sent" and last.date == "2026-06-15"
+
+
+def test_today_json_reports_setup_without_values(tmp_path, monkeypatch):
+    """Einrichtungs-Check des Sync-Laufs: nur gesetzt/nicht gesetzt, nie Werte."""
+    monkeypatch.setenv("ATHLETE_FTP", "170")
+    monkeypatch.delenv("ATHLETE_WEIGHT_KG", raising=False)
+    today = dt.date(2026, 6, 15)
+    _seed(today)
+    payload = build_today.build(tmp_path / "today.json", today=today)
+    setup = payload["setup"]
+    assert setup["ATHLETE_FTP"] is True and setup["ATHLETE_WEIGHT_KG"] is False
+    assert all(isinstance(v, bool) for v in setup.values())
+    assert "170" not in json.dumps(setup)

@@ -178,6 +178,54 @@ def has_routing(cfg: dict[str, Any]) -> bool:
     return bool(key) and not key.startswith("DEIN_") and (lat != 0.0 or lon != 0.0)
 
 
+# Einrichtungs-Check: welche Werte fehlen, und was passiert dann? Bewusst nur
+# „gesetzt / nicht gesetzt" — today.json liegt öffentlich, Werte gehören da
+# nicht hinein. Anlass: ATHLETE_LTHR fehlte monatelang in den Workflows, ohne
+# dass es jemand merkte (CLAUDE.md 8b); im Okt. 2026 liefen Gewicht,
+# Saisonstart und LTHR im Sync still mit Vorgabewerten.
+# (Secret, Bezeichnung, Sektion, Schlüssel, was ohne den Wert gilt)
+SETUP_ITEMS: list[tuple[str, str, str, str, str]] = [
+    ("ATHLETE_FTP", "FTP (Watt)", "athlete", "ftp",
+     "kein Wattplan, kein Zwift-Workout, Rollen-Last nur über den Puls"),
+    ("ATHLETE_WEIGHT_KG", "Körpergewicht", "athlete", "weight_kg",
+     "gerechnet mit 75 kg (Energie fürs Workout) bzw. 88 kg Systemmasse (Fitness-Index)"),
+    ("ATHLETE_LTHR", "Schwellenpuls (LTHR)", "athlete", "lthr",
+     "HF-Zonen aus Max-HF und Ruhepuls (Karvonen) statt aus dem Feldtest"),
+    ("ATHLETE_SEASON_START", "Saisonstart", "athlete", "season_start",
+     "Saisonplan rechnet auf den 01.03.2027"),
+    ("INTERVALS_API_KEY", "intervals.icu (Zwift)", "intervals", "api_key",
+     "Workouts landen nicht automatisch in Zwift"),
+    ("NTFY_TOPIC", "ntfy-Thema (Push)", "report", "ntfy_topic",
+     "kein Morgen-Report und kein Wochenrückblick aufs Handy"),
+    ("ORS_API_KEY", "Routen (OpenRouteService)", "ors", "api_key",
+     "keine generierten Routen"),
+]
+
+
+def _is_set(val: Any) -> bool:
+    if val is None:
+        return False
+    text = str(val).strip()
+    if not text or text.upper().startswith("DEIN"):
+        return False
+    try:
+        return float(text) != 0.0
+    except ValueError:
+        return True
+
+
+def setup_status(cfg: dict[str, Any] | None = None) -> list[dict[str, Any]]:
+    """Je Einstellung: gesetzt? und was ohne sie gilt. Mit Env-Overlay."""
+    if cfg is None:
+        cfg = load_config_raw()
+        _overlay_env(cfg)
+    return [
+        {"env": env, "label": label, "set": _is_set(cfg.get(sec, {}).get(key)),
+         "fallback": fallback}
+        for env, label, sec, key, fallback in SETUP_ITEMS
+    ]
+
+
 def athlete(cfg: dict[str, Any]) -> dict[str, Any]:
     return cfg.get("athlete", {})
 
