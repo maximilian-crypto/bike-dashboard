@@ -1,11 +1,11 @@
 {
-  "generated_at": "2026-10-26T05:11:36+00:00",
+  "generated_at": "2026-10-26T10:01:08+00:00",
   "date": "2026-10-26",
   "recommendation": {
     "kind": "VO2MAX",
     "title": "4×4-Intervalle (Z5)",
     "readiness_band": "green",
-    "recovery_score": 90.0,
+    "recovery_score": 92.0,
     "zone_number": 5,
     "zone_label": "Z5 · Maximal",
     "hr_low": 184,
@@ -149,7 +149,7 @@
     ],
     "comeback": null,
     "rationale": [
-      "Whoop-Recovery heute: 90 %.",
+      "Whoop-Recovery heute: 92 %.",
       "Diese Woche bisher 0 / Ziel 81 Last (0 %, ≈ 1.4 h).",
       "Planwoche 7, Phase „Grundlage“ — noch 18 Wochen bis zum Saisonstart.",
       "Form (TSB) aktuell +1.",
@@ -173,11 +173,11 @@
     }
   },
   "weather": {
-    "temp_c": 8.1,
-    "wind_kmh": 17.6,
-    "wind_deg": 229,
+    "temp_c": 10.1,
+    "wind_kmh": 18.6,
+    "wind_deg": 224,
     "wind_dir": "SW",
-    "gust_kmh": 40.0,
+    "gust_kmh": 44.6,
     "code": 61,
     "desc": "leichter Regen"
   },
@@ -398,13 +398,13 @@
     "fluid_text": "💧 ca. 0,3 l trinken (700 ml/h), auf der Rolle eher mehr"
   },
   "zwift": {
-    "status": "skipped",
-    "name": null,
-    "event_id": null,
-    "detail": "intervals.icu nicht eingerichtet",
+    "status": "updated",
+    "name": "Bikedash 26-10 4x4 VO2max Z5 50min",
+    "event_id": 148331045,
+    "detail": null,
     "date": "2026-10-26",
-    "at": "2026-10-26T05:11:35+00:00",
-    "short_status": null,
-    "short_name": null
+    "at": "2026-10-26T10:01:07+00:00",
+    "short_status": "updated",
+    "short_name": "Bikedash 26-10 Kurz 4x4 VO2max Z5 24min"
   }
 }
