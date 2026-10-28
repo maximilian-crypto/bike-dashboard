@@ -1,11 +1,11 @@
 {
-  "generated_at": "2026-10-28T05:34:07+00:00",
+  "generated_at": "2026-10-28T10:30:36+00:00",
   "date": "2026-10-28",
   "recommendation": {
     "kind": "ENDURANCE",
     "title": "Grundlagenausdauer (Z2)",
     "readiness_band": "green",
-    "recovery_score": 68.0,
+    "recovery_score": 69.0,
     "zone_number": 2,
     "zone_label": "Z2 · Grundlage",
     "hr_low": 144,
@@ -85,7 +85,7 @@
     ],
     "comeback": null,
     "rationale": [
-      "Whoop-Recovery heute: 68 %.",
+      "Whoop-Recovery heute: 69 %.",
       "Diese Woche bisher 66 / Ziel 81 Last (82 %, ≈ 1.4 h).",
       "Planwoche 7, Phase „Grundlage“ — noch 17 Wochen bis zum Saisonstart.",
       "Form (TSB) aktuell -8.",
@@ -108,13 +108,13 @@
     }
   },
   "weather": {
-    "temp_c": 8.7,
-    "wind_kmh": 11.3,
-    "wind_deg": 239,
+    "temp_c": 11.4,
+    "wind_kmh": 12.4,
+    "wind_deg": 244,
     "wind_dir": "SW",
-    "gust_kmh": 23.8,
-    "code": 3,
-    "desc": "bedeckt"
+    "gust_kmh": 29.5,
+    "code": 2,
+    "desc": "teils bewölkt"
   },
   "milestone": {
     "total_km": 1154.1,
@@ -363,13 +363,13 @@
     "fluid_text": "💧 ca. 0,3 l trinken (550 ml/h), auf der Rolle eher mehr"
   },
   "zwift": {
-    "status": "sent",
+    "status": "unchanged",
     "name": "Bikedash 28-10 Grundlage Z2 89min",
     "event_id": 149126318,
     "detail": null,
     "date": "2026-10-28",
-    "at": "2026-10-28T05:34:06+00:00",
-    "short_status": "sent",
+    "at": "2026-10-28T10:30:35+00:00",
+    "short_status": "unchanged",
     "short_name": "Bikedash 28-10 Kurz Grundlage Z2 30min"
   }
 }
