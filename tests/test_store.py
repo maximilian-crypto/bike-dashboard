@@ -63,3 +63,39 @@ def test_whoop_sleep_roundtrip_and_prep():
     df = dataprep.prep_sleep()
     assert list(df["asleep_h"]) == [5.0, 4.0]          # Nickerchen nicht mitgezählt
     assert [d.date().isoformat() for d in df["date"]] == ["2026-10-21", "2026-10-22"]
+
+
+def test_reads_are_cached_and_writes_invalidate(monkeypatch):
+    """Ein Seitenaufruf soll jede Tabelle nur einmal lesen; eigene Schreibzugriffe
+    müssen trotzdem sofort sichtbar sein."""
+    from sqlalchemy import event
+
+    store.upsert_strava_activities([ride(1, dt.datetime(2026, 6, 1, 9))])
+    store.set_state("a", "1")
+    n = {"q": 0}
+    event.listen(store._engine(), "before_cursor_execute",
+                 lambda *a: n.__setitem__("q", n["q"] + 1))
+    for _ in range(5):
+        store.read_table("strava_activities")
+        store.get_state("a")
+        store.get_state("b")
+    assert n["q"] == 2
+
+    df = store.read_table("strava_activities")
+    df["neu"] = 1                       # Aufrufer verändern ihre Kopie …
+    assert "neu" not in store.read_table("strava_activities").columns   # … nie den Cache
+
+    store.set_state("a", "2")
+    assert store.get_state("a") == "2"
+    store.upsert_strava_activities([ride(2, dt.datetime(2026, 6, 2, 9))])
+    assert len(store.read_table("strava_activities")) == 2
+
+
+def test_cache_expires_for_outside_writers(monkeypatch):
+    store.set_state("a", "1")
+    assert store.get_state("a") == "1"
+    with store._engine().begin() as conn:     # wie der Sync in GitHub Actions
+        conn.execute(store.text("UPDATE sync_state SET value = '2' WHERE key = 'a'"))
+    assert store.get_state("a") == "1"
+    monkeypatch.setattr(store, "READ_TTL_S", 0.0)
+    assert store.get_state("a") == "2"

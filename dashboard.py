@@ -247,7 +247,11 @@ pio.templates["bikedash"] = go.layout.Template(
         margin=dict(t=48),
     )
 )
-pio.templates.default = "plotly_dark+bikedash"
+# Einmal vorab zusammenführen: mit "plotly_dark+bikedash" als Vorgabe merged
+# Plotly die beiden Templates bei JEDEM Diagramm neu (~35 ms je Figur, ~1 s
+# pro Seitenaufruf).
+pio.templates["bikedash_dark"] = pio.templates.merge_templates("plotly_dark", "bikedash")
+pio.templates.default = "bikedash_dark"
 
 
 def _rec_trend(rec: pd.DataFrame, col: str) -> dict | None:
@@ -340,22 +344,22 @@ def _wx_icon(code: int) -> str:
 # ---------------------------------------------------------------------------
 # Daten laden (gecached)
 # ---------------------------------------------------------------------------
-@st.cache_data(ttl=120)
+@st.cache_data(ttl=600)
 def load_rides() -> pd.DataFrame:
     return dataprep.prep_rides()
 
 
-@st.cache_data(ttl=120)
+@st.cache_data(ttl=600)
 def load_recovery() -> pd.DataFrame:
     return dataprep.prep_recovery()
 
 
-@st.cache_data(ttl=120)
+@st.cache_data(ttl=600)
 def load_sleep() -> pd.DataFrame:
     return dataprep.prep_sleep()
 
 
-@st.cache_data(ttl=120)
+@st.cache_data(ttl=600)
 def load_cycles() -> pd.DataFrame:
     return dataprep.prep_cycles()
 
@@ -368,19 +372,19 @@ def load_weather():
         return None
 
 
-@st.cache_data(ttl=120)
+@st.cache_data(ttl=600)
 def load_wind_fit():
     return windlab.analyze()
 
 
-@st.cache_data(ttl=120)
+@st.cache_data(ttl=600)
 def load_fitness():
     """Fitness-Index inkl. Verlauf. Schreibt den Anker beim ersten Aufruf fest —
     das ist gewollt: hier sieht der Nutzer, worauf sich alles bezieht."""
     return fitness.compute()
 
 
-@st.cache_data(ttl=120)
+@st.cache_data(ttl=600)
 def load_ef_points() -> pd.DataFrame:
     return fitness.ef_series(dataprep.prep_rides())
 

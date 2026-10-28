@@ -15,7 +15,9 @@ gewählt, dass sie auf beiden Backends identisch läuft (``ON CONFLICT``).
 from __future__ import annotations
 
 import json
-from typing import Any
+import threading
+import time
+from typing import Any, Callable
 
 import pandas as pd
 from sqlalchemy import create_engine, text
@@ -183,6 +185,39 @@ def _init_schema(engine: Engine, is_sqlite: bool) -> None:
                 conn.execute(text(stmt))
 
 
+# ---------------------------------------------------------------------------
+# Lesecache
+# ---------------------------------------------------------------------------
+# Ein Seitenaufruf im Dashboard las dieselben Tabellen bis zu 14-mal (Zonen,
+# Empfehlung, Schutzgeländer, Fitness-Index … holen sich jeweils selbst die
+# Recovery) und jeden Schlüssel aus sync_state einzeln — 45 Abfragen. Gegen die
+# Cloud-DB kostet jede einen Netz-Roundtrip (plus Ping des Pools). Deshalb:
+# Lesungen kurz im Prozess merken, jeder Schreibzugriff über dieses Modul leert
+# den Cache. Die TTL begrenzt, wie lange fremde Schreiber (der Sync in GitHub
+# Actions) unsichtbar bleiben.
+READ_TTL_S = 30.0
+_CACHE: dict[tuple[str, str], tuple[float, Any]] = {}
+_CACHE_LOCK = threading.Lock()
+
+
+def _cached(key: str, loader: Callable[[], Any]) -> Any:
+    k = (_resolve_url()[0], key)
+    now = time.monotonic()
+    with _CACHE_LOCK:
+        hit = _CACHE.get(k)
+    if hit and now - hit[0] < READ_TTL_S:
+        return hit[1]
+    val = loader()
+    with _CACHE_LOCK:
+        _CACHE[k] = (now, val)
+    return val
+
+
+def invalidate_cache() -> None:
+    with _CACHE_LOCK:
+        _CACHE.clear()
+
+
 def _col_ref(col: str) -> str:
     return f'"{col}"' if col in _QUOTED_COLS else col
 
@@ -204,6 +239,7 @@ def _upsert(table: str, rows: list[dict[str, Any]], pk: str | tuple[str, ...]) -
     )
     with _engine().begin() as conn:
         conn.execute(text(sql), rows)
+    invalidate_cache()
     return len(rows)
 
 
@@ -249,6 +285,7 @@ def replace_wind_segments(ride_id: int, rows: list[dict[str, Any]]) -> int:
             conn.execute(
                 text(f"INSERT INTO wind_segments ({collist}) VALUES ({values})"), rows
             )
+    invalidate_cache()
     return len(rows)
 
 
@@ -258,12 +295,16 @@ def wind_processed_ids() -> set[int]:
         return {r[0] for r in rows}
 
 
+def _key_values(table: str) -> dict[str, str]:
+    """Ganze Schlüssel-Wert-Tabelle auf einmal — eine Abfrage statt einer je Schlüssel."""
+    def load() -> dict[str, str]:
+        with _engine().connect() as conn:
+            return {k: v for k, v in conn.execute(text(f"SELECT key, value FROM {table}"))}
+    return _cached(f"kv:{table}", load)
+
+
 def get_state(key: str) -> str | None:
-    with _engine().connect() as conn:
-        row = conn.execute(
-            text("SELECT value FROM sync_state WHERE key = :k"), {"k": key}
-        ).fetchone()
-        return row[0] if row else None
+    return _key_values("sync_state").get(key)
 
 
 def set_state(key: str, value: str) -> None:
@@ -275,15 +316,23 @@ def set_state(key: str, value: str) -> None:
             ),
             {"k": key, "v": value},
         )
+    invalidate_cache()
 
 
-def get_kv(key: str) -> str | None:
-    """Kleiner Schlüssel-Wert-Speicher (u. a. für OAuth-Tokens in der Cloud)."""
-    with _engine().connect() as conn:
-        row = conn.execute(
-            text("SELECT value FROM app_kv WHERE key = :k"), {"k": key}
-        ).fetchone()
-        return row[0] if row else None
+def get_kv(key: str, *, fresh: bool = False) -> str | None:
+    """Kleiner Schlüssel-Wert-Speicher (u. a. für OAuth-Tokens in der Cloud).
+
+    ``fresh=True`` liest am Cache vorbei — für die OAuth-Tokens: Whoop tauscht
+    das Refresh-Token bei jeder Erneuerung aus, ein 30 s altes ist dann schon
+    ungültig, wenn der Actions-Sync zwischendurch erneuert hat.
+    """
+    if fresh:
+        with _engine().connect() as conn:
+            row = conn.execute(
+                text("SELECT value FROM app_kv WHERE key = :k"), {"k": key}
+            ).fetchone()
+            return row[0] if row else None
+    return _key_values("app_kv").get(key)
 
 
 def set_kv(key: str, value: str) -> None:
@@ -295,18 +344,24 @@ def set_kv(key: str, value: str) -> None:
             ),
             {"k": key, "v": value},
         )
+    invalidate_cache()
 
 
 def delete_kv(key: str) -> None:
     with _engine().begin() as conn:
         conn.execute(text("DELETE FROM app_kv WHERE key = :k"), {"k": key})
+    invalidate_cache()
 
 
 def read_table(table: str) -> pd.DataFrame:
-    """Tabelle als DataFrame lesen (für das Dashboard)."""
-    _engine()  # stellt sicher, dass das Schema existiert
-    with _engine().connect() as conn:
-        return pd.read_sql_query(text(f"SELECT * FROM {table}"), conn)
+    """Tabelle als DataFrame lesen (für das Dashboard).
+
+    Gibt eine Kopie zurück: Aufrufer hängen Spalten an, der Cache bleibt sauber.
+    """
+    def load() -> pd.DataFrame:
+        with _engine().connect() as conn:
+            return pd.read_sql_query(text(f"SELECT * FROM {table}"), conn)
+    return _cached(f"table:{table}", load).copy()
 
 
 def counts() -> dict[str, int]:

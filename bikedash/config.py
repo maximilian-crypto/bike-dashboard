@@ -261,7 +261,7 @@ def ors(cfg: dict[str, Any]) -> dict[str, Any]:
 def load_tokens() -> dict[str, Any]:
     if is_cloud():
         from . import store
-        raw = store.get_kv("oauth_tokens")
+        raw = store.get_kv("oauth_tokens", fresh=True)
         if not raw:
             return {}
         try:
