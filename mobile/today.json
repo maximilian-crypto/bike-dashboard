@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-10-29T15:12:35+00:00",
+  "generated_at": "2026-10-29T21:05:28+00:00",
   "date": "2026-10-29",
   "recommendation": {
     "kind": "REST",
@@ -61,13 +61,13 @@
     }
   },
   "weather": {
-    "temp_c": 12.6,
-    "wind_kmh": 5.8,
-    "wind_deg": 240,
-    "wind_dir": "SW",
-    "gust_kmh": 15.8,
-    "code": 2,
-    "desc": "teils bewölkt"
+    "temp_c": 6.9,
+    "wind_kmh": 2.4,
+    "wind_deg": 297,
+    "wind_dir": "NW",
+    "gust_kmh": 5.4,
+    "code": 45,
+    "desc": "Nebel"
   },
   "milestone": {
     "total_km": 1154.1,
@@ -146,7 +146,7 @@
     "event_id": null,
     "detail": "Ruhetag",
     "date": "2026-10-29",
-    "at": "2026-10-29T15:12:34+00:00",
+    "at": "2026-10-29T21:05:27+00:00",
     "short_status": "skipped",
     "short_name": null
   }
