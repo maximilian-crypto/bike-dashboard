@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-10-30T15:01:21+00:00",
+  "generated_at": "2026-10-30T20:45:05+00:00",
   "date": "2026-10-30",
   "recommendation": {
     "kind": "ENDURANCE",
@@ -108,13 +108,13 @@
     }
   },
   "weather": {
-    "temp_c": 9.4,
-    "wind_kmh": 4.8,
-    "wind_deg": 347,
-    "wind_dir": "N",
-    "gust_kmh": 12.2,
-    "code": 45,
-    "desc": "Nebel"
+    "temp_c": 9.2,
+    "wind_kmh": 7.6,
+    "wind_deg": 262,
+    "wind_dir": "W",
+    "gust_kmh": 15.1,
+    "code": 3,
+    "desc": "bedeckt"
   },
   "milestone": {
     "total_km": 1154.1,
@@ -368,7 +368,7 @@
     "event_id": 149847773,
     "detail": null,
     "date": "2026-10-30",
-    "at": "2026-10-30T15:01:20+00:00",
+    "at": "2026-10-30T20:45:04+00:00",
     "short_status": "unchanged",
     "short_name": "Bikedash 30-10 Kurz Grundlage Z2 30min"
   }
