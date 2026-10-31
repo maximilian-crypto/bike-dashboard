@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-10-31T10:19:15+00:00",
+  "generated_at": "2026-10-31T14:30:36+00:00",
   "date": "2026-10-31",
   "recommendation": {
     "kind": "VO2MAX",
@@ -172,13 +172,13 @@
     }
   },
   "weather": {
-    "temp_c": 11.0,
-    "wind_kmh": 8.0,
-    "wind_deg": 352,
+    "temp_c": 10.6,
+    "wind_kmh": 7.6,
+    "wind_deg": 5,
     "wind_dir": "N",
-    "gust_kmh": 20.9,
-    "code": 61,
-    "desc": "leichter Regen"
+    "gust_kmh": 19.8,
+    "code": 3,
+    "desc": "bedeckt"
   },
   "milestone": {
     "total_km": 1154.1,
@@ -406,13 +406,13 @@
     "fluid_text": "💧 ca. 0,3 l trinken (700 ml/h), auf der Rolle eher mehr"
   },
   "zwift": {
-    "status": "updated",
+    "status": "unchanged",
     "name": "Bikedash 31-10 4x4 VO2max Z5 50min",
     "event_id": 150140667,
     "detail": null,
     "date": "2026-10-31",
-    "at": "2026-10-31T10:19:13+00:00",
-    "short_status": "updated",
+    "at": "2026-10-31T14:30:35+00:00",
+    "short_status": "unchanged",
     "short_name": "Bikedash 31-10 Kurz 4x4 VO2max Z5 24min"
   }
 }
