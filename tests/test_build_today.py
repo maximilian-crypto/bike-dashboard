@@ -183,3 +183,13 @@ def test_today_json_reports_setup_without_values(tmp_path, monkeypatch):
     assert setup["ATHLETE_FTP"] is True and setup["ATHLETE_WEIGHT_KG"] is False
     assert all(isinstance(v, bool) for v in setup.values())
     assert "170" not in json.dumps(setup)
+
+
+def test_local_today_uses_german_time(monkeypatch):
+    """Kurz nach Mitternacht in Deutschland ist es in UTC noch gestern."""
+    class _DT(dt.datetime):
+        @classmethod
+        def now(cls, tz=None):
+            return dt.datetime(2026, 10, 31, 23, 30, tzinfo=dt.timezone.utc).astimezone(tz)
+    monkeypatch.setattr(build_today.dt, "datetime", _DT)
+    assert build_today.local_today() == dt.date(2026, 11, 1)

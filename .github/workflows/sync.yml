@@ -62,6 +62,10 @@ jobs:
           # beiden, wird der Schritt still übersprungen (today.json: zwift.status).
           INTERVALS_API_KEY: ${{ secrets.INTERVALS_API_KEY }}
           INTERVALS_ATHLETE_ID: ${{ secrets.INTERVALS_ATHLETE_ID }}
+          # Nur für den Einrichtungs-Check in today.json (gesetzt ja/nein) —
+          # ohne sie meldete der Sync „fehlt", obwohl Push und Routen liefen.
+          NTFY_TOPIC: ${{ secrets.NTFY_TOPIC }}
+          ORS_API_KEY: ${{ secrets.ORS_API_KEY }}
         run: python build_today.py
 
       - name: Morgen-Report und Wochenrückblick aufs Handy (nur wenn fällig)

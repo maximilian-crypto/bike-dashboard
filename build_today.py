@@ -24,6 +24,7 @@ import re
 import sys
 from pathlib import Path
 from typing import Any
+from zoneinfo import ZoneInfo
 
 from bikedash import (config, dataprep, fitness, fuel, milestones, recommend,
                       weather, zones, zwift)
@@ -144,9 +145,15 @@ def _weather_payload(cfg: dict[str, Any]) -> dict[str, Any] | None:
     }
 
 
+def local_today() -> dt.date:
+    return dt.datetime.now(ZoneInfo("Europe/Berlin")).date()
+
+
 def build(out_path: Path = DEFAULT_OUT, today: dt.date | None = None) -> dict[str, Any]:
     cfg = _load_cfg()
-    today = today or dt.date.today()
+    # Deutsche Zeit, nicht die des Runners (UTC): der Lauf kurz nach Mitternacht
+    # baute sonst den Plan für den Vortag (Befund 01.11.2026).
+    today = today or local_today()
     rc = recommend.build(today)
 
     max_hr = zones.max_hr_from_data()
