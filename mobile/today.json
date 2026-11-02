@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-11-02T07:28:13+00:00",
+  "generated_at": "2026-11-02T12:15:02+00:00",
   "date": "2026-11-02",
   "recommendation": {
     "kind": "ENDURANCE",
@@ -109,13 +109,13 @@
     }
   },
   "weather": {
-    "temp_c": 8.0,
-    "wind_kmh": 8.9,
-    "wind_deg": 212,
-    "wind_dir": "SW",
-    "gust_kmh": 17.3,
-    "code": 61,
-    "desc": "leichter Regen"
+    "temp_c": 11.0,
+    "wind_kmh": 1.8,
+    "wind_deg": 307,
+    "wind_dir": "NW",
+    "gust_kmh": 5.8,
+    "code": 3,
+    "desc": "bedeckt"
   },
   "milestone": {
     "total_km": 1154.1,
@@ -271,9 +271,9 @@
     "ATHLETE_WEIGHT_KG": false,
     "ATHLETE_LTHR": false,
     "ATHLETE_SEASON_START": false,
-    "INTERVALS_API_KEY": false,
+    "INTERVALS_API_KEY": true,
     "NTFY_TOPIC": true,
-    "ORS_API_KEY": false
+    "ORS_API_KEY": true
   },
   "fuel_short": {
     "kind": "ENDURANCE",
@@ -364,13 +364,13 @@
     "fluid_text": "💧 ca. 0,3 l trinken (550 ml/h), auf der Rolle eher mehr"
   },
   "zwift": {
-    "status": "skipped",
-    "name": null,
-    "event_id": null,
-    "detail": "intervals.icu nicht eingerichtet",
+    "status": "unchanged",
+    "name": "Bikedash 02-11 Grundlage Z2 107min",
+    "event_id": 150906812,
+    "detail": null,
     "date": "2026-11-02",
-    "at": "2026-11-02T07:28:13+00:00",
-    "short_status": null,
-    "short_name": null
+    "at": "2026-11-02T12:15:01+00:00",
+    "short_status": "unchanged",
+    "short_name": "Bikedash 02-11 Kurz Grundlage Z2 30min"
   }
 }
