@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-11-03T11:53:06+00:00",
+  "generated_at": "2026-11-03T19:28:34+00:00",
   "date": "2026-11-03",
   "recommendation": {
     "kind": "REST",
@@ -59,13 +59,13 @@
     }
   },
   "weather": {
-    "temp_c": 9.7,
-    "wind_kmh": 9.0,
-    "wind_deg": 92,
-    "wind_dir": "O",
+    "temp_c": 8.4,
+    "wind_kmh": 9.7,
+    "wind_deg": 63,
+    "wind_dir": "NO",
     "gust_kmh": 20.2,
-    "code": 2,
-    "desc": "teils bewölkt"
+    "code": 3,
+    "desc": "bedeckt"
   },
   "milestone": {
     "total_km": 1178.8,
@@ -187,7 +187,7 @@
     "event_id": null,
     "detail": "Ruhetag",
     "date": "2026-11-03",
-    "at": "2026-11-03T11:53:06+00:00",
+    "at": "2026-11-03T19:28:33+00:00",
     "short_status": "skipped",
     "short_name": null
   }
