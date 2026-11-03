@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-11-03T11:49:58+00:00",
+  "generated_at": "2026-11-03T11:53:06+00:00",
   "date": "2026-11-03",
   "recommendation": {
     "kind": "REST",
@@ -59,11 +59,11 @@
     }
   },
   "weather": {
-    "temp_c": 9.9,
+    "temp_c": 9.7,
     "wind_kmh": 9.0,
     "wind_deg": 92,
     "wind_dir": "O",
-    "gust_kmh": 19.4,
+    "gust_kmh": 20.2,
     "code": 2,
     "desc": "teils bewölkt"
   },
@@ -182,13 +182,13 @@
   },
   "fuel_short": null,
   "zwift": {
-    "status": "deleted",
-    "name": "Bikedash 03-11 Grundlage Z2 66min",
-    "event_id": 151352168,
-    "detail": "Ruhetag – Workout entfernt",
+    "status": "skipped",
+    "name": null,
+    "event_id": null,
+    "detail": "Ruhetag",
     "date": "2026-11-03",
-    "at": "2026-11-03T11:49:57+00:00",
-    "short_status": "deleted",
-    "short_name": "Bikedash 03-11 Kurz Grundlage Z2 30min"
+    "at": "2026-11-03T11:53:06+00:00",
+    "short_status": "skipped",
+    "short_name": null
   }
 }
