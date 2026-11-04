@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-11-04T12:00:30+00:00",
+  "generated_at": "2026-11-04T12:03:11+00:00",
   "date": "2026-11-04",
   "recommendation": {
     "kind": "ENDURANCE",
@@ -374,7 +374,7 @@
     "event_id": 151735240,
     "detail": null,
     "date": "2026-11-04",
-    "at": "2026-11-04T12:00:29+00:00",
+    "at": "2026-11-04T12:03:10+00:00",
     "short_status": "unchanged",
     "short_name": "Bikedash 04-11 Kurz Grundlage Z2 30min"
   }
