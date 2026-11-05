@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-11-05T12:15:41+00:00",
+  "generated_at": "2026-11-05T21:58:44+00:00",
   "date": "2026-11-05",
   "recommendation": {
     "kind": "ENDURANCE",
@@ -114,11 +114,11 @@
     }
   },
   "weather": {
-    "temp_c": 9.3,
-    "wind_kmh": 11.3,
-    "wind_deg": 73,
+    "temp_c": 3.4,
+    "wind_kmh": 6.5,
+    "wind_deg": 87,
     "wind_dir": "O",
-    "gust_kmh": 23.8,
+    "gust_kmh": 13.0,
     "code": 0,
     "desc": "klar"
   },
@@ -374,7 +374,7 @@
     "event_id": 152079410,
     "detail": null,
     "date": "2026-11-05",
-    "at": "2026-11-05T12:15:40+00:00",
+    "at": "2026-11-05T21:58:43+00:00",
     "short_status": "unchanged",
     "short_name": "Bikedash 05-11 Kurz Grundlage Z2 30min"
   }
