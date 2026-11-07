@@ -1,11 +1,11 @@
 {
-  "generated_at": "2026-11-07T20:12:47+00:00",
-  "date": "2026-11-07",
+  "generated_at": "2026-11-07T23:39:03+00:00",
+  "date": "2026-11-08",
   "recommendation": {
     "kind": "ENDURANCE",
     "title": "Grundlagenausdauer (Z2)",
-    "readiness_band": "yellow",
-    "recovery_score": 52.0,
+    "readiness_band": "unknown",
+    "recovery_score": null,
     "zone_number": 2,
     "zone_label": "Z2 · Grundlage",
     "hr_low": 145,
@@ -88,14 +88,13 @@
       1
     ],
     "rationale": [
-      "Whoop-Recovery heute: 52 %.",
+      "Keine aktuelle Whoop-Recovery — neutrale Annahme.",
       "Diese Woche bisher 44 / Ziel 58 Last (76 %, ≈ 1.0 h).",
       "Planwoche 8, Phase „Grundlage“ — noch 16 Wochen bis zum Saisonstart.",
       "Entlastungswoche (jede 4.): Ziel auf 65% — Anpassung passiert in der Erholung.",
       "Form (TSB) aktuell +1.",
-      "Erholung mittel, aber seit 13 Tagen kein harter Reiz — dosiertes Tempo (Z3), damit die Intensität nicht ganz einschläft.",
-      "Willkommen zurück nach 7 Tagen Pause! Fahrt 2 von 2 zum Reinkommen: locker und etwas kürzer, danach geht es normal weiter.",
-      "Wiedereinstieg: Tempo-Einheit (Z3) → Grundlagenausdauer (Z2)."
+      "Ohne Erholungsdaten konservativ: ruhige Grundlage (Z2).",
+      "Willkommen zurück nach 7 Tagen Pause! Fahrt 2 von 2 zum Reinkommen: locker und etwas kürzer, danach geht es normal weiter."
     ],
     "guard_level": "ok",
     "warnings": [],
@@ -114,11 +113,11 @@
     }
   },
   "weather": {
-    "temp_c": 2.5,
-    "wind_kmh": 10.0,
-    "wind_deg": 116,
+    "temp_c": 3.2,
+    "wind_kmh": 8.4,
+    "wind_deg": 133,
     "wind_dir": "SO",
-    "gust_kmh": 20.5,
+    "gust_kmh": 16.9,
     "code": 3,
     "desc": "bedeckt"
   },
@@ -369,13 +368,13 @@
     "fluid_text": "💧 ca. 0,3 l trinken (550 ml/h), auf der Rolle eher mehr"
   },
   "zwift": {
-    "status": "unchanged",
-    "name": "Bikedash 07-11 Grundlage Z2 66min",
-    "event_id": 152787455,
+    "status": "sent",
+    "name": "Bikedash 08-11 Grundlage Z2 66min",
+    "event_id": 153034048,
     "detail": null,
-    "date": "2026-11-07",
-    "at": "2026-11-07T20:12:46+00:00",
-    "short_status": "unchanged",
-    "short_name": "Bikedash 07-11 Kurz Grundlage Z2 30min"
+    "date": "2026-11-08",
+    "at": "2026-11-07T23:39:02+00:00",
+    "short_status": "sent",
+    "short_name": "Bikedash 08-11 Kurz Grundlage Z2 30min"
   }
 }
