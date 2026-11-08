@@ -103,5 +103,17 @@ jobs:
             echo "today.json unverändert – nichts zu committen."
           else
             git commit -m "chore: Tagesplan (today.json) aktualisieren [skip ci]"
-            git push
+            # Der Morgenlauf kann Stunden auf die Recovery warten (send_report
+            # --wait); pusht in der Zeit jemand anderes auf main, wird ein
+            # nackter Push abgelehnt (Befund 01.11.2026). Deshalb vorher den
+            # neuen Stand holen und den eigenen Commit oben drauf setzen;
+            # bei Konflikten in today.json gewinnt der frische Tagesplan.
+            for attempt in 1 2 3; do
+              if git pull --rebase -X theirs origin main && git push; then
+                exit 0
+              fi
+              echo "Push-Versuch $attempt fehlgeschlagen – neuer Anlauf."
+              sleep 5
+            done
+            exit 1
           fi
