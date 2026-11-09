@@ -1,11 +1,11 @@
 {
-  "generated_at": "2026-11-08T20:26:54+00:00",
-  "date": "2026-11-08",
+  "generated_at": "2026-11-09T06:15:43+00:00",
+  "date": "2026-11-09",
   "recommendation": {
     "kind": "ENDURANCE",
     "title": "Grundlagenausdauer (Z2)",
-    "readiness_band": "yellow",
-    "recovery_score": 60.0,
+    "readiness_band": "green",
+    "recovery_score": 87.0,
     "zone_number": 2,
     "zone_label": "Z2 · Grundlage",
     "hr_low": 145,
@@ -23,8 +23,8 @@
       23.9
     ],
     "target_distance_km": 21.7,
-    "week_hours": 1.0,
-    "target_hours": 1.0,
+    "week_hours": 0.0,
+    "target_hours": 1.5,
     "tsb": 0.7,
     "power_low": 95,
     "power_high": 128,
@@ -88,14 +88,14 @@
       1
     ],
     "rationale": [
-      "Whoop-Recovery heute: 60 %.",
-      "Diese Woche bisher 44 / Ziel 58 Last (76 %, ≈ 1.0 h).",
-      "Planwoche 8, Phase „Grundlage“ — noch 16 Wochen bis zum Saisonstart.",
-      "Entlastungswoche (jede 4.): Ziel auf 65% — Anpassung passiert in der Erholung.",
+      "Whoop-Recovery heute: 87 %.",
+      "Diese Woche bisher 0 / Ziel 90 Last (0 %, ≈ 1.5 h).",
+      "Planwoche 9, Phase „Grundlage“ — noch 16 Wochen bis zum Saisonstart.",
       "Form (TSB) aktuell +1.",
-      "Erholung mittel, aber seit 14 Tagen kein harter Reiz — dosiertes Tempo (Z3), damit die Intensität nicht ganz einschläft.",
+      "Bestens erholt & harte Einheit frei: 4×4 min nahe Maximalpuls. Das Protokoll mit der besten Studienlage für Schlagvolumen und VO2max (Helgerud et al. 2007) — kurz, hart, wirksam.",
+      "Letzter harter Reiz vor 15 Tagen.",
       "Willkommen zurück nach 7 Tagen Pause! Fahrt 2 von 2 zum Reinkommen: locker und etwas kürzer, danach geht es normal weiter.",
-      "Wiedereinstieg: Tempo-Einheit (Z3) → Grundlagenausdauer (Z2)."
+      "Wiedereinstieg: 4×4-Intervalle (Z5) → Grundlagenausdauer (Z2)."
     ],
     "guard_level": "ok",
     "warnings": [],
@@ -114,11 +114,11 @@
     }
   },
   "weather": {
-    "temp_c": 6.3,
-    "wind_kmh": 6.9,
-    "wind_deg": 141,
+    "temp_c": 4.1,
+    "wind_kmh": 5.6,
+    "wind_deg": 130,
     "wind_dir": "SO",
-    "gust_kmh": 14.0,
+    "gust_kmh": 10.8,
     "code": 3,
     "desc": "bedeckt"
   },
@@ -133,16 +133,16 @@
     "next_km": 1200.0
   },
   "fitness": {
-    "score": 70.3,
-    "tier": "Formstark",
-    "delta_30": 1.0,
-    "delta_90": -7.6,
+    "score": 68.8,
+    "tier": "Im Aufbau",
+    "delta_30": -0.5,
+    "delta_90": -9.1,
     "best": 79.1,
     "subscores": {
       "cap": {
         "label": "Kapazität",
-        "score": 43.0,
-        "n": 7
+        "score": 41.6,
+        "n": 6
       },
       "dur": {
         "label": "Ermüdungsresistenz",
@@ -156,7 +156,7 @@
       },
       "kon": {
         "label": "Konsistenz",
-        "score": 69.5,
+        "score": 62.5,
         "n": 26
       }
     },
@@ -369,13 +369,13 @@
     "fluid_text": "💧 ca. 0,3 l trinken (550 ml/h), auf der Rolle eher mehr"
   },
   "zwift": {
-    "status": "unchanged",
-    "name": "Bikedash 08-11 Grundlage Z2 66min",
-    "event_id": 153034048,
+    "status": "sent",
+    "name": "Bikedash 09-11 Grundlage Z2 66min",
+    "event_id": 153584497,
     "detail": null,
-    "date": "2026-11-08",
-    "at": "2026-11-08T20:26:53+00:00",
-    "short_status": "unchanged",
-    "short_name": "Bikedash 08-11 Kurz Grundlage Z2 30min"
+    "date": "2026-11-09",
+    "at": "2026-11-09T06:15:42+00:00",
+    "short_status": "sent",
+    "short_name": "Bikedash 09-11 Kurz Grundlage Z2 30min"
   }
 }
