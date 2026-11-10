@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-11-10T12:33:47+00:00",
+  "generated_at": "2026-11-10T21:47:34+00:00",
   "date": "2026-11-10",
   "recommendation": {
     "kind": "TEMPO",
@@ -156,13 +156,13 @@
     }
   },
   "weather": {
-    "temp_c": 5.3,
-    "wind_kmh": 6.2,
-    "wind_deg": 249,
-    "wind_dir": "W",
-    "gust_kmh": 13.0,
-    "code": 3,
-    "desc": "bedeckt"
+    "temp_c": 3.3,
+    "wind_kmh": 7.6,
+    "wind_deg": 183,
+    "wind_dir": "S",
+    "gust_kmh": 15.5,
+    "code": 45,
+    "desc": "Nebel"
   },
   "milestone": {
     "total_km": 1206.7,
@@ -416,7 +416,7 @@
     "event_id": 154013776,
     "detail": null,
     "date": "2026-11-10",
-    "at": "2026-11-10T12:33:46+00:00",
+    "at": "2026-11-10T21:47:33+00:00",
     "short_status": "unchanged",
     "short_name": "Bikedash 10-11 Kurz Tempo Z3 30min"
   }
