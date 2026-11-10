@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-11-10T12:29:10+00:00",
+  "generated_at": "2026-11-10T12:33:47+00:00",
   "date": "2026-11-10",
   "recommendation": {
     "kind": "TEMPO",
@@ -156,9 +156,9 @@
     }
   },
   "weather": {
-    "temp_c": 5.1,
-    "wind_kmh": 6.3,
-    "wind_deg": 257,
+    "temp_c": 5.3,
+    "wind_kmh": 6.2,
+    "wind_deg": 249,
     "wind_dir": "W",
     "gust_kmh": 13.0,
     "code": 3,
@@ -411,13 +411,13 @@
     "fluid_text": "💧 ca. 0,4 l trinken (650 ml/h), auf der Rolle eher mehr"
   },
   "zwift": {
-    "status": "updated",
+    "status": "unchanged",
     "name": "Bikedash 10-11 Tempo Z3 85min",
     "event_id": 154013776,
     "detail": null,
     "date": "2026-11-10",
-    "at": "2026-11-10T12:29:09+00:00",
-    "short_status": "updated",
+    "at": "2026-11-10T12:33:46+00:00",
+    "short_status": "unchanged",
     "short_name": "Bikedash 10-11 Kurz Tempo Z3 30min"
   }
 }
