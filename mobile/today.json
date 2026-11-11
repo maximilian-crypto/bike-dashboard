@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-11-11T16:07:23+00:00",
+  "generated_at": "2026-11-11T22:40:31+00:00",
   "date": "2026-11-11",
   "recommendation": {
     "kind": "RECOVERY",
@@ -108,11 +108,11 @@
     }
   },
   "weather": {
-    "temp_c": 2.3,
-    "wind_kmh": 4.1,
-    "wind_deg": 135,
-    "wind_dir": "SO",
-    "gust_kmh": 11.2,
+    "temp_c": 2.0,
+    "wind_kmh": 3.3,
+    "wind_deg": 257,
+    "wind_dir": "W",
+    "gust_kmh": 8.3,
     "code": 45,
     "desc": "Nebel"
   },
@@ -347,7 +347,7 @@
     "event_id": 154462741,
     "detail": null,
     "date": "2026-11-11",
-    "at": "2026-11-11T16:07:22+00:00",
+    "at": "2026-11-11T22:40:30+00:00",
     "short_status": "unchanged",
     "short_name": "Bikedash 11-11 Kurz Erholung Z1 20min"
   }
