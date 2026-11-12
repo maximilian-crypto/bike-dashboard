@@ -1,6 +1,6 @@
 {
-  "generated_at": "2026-11-11T22:40:31+00:00",
-  "date": "2026-11-11",
+  "generated_at": "2026-11-12T07:04:50+00:00",
+  "date": "2026-11-12",
   "recommendation": {
     "kind": "RECOVERY",
     "title": "Lockerer Erholungs-Spin",
@@ -108,13 +108,13 @@
     }
   },
   "weather": {
-    "temp_c": 2.0,
-    "wind_kmh": 3.3,
-    "wind_deg": 257,
-    "wind_dir": "W",
-    "gust_kmh": 8.3,
-    "code": 45,
-    "desc": "Nebel"
+    "temp_c": 1.4,
+    "wind_kmh": 15.6,
+    "wind_deg": 218,
+    "wind_dir": "SW",
+    "gust_kmh": 30.2,
+    "code": 3,
+    "desc": "bedeckt"
   },
   "milestone": {
     "total_km": 1206.7,
@@ -127,16 +127,16 @@
     "next_km": 1215.0
   },
   "fitness": {
-    "score": 70.7,
-    "tier": "Formstark",
-    "delta_30": 2.6,
-    "delta_90": -7.2,
+    "score": 69.0,
+    "tier": "Im Aufbau",
+    "delta_30": 0.9,
+    "delta_90": -8.9,
     "best": 79.1,
     "subscores": {
       "cap": {
         "label": "Kapazität",
-        "score": 44.6,
-        "n": 7
+        "score": 40.4,
+        "n": 6
       },
       "dur": {
         "label": "Ermüdungsresistenz",
@@ -145,13 +145,13 @@
       },
       "reg": {
         "label": "Regeneration",
-        "score": 79.9,
+        "score": 79.5,
         "n": 40
       },
       "kon": {
         "label": "Konsistenz",
         "score": 69.7,
-        "n": 27
+        "n": 26
       }
     },
     "highlight": "🫀 Dein Puls driftet in der zweiten Fahrthälfte nur **-2,4 %** vom Tempo weg — das ist der Bereich, in dem lange Fahrten aufhören, teuer zu werden."
@@ -342,13 +342,13 @@
     "fluid_text": "💧 ca. 0,2 l trinken (500 ml/h), auf der Rolle eher mehr"
   },
   "zwift": {
-    "status": "unchanged",
-    "name": "Bikedash 11-11 Erholung Z1 47min",
-    "event_id": 154462741,
+    "status": "sent",
+    "name": "Bikedash 12-11 Erholung Z1 47min",
+    "event_id": 154891937,
     "detail": null,
-    "date": "2026-11-11",
-    "at": "2026-11-11T22:40:30+00:00",
-    "short_status": "unchanged",
-    "short_name": "Bikedash 11-11 Kurz Erholung Z1 20min"
+    "date": "2026-11-12",
+    "at": "2026-11-12T07:04:48+00:00",
+    "short_status": "sent",
+    "short_name": "Bikedash 12-11 Kurz Erholung Z1 20min"
   }
 }
