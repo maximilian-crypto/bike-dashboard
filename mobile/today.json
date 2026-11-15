@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-11-14T23:53:00+00:00",
+  "generated_at": "2026-11-15T08:02:34+00:00",
   "date": "2026-11-15",
   "recommendation": {
     "kind": "ENDURANCE",
@@ -108,13 +108,13 @@
     }
   },
   "weather": {
-    "temp_c": 1.4,
-    "wind_kmh": 10.7,
-    "wind_deg": 168,
+    "temp_c": 0.5,
+    "wind_kmh": 11.7,
+    "wind_deg": 169,
     "wind_dir": "S",
-    "gust_kmh": 20.2,
-    "code": 1,
-    "desc": "überwiegend klar"
+    "gust_kmh": 22.3,
+    "code": 2,
+    "desc": "teils bewölkt"
   },
   "milestone": {
     "total_km": 1229.2,
@@ -127,9 +127,9 @@
     "next_km": 1233.0
   },
   "fitness": {
-    "score": 68.3,
+    "score": 68.1,
     "tier": "Im Aufbau",
-    "delta_30": 0.2,
+    "delta_30": 0.0,
     "delta_90": -9.7,
     "best": 79.2,
     "subscores": {
@@ -145,7 +145,7 @@
       },
       "reg": {
         "label": "Regeneration",
-        "score": 78.3,
+        "score": 77.4,
         "n": 40
       },
       "kon": {
@@ -270,9 +270,9 @@
     "ATHLETE_WEIGHT_KG": false,
     "ATHLETE_LTHR": false,
     "ATHLETE_SEASON_START": false,
-    "INTERVALS_API_KEY": true,
+    "INTERVALS_API_KEY": false,
     "NTFY_TOPIC": true,
-    "ORS_API_KEY": true
+    "ORS_API_KEY": false
   },
   "fuel_short": {
     "kind": "ENDURANCE",
@@ -363,13 +363,13 @@
     "fluid_text": "💧 ca. 0,3 l trinken (550 ml/h), auf der Rolle eher mehr"
   },
   "zwift": {
-    "status": "sent",
-    "name": "Bikedash 15-11 Grundlage Z2 89min",
-    "event_id": 155914681,
-    "detail": null,
+    "status": "skipped",
+    "name": null,
+    "event_id": null,
+    "detail": "intervals.icu nicht eingerichtet",
     "date": "2026-11-15",
-    "at": "2026-11-14T23:52:59+00:00",
-    "short_status": "sent",
-    "short_name": "Bikedash 15-11 Kurz Grundlage Z2 30min"
+    "at": "2026-11-15T08:02:34+00:00",
+    "short_status": null,
+    "short_name": null
   }
 }
