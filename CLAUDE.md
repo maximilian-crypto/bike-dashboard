@@ -303,7 +303,7 @@ Live-Ride-PWA mit BLE-Puls/-Kadenz und Karte.
 | 13 | **4×4-Intervalle & Intensität vom Wochenziel entkoppelt** — neuer Einheitentyp `VO2MAX`, Intensitätslücken-Regel, Wattdaten-basierte Erkennung harter Einheiten | `bikedash/recommend.py`, `bikedash/power.py`, `zwift.py`, `fuel.py`, `report.py` | Code fertig, Tests grün, Tab „Heute" + Zwift-Text geprüft |
 | 8 | **Morgen-Report ereignisgesteuert** — Push, sobald die heutige Whoop-Recovery da ist, spätestens 10:00; erste Zeile = Entscheidung | `bikedash/report.py`, `send_report.py --if-due`, `sync.yml` | Code fertig, Tests grün. **Offen: `NTFY_TOPIC` als Actions-Secret + ntfy-App abonnieren** |
 
-**Tests:** 238 grün (`python -m pytest -q`), inkl. Suites
+**Tests:** 242 grün (`python -m pytest -q`), inkl. Suites
 `tests/test_milestones.py`, `tests/test_maintenance.py`, `tests/test_dataprep.py`, `tests/test_season.py`, `tests/test_power.py`, `tests/test_zwift.py`, `tests/test_report.py`, `tests/test_fitness.py`, `tests/test_fuel.py`, `tests/test_guard.py` und `tests/test_weekly.py`.
 
 **Zwift-Zustellung verifiziert (2026-09-18, Lauf #346):** `today.json` meldet
@@ -558,7 +558,7 @@ gelesen) monatelang kaputt. Checkliste:
 | 1 | `bikedash/config.py` → `_ENV_MAP` | Env-Overlay beim Hosting |
 | 2 | `config.example.toml` | lokale Einrichtung |
 | 3 | `.streamlit/secrets.toml.example` | Streamlit-Secrets |
-| 4 | `.github/workflows/sync.yml` (beide Schritte: Tagesplan **und** Morgen-Report) | **die vergessene Stelle** |
+| 4 | `.github/workflows/sync.yml` — **ein** `env:`-Block auf Job-Ebene (seit 15.11.2026; `tests/test_workflow.py` prüft ihn gegen `_ENV_MAP`) | **die vergessene Stelle**: vorher fehlten INTERVALS_*/ORS im Report-Schritt, der in der Warteschleife den Tagesplan neu baut → Zwift „übersprungen“ |
 | 5 | `DEPLOY.md` (Secrets-Tabelle) | damit der Nutzer es findet |
 | 6 | Einrichtungs-Tab in `dashboard.py` | Eingabe + Speichern |
 

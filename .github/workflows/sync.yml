@@ -25,6 +25,34 @@ jobs:
   sync:
     runs-on: ubuntu-latest
     timeout-minutes: 330   # Nachfassen am Morgen dauert höchstens bis 10:00
+    # Alle Einstellungen EINMAL für den ganzen Job. Vorher hatte jeder Schritt
+    # seine eigene Liste — und der Report-Schritt, der in der Warteschleife
+    # den Tagesplan NEU baut (send_report --wait → build_today), kannte weder
+    # intervals.icu noch ORS. Folge (07. und 15.11.2026): Sobald der Lauf auf
+    # die Recovery wartete, wurde die Zwift-Zustellung „übersprungen" und der
+    # Einrichtungs-Check meldete beides als fehlend. Ein neuer Wert gehört
+    # nur noch hierher (Checkliste CLAUDE.md 8b, Punkt 4);
+    # tests/test_workflow.py prüft das gegen config._ENV_MAP.
+    env:
+      DATABASE_URL: ${{ secrets.DATABASE_URL }}
+      STRAVA_CLIENT_ID: ${{ secrets.STRAVA_CLIENT_ID }}
+      STRAVA_CLIENT_SECRET: ${{ secrets.STRAVA_CLIENT_SECRET }}
+      WHOOP_CLIENT_ID: ${{ secrets.WHOOP_CLIENT_ID }}
+      WHOOP_CLIENT_SECRET: ${{ secrets.WHOOP_CLIENT_SECRET }}
+      ATHLETE_HOME_LAT: ${{ secrets.ATHLETE_HOME_LAT }}   # Wetter; today.json bleibt route-frei
+      ATHLETE_HOME_LON: ${{ secrets.ATHLETE_HOME_LON }}
+      # Zonen und Trainingslast müssen identisch zum Dashboard gerechnet werden.
+      ATHLETE_LTHR: ${{ secrets.ATHLETE_LTHR }}
+      ATHLETE_FTP: ${{ secrets.ATHLETE_FTP }}
+      ATHLETE_WEIGHT_KG: ${{ secrets.ATHLETE_WEIGHT_KG }}
+      ATHLETE_SEASON_START: ${{ secrets.ATHLETE_SEASON_START }}
+      # Tagesworkout automatisch nach Zwift (über intervals.icu). Fehlen die
+      # beiden, wird der Schritt still übersprungen (today.json: zwift.status).
+      INTERVALS_API_KEY: ${{ secrets.INTERVALS_API_KEY }}
+      INTERVALS_ATHLETE_ID: ${{ secrets.INTERVALS_ATHLETE_ID }}
+      ORS_API_KEY: ${{ secrets.ORS_API_KEY }}
+      NTFY_TOPIC: ${{ secrets.NTFY_TOPIC }}
+      DASHBOARD_URL: ${{ secrets.DASHBOARD_URL }}
     steps:
       - uses: actions/checkout@v4
 
@@ -36,36 +64,9 @@ jobs:
       - run: pip install -r requirements.txt
 
       - name: Sync
-        env:
-          DATABASE_URL: ${{ secrets.DATABASE_URL }}
-          STRAVA_CLIENT_ID: ${{ secrets.STRAVA_CLIENT_ID }}
-          STRAVA_CLIENT_SECRET: ${{ secrets.STRAVA_CLIENT_SECRET }}
-          WHOOP_CLIENT_ID: ${{ secrets.WHOOP_CLIENT_ID }}
-          WHOOP_CLIENT_SECRET: ${{ secrets.WHOOP_CLIENT_SECRET }}
-          ORS_API_KEY: ${{ secrets.ORS_API_KEY }}
-          ATHLETE_HOME_LAT: ${{ secrets.ATHLETE_HOME_LAT }}
-          ATHLETE_HOME_LON: ${{ secrets.ATHLETE_HOME_LON }}
         run: python sync.py
 
       - name: Tagesplan für die PWA bauen (mobile/today.json, route-frei)
-        env:
-          DATABASE_URL: ${{ secrets.DATABASE_URL }}
-          ATHLETE_HOME_LAT: ${{ secrets.ATHLETE_HOME_LAT }}   # nur fürs Wetter
-          ATHLETE_HOME_LON: ${{ secrets.ATHLETE_HOME_LON }}
-          # Zonen und Trainingslast müssen hier identisch zum Dashboard
-          # gerechnet werden, sonst weicht today.json davon ab.
-          ATHLETE_LTHR: ${{ secrets.ATHLETE_LTHR }}
-          ATHLETE_FTP: ${{ secrets.ATHLETE_FTP }}
-          ATHLETE_WEIGHT_KG: ${{ secrets.ATHLETE_WEIGHT_KG }}
-          ATHLETE_SEASON_START: ${{ secrets.ATHLETE_SEASON_START }}
-          # Tagesworkout automatisch nach Zwift (über intervals.icu). Fehlen die
-          # beiden, wird der Schritt still übersprungen (today.json: zwift.status).
-          INTERVALS_API_KEY: ${{ secrets.INTERVALS_API_KEY }}
-          INTERVALS_ATHLETE_ID: ${{ secrets.INTERVALS_ATHLETE_ID }}
-          # Nur für den Einrichtungs-Check in today.json (gesetzt ja/nein) —
-          # ohne sie meldete der Sync „fehlt", obwohl Push und Routen liefen.
-          NTFY_TOPIC: ${{ secrets.NTFY_TOPIC }}
-          ORS_API_KEY: ${{ secrets.ORS_API_KEY }}
         run: python build_today.py
 
       - name: Morgen-Report und Wochenrückblick aufs Handy (nur wenn fällig)
@@ -75,23 +76,10 @@ jobs:
         # build_today, damit die Zwift-Zeile stimmt. Fehler hier dürfen den
         # Sync nicht rot machen.
         continue-on-error: true
-        env:
-          DATABASE_URL: ${{ secrets.DATABASE_URL }}
-          STRAVA_CLIENT_ID: ${{ secrets.STRAVA_CLIENT_ID }}
-          STRAVA_CLIENT_SECRET: ${{ secrets.STRAVA_CLIENT_SECRET }}
-          WHOOP_CLIENT_ID: ${{ secrets.WHOOP_CLIENT_ID }}
-          WHOOP_CLIENT_SECRET: ${{ secrets.WHOOP_CLIENT_SECRET }}
-          ATHLETE_HOME_LAT: ${{ secrets.ATHLETE_HOME_LAT }}
-          ATHLETE_HOME_LON: ${{ secrets.ATHLETE_HOME_LON }}
-          ATHLETE_LTHR: ${{ secrets.ATHLETE_LTHR }}
-          ATHLETE_FTP: ${{ secrets.ATHLETE_FTP }}
-          ATHLETE_WEIGHT_KG: ${{ secrets.ATHLETE_WEIGHT_KG }}
-          ATHLETE_SEASON_START: ${{ secrets.ATHLETE_SEASON_START }}
-          NTFY_TOPIC: ${{ secrets.NTFY_TOPIC }}
-          DASHBOARD_URL: ${{ secrets.DASHBOARD_URL }}
         # --wait: wartet der Report noch auf die Recovery, fasst derselbe Lauf
-        # alle 10 min nach (bis 10:00). GitHub verwirft die meisten
-        # Morgen-Slots — auf den nächsten Lauf zu hoffen, hieß oft 11:20.
+        # alle 10 min nach (bis 10:00) und baut dabei Tagesplan + Zwift neu.
+        # GitHub verwirft die meisten Morgen-Slots — auf den nächsten Lauf zu
+        # hoffen, hieß oft 11:20.
         run: python send_report.py --if-due --weekly-if-due --wait
 
       - name: today.json committen (nur bei Änderung)
