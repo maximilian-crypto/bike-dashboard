@@ -1,11 +1,11 @@
 {
-  "generated_at": "2026-11-17T13:16:26+00:00",
-  "date": "2026-11-17",
+  "generated_at": "2026-11-17T23:29:39+00:00",
+  "date": "2026-11-18",
   "recommendation": {
     "kind": "ENDURANCE",
     "title": "Grundlagenausdauer (Z2)",
-    "readiness_band": "yellow",
-    "recovery_score": 47.0,
+    "readiness_band": "unknown",
+    "recovery_score": null,
     "zone_number": 2,
     "zone_label": "Z2 · Grundlage",
     "hr_low": 145,
@@ -85,17 +85,17 @@
     ],
     "comeback": null,
     "rationale": [
-      "Whoop-Recovery heute: 47 %.",
+      "Keine aktuelle Whoop-Recovery — neutrale Annahme.",
       "Diese Woche bisher 26 / Ziel 90 Last (28 %, ≈ 1.5 h).",
       "Planwoche 10, Phase „Grundlage“ — noch 14 Wochen bis zum Saisonstart.",
       "An die Realität angepasst: höchstens 130% deiner besten der letzten drei Wochen — nach einer Pause wird nicht aufgeholt, sondern wieder herangeführt.",
       "Form (TSB) aktuell +1.",
-      "Erholung mittel & Woche noch dünn: ruhige Grundlage (Z2)."
+      "Ohne Erholungsdaten konservativ: ruhige Grundlage (Z2)."
     ],
     "guard_level": "ok",
     "warnings": [],
     "acwr": null,
-    "streak_days": 1
+    "streak_days": 0
   },
   "zones": {
     "max_hr": 197,
@@ -109,13 +109,13 @@
     }
   },
   "weather": {
-    "temp_c": 4.7,
-    "wind_kmh": 22.0,
-    "wind_deg": 108,
-    "wind_dir": "O",
-    "gust_kmh": 43.9,
-    "code": 61,
-    "desc": "leichter Regen"
+    "temp_c": 8.4,
+    "wind_kmh": 15.6,
+    "wind_deg": 195,
+    "wind_dir": "S",
+    "gust_kmh": 30.6,
+    "code": 3,
+    "desc": "bedeckt"
   },
   "milestone": {
     "total_km": 1242.5,
@@ -364,13 +364,13 @@
     "fluid_text": "💧 ca. 0,3 l trinken (550 ml/h), auf der Rolle eher mehr"
   },
   "zwift": {
-    "status": "unchanged",
-    "name": "Bikedash 17-11 Grundlage Z2 107min",
-    "event_id": 157026867,
+    "status": "sent",
+    "name": "Bikedash 18-11 Grundlage Z2 107min",
+    "event_id": 157425073,
     "detail": null,
-    "date": "2026-11-17",
-    "at": "2026-11-17T13:16:26+00:00",
-    "short_status": "unchanged",
-    "short_name": "Bikedash 17-11 Kurz Grundlage Z2 30min"
+    "date": "2026-11-18",
+    "at": "2026-11-17T23:29:38+00:00",
+    "short_status": "sent",
+    "short_name": "Bikedash 18-11 Kurz Grundlage Z2 30min"
   }
 }
