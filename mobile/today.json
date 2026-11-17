@@ -1,71 +1,121 @@
 {
-  "generated_at": "2026-11-16T18:28:01+00:00",
-  "date": "2026-11-16",
+  "generated_at": "2026-11-17T02:54:44+00:00",
+  "date": "2026-11-17",
   "recommendation": {
-    "kind": "REST",
-    "title": "Ruhetag",
-    "readiness_band": "yellow",
-    "recovery_score": 64.0,
-    "zone_number": null,
-    "zone_label": null,
-    "hr_low": null,
-    "hr_high": null,
-    "cadence": "–",
-    "cadence_low": null,
-    "cadence_high": null,
-    "rpe": "–",
+    "kind": "ENDURANCE",
+    "title": "Grundlagenausdauer (Z2)",
+    "readiness_band": "unknown",
+    "recovery_score": null,
+    "zone_number": 2,
+    "zone_label": "Z2 · Grundlage",
+    "hr_low": 145,
+    "hr_high": 158,
+    "cadence": "85–95",
+    "cadence_low": 85,
+    "cadence_high": 95,
+    "rpe": "3–4",
     "duration_min": [
-      0,
-      0
+      91,
+      124
     ],
     "distance_km": [
-      0.0,
-      0.0
+      31.6,
+      38.6
     ],
-    "target_distance_km": 0.0,
+    "target_distance_km": 35.1,
     "week_hours": 0.5,
     "target_hours": 1.5,
     "tsb": 1.3,
-    "power_low": null,
-    "power_high": null,
-    "power_summary": null,
-    "power_plan": [],
-    "short_duration_min": 0,
-    "short_summary": null,
-    "short_plan": [],
+    "power_low": 95,
+    "power_high": 128,
+    "power_summary": "10' ein · 89' @ 95–128 W · 8' aus",
+    "power_plan": [
+      {
+        "label": "Einfahren",
+        "minutes": 10,
+        "low_w": 76,
+        "high_w": 94,
+        "zone": 1,
+        "cadence": "85–95"
+      },
+      {
+        "label": "Hauptteil",
+        "minutes": 89,
+        "low_w": 95,
+        "high_w": 128,
+        "zone": 2,
+        "cadence": "85–95"
+      },
+      {
+        "label": "Ausfahren",
+        "minutes": 8,
+        "low_w": 76,
+        "high_w": 94,
+        "zone": 1,
+        "cadence": null
+      }
+    ],
+    "short_duration_min": 30,
+    "short_summary": "5' ein · 20' @ 95–128 W · 5' aus",
+    "short_plan": [
+      {
+        "label": "Einfahren",
+        "minutes": 5,
+        "low_w": 76,
+        "high_w": 94,
+        "zone": 1,
+        "cadence": "85–95"
+      },
+      {
+        "label": "Hauptteil",
+        "minutes": 20,
+        "low_w": 95,
+        "high_w": 128,
+        "zone": 2,
+        "cadence": "85–95"
+      },
+      {
+        "label": "Ausfahren",
+        "minutes": 5,
+        "low_w": 76,
+        "high_w": 94,
+        "zone": 1,
+        "cadence": null
+      }
+    ],
     "comeback": null,
     "rationale": [
-      "Whoop-Recovery heute: 64 %.",
+      "Keine aktuelle Whoop-Recovery — neutrale Annahme.",
       "Diese Woche bisher 26 / Ziel 90 Last (28 %, ≈ 1.5 h).",
-      "Planwoche 10, Phase „Grundlage“ — noch 15 Wochen bis zum Saisonstart.",
+      "Planwoche 10, Phase „Grundlage“ — noch 14 Wochen bis zum Saisonstart.",
       "An die Realität angepasst: höchstens 130% deiner besten der letzten drei Wochen — nach einer Pause wird nicht aufgeholt, sondern wieder herangeführt.",
       "Form (TSB) aktuell +1.",
-      "Du bist heute bereits gefahren — Fokus auf Regeneration."
+      "Ohne Erholungsdaten konservativ: ruhige Grundlage (Z2)."
     ],
     "guard_level": "ok",
     "warnings": [],
     "acwr": null,
-    "streak_days": 0
+    "streak_days": 1
   },
   "zones": {
     "max_hr": 197,
     "rest_hr": 68,
     "lthr": null,
     "ftp": 170,
-    "target_zone": null,
+    "target_zone": 2,
     "method": "Karvonen/HRR",
     "load_sources": {
       "power": 7
     }
   },
   "weather": {
-    "temp_c": 7.1,
-    "wind_kmh": 18.0,
-    "wind_deg": 272,
-    "wind_dir": "W",
-    "gust_kmh": 35.3,
-    "code": 61,
-    "desc": "leichter Regen"
+    "temp_c": 3.0,
+    "wind_kmh": 9.4,
+    "wind_deg": 223,
+    "wind_dir": "SW",
+    "gust_kmh": 22.0,
+    "code": 2,
+    "desc": "teils bewölkt"
   },
   "milestone": {
     "total_km": 1242.5,
@@ -78,10 +128,10 @@
     "next_km": 1265.0
   },
   "fitness": {
-    "score": 68.9,
+    "score": 68.7,
     "tier": "Im Aufbau",
-    "delta_30": 0.9,
-    "delta_90": -8.9,
+    "delta_30": 0.7,
+    "delta_90": -9.1,
     "best": 79.3,
     "subscores": {
       "cap": {
@@ -96,32 +146,76 @@
       },
       "reg": {
         "label": "Regeneration",
-        "score": 77.4,
-        "n": 40
+        "score": 77.2,
+        "n": 39
       },
       "kon": {
         "label": "Konsistenz",
-        "score": 70.8,
+        "score": 69.9,
         "n": 28
       }
     },
     "highlight": "🫀 Dein Puls driftet in der zweiten Fahrthälfte nur **-2,5 %** vom Tempo weg — das ist der Bereich, in dem lange Fahrten aufhören, teuer zu werden."
   },
   "fuel": {
-    "kind": "REST",
-    "duration_min": 0,
-    "kcal_extra": 162,
+    "kind": "ENDURANCE",
+    "duration_min": 107,
+    "kcal_extra": 551,
     "kcal_range": [
-      130,
-      190
+      440,
+      660
     ],
-    "source": "ride",
+    "source": "power",
     "weight_known": false,
     "phases": [
       {
+        "key": "before",
+        "title": "Vorher",
+        "kcal": 165,
+        "carbs_g": 44,
+        "hint": "30–90 min vor dem Start",
+        "portions": [
+          {
+            "key": "toast",
+            "icon": "🍞",
+            "count": 2.0,
+            "label": "2 Scheiben Toast mit Honig"
+          },
+          {
+            "key": "banana",
+            "icon": "🍌",
+            "count": 2.0,
+            "label": "2 Bananen"
+          }
+        ],
+        "text": "2 Scheiben Toast mit Honig oder 2 Bananen"
+      },
+      {
+        "key": "during",
+        "title": "Unterwegs",
+        "kcal": 275,
+        "carbs_g": 70,
+        "hint": "ab der ersten halben Stunde, in Schlucken bzw. Stücken",
+        "portions": [
+          {
+            "key": "cola",
+            "icon": "🥤",
+            "count": 2.0,
+            "label": "2 Dosen Cola"
+          },
+          {
+            "key": "maoam",
+            "icon": "🍬",
+            "count": 3.5,
+            "label": "3½ Maoam Bloxx"
+          }
+        ],
+        "text": "2 Dosen Cola oder 3½ Maoam Bloxx"
+      },
+      {
         "key": "after",
         "title": "Danach",
-        "kcal": 162,
+        "kcal": 110,
         "carbs_g": 33,
         "hint": "innerhalb von 1–2 h, gern mit der nächsten Mahlzeit",
         "portions": [
@@ -134,11 +228,107 @@
           {
             "key": "cola",
             "icon": "🥤",
-            "count": 1.5,
-            "label": "1½ Dosen Cola"
+            "count": 1.0,
+            "label": "1 Dose Cola"
           }
         ],
-        "text": "1½ Scheiben Toast mit Honig oder 1½ Dosen Cola"
+        "text": "1½ Scheiben Toast mit Honig oder 1 Dose Cola"
+      }
+    ],
+    "equivalents": [
+      {
+        "key": "cola",
+        "icon": "🥤",
+        "count": 4.0,
+        "label": "4 Dosen Cola"
+      },
+      {
+        "key": "maoam",
+        "icon": "🍬",
+        "count": 6.5,
+        "label": "6½ Maoam Bloxx"
+      },
+      {
+        "key": "toast",
+        "icon": "🍞",
+        "count": 5.5,
+        "label": "5½ Scheiben Toast mit Honig"
+      }
+    ],
+    "notes": [
+      "Die Werte kommen **oben drauf** auf deine normalen Mahlzeiten — sie ersetzen keine. Wer über den Tag zu wenig isst, fährt schon mit Defizit los.",
+      "Heute kaum gegessen und fühlst dich schwach? Erst die Vorher-Portion essen und 20–30 min warten. Wird's nicht besser: kürzere Variante oder Pause — Training auf leerem Tank baut dich ab statt auf.",
+      "Ohne hinterlegtes Gewicht mit 75 kg gerechnet (Einrichtung → Körpergewicht)."
+    ],
+    "done_today_kcal": null,
+    "fluid_ml_per_h": 550,
+    "fluid_l": 1.0,
+    "short": "Extra essen: ≈ 551 kcal (4 Dosen Cola / 6½ Maoam Bloxx / 5½ Scheiben Toast mit Honig) · 💧 1,0 l",
+    "fluid_text": "💧 ca. 1,0 l trinken (550 ml/h), auf der Rolle eher mehr, ab 1 h eine Prise Salz oder Elektrolyte"
+  },
+  "setup": {
+    "ATHLETE_FTP": true,
+    "ATHLETE_WEIGHT_KG": false,
+    "ATHLETE_LTHR": false,
+    "ATHLETE_SEASON_START": false,
+    "INTERVALS_API_KEY": true,
+    "NTFY_TOPIC": true,
+    "ORS_API_KEY": true
+  },
+  "fuel_short": {
+    "kind": "ENDURANCE",
+    "duration_min": 30,
+    "kcal_extra": 147,
+    "kcal_range": [
+      120,
+      180
+    ],
+    "source": "power",
+    "weight_known": false,
+    "phases": [
+      {
+        "key": "before",
+        "title": "Vorher",
+        "kcal": 44,
+        "carbs_g": 11,
+        "hint": "30–90 min vor dem Start",
+        "portions": [
+          {
+            "key": "toast",
+            "icon": "🍞",
+            "count": 0.5,
+            "label": "½ Scheibe Toast mit Honig"
+          },
+          {
+            "key": "banana",
+            "icon": "🍌",
+            "count": 0.5,
+            "label": "½ Banane"
+          }
+        ],
+        "text": "½ Scheibe Toast mit Honig oder ½ Banane"
+      },
+      {
+        "key": "after",
+        "title": "Danach",
+        "kcal": 103,
+        "carbs_g": 22,
+        "hint": "innerhalb von 1–2 h, gern mit der nächsten Mahlzeit",
+        "portions": [
+          {
+            "key": "toast",
+            "icon": "🍞",
+            "count": 1.0,
+            "label": "1 Scheibe Toast mit Honig"
+          },
+          {
+            "key": "cola",
+            "icon": "🥤",
+            "count": 1.0,
+            "label": "1 Dose Cola"
+          }
+        ],
+        "text": "1 Scheibe Toast mit Honig oder 1 Dose Cola"
       }
     ],
     "equivalents": [
@@ -162,33 +352,25 @@
       }
     ],
     "notes": [
-      "Deine Fahrt heute hat rund 162 kcal zusätzlich gekostet — die gehören heute noch auf den Teller.",
-      "Die Werte kommen **oben drauf** auf deine normalen Mahlzeiten — sie ersetzen keine. Wer über den Tag zu wenig isst, fährt schon mit Defizit los."
+      "Die Werte kommen **oben drauf** auf deine normalen Mahlzeiten — sie ersetzen keine. Wer über den Tag zu wenig isst, fährt schon mit Defizit los.",
+      "Heute kaum gegessen und fühlst dich schwach? Erst die Vorher-Portion essen und 20–30 min warten. Wird's nicht besser: kürzere Variante oder Pause — Training auf leerem Tank baut dich ab statt auf.",
+      "Unter einer Stunde musst du unterwegs nichts essen — wenn du vorher getankt hast. Eine Cola in der Trinkflasche schadet trotzdem nicht, falls die Beine leer werden.",
+      "Ohne hinterlegtes Gewicht mit 75 kg gerechnet (Einrichtung → Körpergewicht)."
     ],
-    "done_today_kcal": 162,
-    "fluid_ml_per_h": 0,
-    "fluid_l": 0.0,
-    "short": "Extra essen: ≈ 162 kcal (1½ Dosen Cola / 2 Maoam Bloxx / 1½ Scheiben Toast mit Honig)",
-    "fluid_text": ""
+    "done_today_kcal": null,
+    "fluid_ml_per_h": 550,
+    "fluid_l": 0.3,
+    "short": "Extra essen: ≈ 147 kcal (1½ Dosen Cola / 2 Maoam Bloxx / 1½ Scheiben Toast mit Honig) · 💧 0,3 l",
+    "fluid_text": "💧 ca. 0,3 l trinken (550 ml/h), auf der Rolle eher mehr"
   },
-  "setup": {
-    "ATHLETE_FTP": true,
-    "ATHLETE_WEIGHT_KG": false,
-    "ATHLETE_LTHR": false,
-    "ATHLETE_SEASON_START": false,
-    "INTERVALS_API_KEY": true,
-    "NTFY_TOPIC": true,
-    "ORS_API_KEY": true
-  },
-  "fuel_short": null,
   "zwift": {
-    "status": "skipped",
-    "name": null,
-    "event_id": null,
-    "detail": "Ruhetag",
-    "date": "2026-11-16",
-    "at": "2026-11-16T18:28:00+00:00",
-    "short_status": "skipped",
-    "short_name": null
+    "status": "sent",
+    "name": "Bikedash 17-11 Grundlage Z2 107min",
+    "event_id": 157026867,
+    "detail": null,
+    "date": "2026-11-17",
+    "at": "2026-11-17T02:54:43+00:00",
+    "short_status": "sent",
+    "short_name": "Bikedash 17-11 Kurz Grundlage Z2 30min"
   }
 }
