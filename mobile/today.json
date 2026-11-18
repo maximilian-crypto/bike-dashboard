@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-11-18T12:57:35+00:00",
+  "generated_at": "2026-11-18T17:13:28+00:00",
   "date": "2026-11-18",
   "recommendation": {
     "kind": "VO2MAX",
@@ -173,7 +173,15 @@
       "power": 7
     }
   },
-  "weather": null,
+  "weather": {
+    "temp_c": 7.8,
+    "wind_kmh": 19.6,
+    "wind_deg": 287,
+    "wind_dir": "W",
+    "gust_kmh": 40.0,
+    "code": 3,
+    "desc": "bedeckt"
+  },
   "milestone": {
     "total_km": 1242.5,
     "orden_earned": 22,
@@ -405,7 +413,7 @@
     "event_id": 157425073,
     "detail": null,
     "date": "2026-11-18",
-    "at": "2026-11-18T12:57:34+00:00",
+    "at": "2026-11-18T17:13:27+00:00",
     "short_status": "unchanged",
     "short_name": "Bikedash 18-11 Kurz 4x4 VO2max Z5 24min"
   }
