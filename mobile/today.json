@@ -1,11 +1,11 @@
 {
-  "generated_at": "2026-11-19T23:02:13+00:00",
+  "generated_at": "2026-11-20T07:06:28+00:00",
   "date": "2026-11-20",
   "recommendation": {
     "kind": "ENDURANCE",
     "title": "Grundlagenausdauer (Z2)",
-    "readiness_band": "unknown",
-    "recovery_score": null,
+    "readiness_band": "green",
+    "recovery_score": 68.0,
     "zone_number": 2,
     "zone_label": "Z2 · Grundlage",
     "hr_low": 145,
@@ -85,12 +85,12 @@
     ],
     "comeback": null,
     "rationale": [
-      "Keine aktuelle Whoop-Recovery — neutrale Annahme.",
+      "Whoop-Recovery heute: 68 %.",
       "Diese Woche bisher 26 / Ziel 90 Last (28 %, ≈ 1.5 h).",
       "Planwoche 10, Phase „Grundlage“ — noch 14 Wochen bis zum Saisonstart.",
       "An die Realität angepasst: höchstens 130% deiner besten der letzten drei Wochen — nach einer Pause wird nicht aufgeholt, sondern wieder herangeführt.",
       "Form (TSB) aktuell +1.",
-      "Ohne Erholungsdaten konservativ: ruhige Grundlage (Z2)."
+      "Gut erholt: solide Grundlage (Z2) baut die aerobe Basis."
     ],
     "guard_level": "ok",
     "warnings": [],
@@ -109,13 +109,13 @@
     }
   },
   "weather": {
-    "temp_c": 1.7,
-    "wind_kmh": 7.9,
-    "wind_deg": 336,
-    "wind_dir": "NW",
-    "gust_kmh": 15.8,
-    "code": 1,
-    "desc": "überwiegend klar"
+    "temp_c": -2.2,
+    "wind_kmh": 6.1,
+    "wind_deg": 220,
+    "wind_dir": "SW",
+    "gust_kmh": 13.0,
+    "code": 48,
+    "desc": "Reifnebel"
   },
   "milestone": {
     "total_km": 1242.5,
@@ -364,13 +364,13 @@
     "fluid_text": "💧 ca. 0,3 l trinken (550 ml/h), auf der Rolle eher mehr"
   },
   "zwift": {
-    "status": "sent",
+    "status": "unchanged",
     "name": "Bikedash 20-11 Grundlage Z2 107min",
     "event_id": 158166948,
     "detail": null,
     "date": "2026-11-20",
-    "at": "2026-11-19T23:02:12+00:00",
-    "short_status": "sent",
+    "at": "2026-11-20T07:06:27+00:00",
+    "short_status": "unchanged",
     "short_name": "Bikedash 20-11 Kurz Grundlage Z2 30min"
   }
 }
