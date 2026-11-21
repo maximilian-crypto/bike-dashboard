@@ -1,11 +1,11 @@
 {
-  "generated_at": "2026-11-21T01:28:04+00:00",
+  "generated_at": "2026-11-21T12:28:11+00:00",
   "date": "2026-11-21",
   "recommendation": {
     "kind": "ENDURANCE",
     "title": "Grundlagenausdauer (Z2)",
-    "readiness_band": "unknown",
-    "recovery_score": null,
+    "readiness_band": "yellow",
+    "recovery_score": 42.0,
     "zone_number": 2,
     "zone_label": "Z2 · Grundlage",
     "hr_low": 145,
@@ -85,12 +85,12 @@
     ],
     "comeback": null,
     "rationale": [
-      "Keine aktuelle Whoop-Recovery — neutrale Annahme.",
+      "Whoop-Recovery heute: 42 %.",
       "Diese Woche bisher 71 / Ziel 90 Last (78 %, ≈ 1.5 h).",
       "Planwoche 10, Phase „Grundlage“ — noch 14 Wochen bis zum Saisonstart.",
       "An die Realität angepasst: höchstens 130% deiner besten der letzten drei Wochen — nach einer Pause wird nicht aufgeholt, sondern wieder herangeführt.",
       "Form (TSB) aktuell +2.",
-      "Ohne Erholungsdaten konservativ: ruhige Grundlage (Z2)."
+      "Erholung mittel & Woche noch dünn: ruhige Grundlage (Z2)."
     ],
     "guard_level": "ok",
     "warnings": [],
@@ -109,13 +109,13 @@
     }
   },
   "weather": {
-    "temp_c": 2.0,
-    "wind_kmh": 9.4,
-    "wind_deg": 263,
+    "temp_c": 6.7,
+    "wind_kmh": 14.3,
+    "wind_deg": 252,
     "wind_dir": "W",
-    "gust_kmh": 19.4,
-    "code": 1,
-    "desc": "überwiegend klar"
+    "gust_kmh": 34.9,
+    "code": 80,
+    "desc": "Regenschauer"
   },
   "milestone": {
     "total_km": 1261.3,
@@ -128,10 +128,10 @@
     "next_km": 1265.0
   },
   "fitness": {
-    "score": 69.3,
+    "score": 69.2,
     "tier": "Im Aufbau",
-    "delta_30": 5.0,
-    "delta_90": -8.5,
+    "delta_30": 4.9,
+    "delta_90": -8.6,
     "best": 79.2,
     "subscores": {
       "cap": {
@@ -146,8 +146,8 @@
       },
       "reg": {
         "label": "Regeneration",
-        "score": 73.2,
-        "n": 39
+        "score": 72.9,
+        "n": 40
       },
       "kon": {
         "label": "Konsistenz",
@@ -364,13 +364,13 @@
     "fluid_text": "💧 ca. 0,3 l trinken (550 ml/h), auf der Rolle eher mehr"
   },
   "zwift": {
-    "status": "sent",
+    "status": "unchanged",
     "name": "Bikedash 21-11 Grundlage Z2 89min",
     "event_id": 158556297,
     "detail": null,
     "date": "2026-11-21",
-    "at": "2026-11-21T01:28:03+00:00",
-    "short_status": "sent",
+    "at": "2026-11-21T12:28:10+00:00",
+    "short_status": "unchanged",
     "short_name": "Bikedash 21-11 Kurz Grundlage Z2 30min"
   }
 }
