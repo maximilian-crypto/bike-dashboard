@@ -1,11 +1,11 @@
 {
-  "generated_at": "2026-11-22T07:31:01+00:00",
+  "generated_at": "2026-11-22T12:28:21+00:00",
   "date": "2026-11-22",
   "recommendation": {
     "kind": "TEMPO",
     "title": "Tempo-Einheit (Z3)",
     "readiness_band": "yellow",
-    "recovery_score": 51.0,
+    "recovery_score": 53.0,
     "zone_number": 3,
     "zone_label": "Z3 · Tempo",
     "hr_low": 158,
@@ -117,7 +117,7 @@
     ],
     "comeback": null,
     "rationale": [
-      "Whoop-Recovery heute: 51 %.",
+      "Whoop-Recovery heute: 53 %.",
       "Diese Woche bisher 71 / Ziel 90 Last (78 %, ≈ 1.5 h).",
       "Planwoche 10, Phase „Grundlage“ — noch 14 Wochen bis zum Saisonstart.",
       "An die Realität angepasst: höchstens 130% deiner besten der letzten drei Wochen — nach einer Pause wird nicht aufgeholt, sondern wieder herangeführt.",
@@ -141,13 +141,13 @@
     }
   },
   "weather": {
-    "temp_c": -0.3,
-    "wind_kmh": 4.6,
-    "wind_deg": 342,
+    "temp_c": 4.0,
+    "wind_kmh": 11.9,
+    "wind_deg": 3,
     "wind_dir": "N",
-    "gust_kmh": 8.6,
-    "code": 2,
-    "desc": "teils bewölkt"
+    "gust_kmh": 22.7,
+    "code": 3,
+    "desc": "bedeckt"
   },
   "milestone": {
     "total_km": 1261.3,
@@ -396,13 +396,13 @@
     "fluid_text": "💧 ca. 0,4 l trinken (650 ml/h), auf der Rolle eher mehr"
   },
   "zwift": {
-    "status": "updated",
+    "status": "unchanged",
     "name": "Bikedash 22-11 Tempo Z3 68min",
     "event_id": 158934441,
     "detail": null,
     "date": "2026-11-22",
-    "at": "2026-11-22T07:30:59+00:00",
-    "short_status": "updated",
+    "at": "2026-11-22T12:28:20+00:00",
+    "short_status": "unchanged",
     "short_name": "Bikedash 22-11 Kurz Tempo Z3 30min"
   }
 }
