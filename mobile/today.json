@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-11-23T14:24:20+00:00",
+  "generated_at": "2026-11-23T14:30:48+00:00",
   "date": "2026-11-23",
   "recommendation": {
     "kind": "RECOVERY",
@@ -108,7 +108,15 @@
       "power": 6
     }
   },
-  "weather": null,
+  "weather": {
+    "temp_c": 3.8,
+    "wind_kmh": 13.3,
+    "wind_deg": 327,
+    "wind_dir": "NW",
+    "gust_kmh": 28.4,
+    "code": 0,
+    "desc": "klar"
+  },
   "milestone": {
     "total_km": 1261.3,
     "orden_earned": 22,
@@ -335,13 +343,13 @@
     "fluid_text": "💧 ca. 0,2 l trinken (500 ml/h), auf der Rolle eher mehr"
   },
   "zwift": {
-    "status": "updated",
+    "status": "unchanged",
     "name": "Bikedash 23-11 Erholung Z1 47min",
     "event_id": 159369370,
     "detail": null,
     "date": "2026-11-23",
-    "at": "2026-11-23T14:24:19+00:00",
-    "short_status": "updated",
+    "at": "2026-11-23T14:30:47+00:00",
+    "short_status": "unchanged",
     "short_name": "Bikedash 23-11 Kurz Erholung Z1 20min"
   }
 }
