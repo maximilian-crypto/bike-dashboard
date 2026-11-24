@@ -1,11 +1,11 @@
 {
-  "generated_at": "2026-11-23T14:30:48+00:00",
-  "date": "2026-11-23",
+  "generated_at": "2026-11-24T02:54:44+00:00",
+  "date": "2026-11-24",
   "recommendation": {
     "kind": "RECOVERY",
     "title": "Lockerer Erholungs-Spin",
     "readiness_band": "red",
-    "recovery_score": 1.0,
+    "recovery_score": 18.0,
     "zone_number": 1,
     "zone_label": "Z1 · Erholung",
     "hr_low": 120,
@@ -85,9 +85,9 @@
     ],
     "comeback": null,
     "rationale": [
-      "Whoop-Recovery heute: 1 %.",
+      "Whoop-Recovery heute: 18 %.",
       "Diese Woche bisher 0 / Ziel 92 Last (0 %, ≈ 1.5 h).",
-      "Planwoche 11, Phase „Grundlage“ — noch 14 Wochen bis zum Saisonstart.",
+      "Planwoche 11, Phase „Grundlage“ — noch 13 Wochen bis zum Saisonstart.",
       "An die Realität angepasst: höchstens 130% deiner besten der letzten drei Wochen — nach einer Pause wird nicht aufgeholt, sondern wieder herangeführt.",
       "Form (TSB) aktuell +2.",
       "Erholung niedrig (rot): heute nur locker (Z1) oder Pause."
@@ -105,18 +105,10 @@
     "target_zone": 1,
     "method": "Karvonen/HRR",
     "load_sources": {
-      "power": 6
+      "power": 5
     }
   },
-  "weather": {
-    "temp_c": 3.8,
-    "wind_kmh": 13.3,
-    "wind_deg": 327,
-    "wind_dir": "NW",
-    "gust_kmh": 28.4,
-    "code": 0,
-    "desc": "klar"
-  },
+  "weather": null,
   "milestone": {
     "total_km": 1261.3,
     "orden_earned": 22,
@@ -128,10 +120,10 @@
     "next_km": 1265.0
   },
   "fitness": {
-    "score": 68.0,
+    "score": 67.8,
     "tier": "Im Aufbau",
-    "delta_30": 3.8,
-    "delta_90": -8.3,
+    "delta_30": 3.6,
+    "delta_90": -8.5,
     "best": 79.3,
     "subscores": {
       "cap": {
@@ -141,21 +133,21 @@
       },
       "dur": {
         "label": "Ermüdungsresistenz",
-        "score": 96.9,
-        "n": 16
+        "score": 97.0,
+        "n": 15
       },
       "reg": {
         "label": "Regeneration",
         "score": 72.6,
-        "n": 40
+        "n": 39
       },
       "kon": {
         "label": "Konsistenz",
-        "score": 63.1,
-        "n": 27
+        "score": 61.9,
+        "n": 25
       }
     },
-    "highlight": "🫀 Dein Puls driftet in der zweiten Fahrthälfte nur **-2,5 %** vom Tempo weg — das ist der Bereich, in dem lange Fahrten aufhören, teuer zu werden."
+    "highlight": "🫀 Dein Puls driftet in der zweiten Fahrthälfte nur **-2,6 %** vom Tempo weg — das ist der Bereich, in dem lange Fahrten aufhören, teuer zu werden."
   },
   "fuel": {
     "kind": "RECOVERY",
@@ -343,13 +335,13 @@
     "fluid_text": "💧 ca. 0,2 l trinken (500 ml/h), auf der Rolle eher mehr"
   },
   "zwift": {
-    "status": "unchanged",
-    "name": "Bikedash 23-11 Erholung Z1 47min",
-    "event_id": 159369370,
+    "status": "sent",
+    "name": "Bikedash 24-11 Erholung Z1 47min",
+    "event_id": 159924519,
     "detail": null,
-    "date": "2026-11-23",
-    "at": "2026-11-23T14:30:47+00:00",
-    "short_status": "unchanged",
-    "short_name": "Bikedash 23-11 Kurz Erholung Z1 20min"
+    "date": "2026-11-24",
+    "at": "2026-11-24T02:54:42+00:00",
+    "short_status": "sent",
+    "short_name": "Bikedash 24-11 Kurz Erholung Z1 20min"
   }
 }
