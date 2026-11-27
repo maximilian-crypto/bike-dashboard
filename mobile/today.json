@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-11-27T13:43:25+00:00",
+  "generated_at": "2026-11-27T13:47:49+00:00",
   "date": "2026-11-27",
   "recommendation": {
     "kind": "VO2MAX",
@@ -174,9 +174,9 @@
     }
   },
   "weather": {
-    "temp_c": 2.7,
-    "wind_kmh": 6.3,
-    "wind_deg": 59,
+    "temp_c": 2.9,
+    "wind_kmh": 5.6,
+    "wind_deg": 50,
     "wind_dir": "NO",
     "gust_kmh": 13.0,
     "code": 3,
@@ -408,13 +408,13 @@
     "fluid_text": "💧 ca. 0,3 l trinken (700 ml/h), auf der Rolle eher mehr"
   },
   "zwift": {
-    "status": "updated",
+    "status": "unchanged",
     "name": "Bikedash 27-11 4x4 VO2max Z5 50min",
     "event_id": 161108710,
     "detail": null,
     "date": "2026-11-27",
-    "at": "2026-11-27T13:43:23+00:00",
-    "short_status": "updated",
+    "at": "2026-11-27T13:47:48+00:00",
+    "short_status": "unchanged",
     "short_name": "Bikedash 27-11 Kurz 4x4 VO2max Z5 24min"
   }
 }
